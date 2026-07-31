@@ -29,8 +29,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#0f1e3d',
+  colorScheme: 'dark',
+  themeColor: '#000033',
   width: 'device-width',
   initialScale: 1,
 }
@@ -41,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ja" className={`light bg-background ${rounded.variable} ${notoSans.variable}`}>
+    <html lang="ja" className={`dark bg-[#000033] ${rounded.variable} ${notoSans.variable}`}>
       <body className="font-sans antialiased">
         {children}
       </body>
