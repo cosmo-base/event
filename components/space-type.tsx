@@ -2,7 +2,7 @@
 import { Telescope, Satellite, Rocket, Building, ArrowLeft, Earth, } from "lucide-react"
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { AutoLink } from "@/components/auto-link"
+
 import { FullDiagnosisCard } from "@/components/full-diagnosis-card"
 
 const QUESTIONS = [
@@ -94,7 +94,7 @@ function ResultScreen({ answers }: { answers: number[] }) {
   const data = RESULT_DATA[resultType];
 
   const handleXShare = () => {
-    const shareUrl = `https://cosmo-base.github.io/event/type/result/${resultType}`;
+    const shareUrl = `https://fsifofficial.github.io/CosmoBase/space-type/result/${resultType}`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.shareText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterUrl, '_blank');
   };
@@ -211,12 +211,12 @@ function ResultScreen({ answers }: { answers: number[] }) {
           ✨ 専門知識は一切いりません ✨
         </div>
         <p className="text-sm text-gray-400 mb-2">同じタイプの人が集まる場所はこちら</p>
-        <AutoLink>
+        <a href="https://discord.gg/X78w86XE3v" target="_blank" rel="noopener noreferrer" className="w-full">
           <button className="group relative inline-flex items-center gap-3 rounded-full px-6 py-4 w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold text-lg shadow-lg transform transition hover:scale-105 mb-6">
             <img src="/event/CB_icon.png" className="h-8 w-8" />
             無料でCosmo Baseに参加する
           </button>
-        </AutoLink>
+        </a>
 
         <div className="text-center w-full pt-6 border-t border-gray-800">
           <p className="text-sm text-gray-400 mb-4">あなたの結果をシェアして仲間を見つけよう</p>
