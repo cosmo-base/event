@@ -17,31 +17,24 @@ const notoSans = Noto_Sans_JP({
 })
 
 export const metadata: Metadata = {
-  title: 'くらわくトーク#2',
-  description:
-    '宇宙好きが集まるコミュニティ「Cosmo Base」のイベント特設ページ。ピッチ資料、宇宙コンテンツ、宇宙タイプ診断を体験して、コミュニティに参加しよう。',
-  openGraph: {
-    title: 'くらわくトーク#2',
-    description:
-      '宇宙好きが集まるコミュニティ「Cosmo Base」のイベント特設ページ。ピッチ資料や宇宙タイプ診断を体験しよう。',
-    type: 'website',
-  },
+  title: 'あなたの宇宙タイプは？ | Cosmo Base',
+  description: '30秒の診断で、あなたが宇宙で活躍する未来がわかる。宇宙診断コンテンツ。',
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#0f1e3d',
+  colorScheme: 'dark',
+  themeColor: '#000033',
   width: 'device-width',
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default function TypeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ja" className={`light bg-background ${rounded.variable} ${notoSans.variable}`}>
+    <html lang="ja" className={`${rounded.variable} ${notoSans.variable}`}>
       <body className="font-sans antialiased">
         {children}
       </body>

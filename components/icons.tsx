@@ -78,10 +78,8 @@ const TiktokIcon: SvgIcon = (props) => (
   </svg>
 )
 
-const NoteIcon: SvgIcon = (props) => (
-  <svg {...base(props)}>
-    <path d="M4 3h13.5L21 6.5V21H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm3 5v2h10V8H7Zm0 4v2h10v-2H7Zm0 4v2h7v-2H7Z" />
-  </svg>
+const NoteIcon: SvgIcon = ({ className }) => (
+  <img src="/event/note.png" alt="" aria-hidden="true" className={className} />
 )
 
 const DiscordIcon: SvgIcon = (props) => (

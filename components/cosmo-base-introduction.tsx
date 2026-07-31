@@ -14,7 +14,7 @@ export function CosmoBaseIntroduction({ cosmoBase }: { cosmoBase: EventPageData[
           <Reveal>
             <div className="flex items-center gap-3">
               <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                <img src="CB_icon.png" alt="CB" className="size-10" aria-hidden="true" />
+                <img src="/event/CB_icon.png" alt="CB" className="size-10" aria-hidden="true" />
               </span>
               <div>
                 <p className="text-lg font-bold">Cosmo Base</p>
