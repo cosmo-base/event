@@ -251,3 +251,11 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Leaflet map */
+.leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 10 !important;
+}
+.leaflet-tile-pane { image-rendering: auto; }
