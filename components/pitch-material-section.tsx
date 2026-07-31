@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Presentation, FileText, Paperclip, User, CalendarDays, Clock3 } from "lucide-react"
+import { Presentation, FileText, User, CalendarDays, Clock3 } from "lucide-react"
 import type { PitchData } from "@/data/event-page-data"
 import { SectionHeading } from "@/components/section-heading"
 import { ExternalLinkButton } from "@/components/external-link-button"
@@ -12,14 +12,21 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
         <SectionHeading
           eyebrow="Pitch"
           title={pitch.title}
-          description="当日のピッチで使用した発表スライドと補足資料をご覧いただけます。発表時間内にご紹介できなかった内容も掲載しています。"
+          description="当日の発表スライドをご覧いただけます。"
         />
 
         <Reveal className="mt-8">
           <div className="grid gap-0 overflow-hidden rounded-3xl border border-border bg-card shadow-sm md:grid-cols-[1.1fr_1fr]">
-            {/* サムネイル */}
+            {/* スライド埋め込み / サムネイル */}
             <div className="relative aspect-video md:aspect-auto">
-              {pitch.thumbnailUrl ? (
+              {pitch.embedUrl ? (
+                <iframe
+                  src={pitch.embedUrl}
+                  title={pitch.presentationTitle}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allowFullScreen
+                />
+              ) : pitch.thumbnailUrl ? (
                 <Image
                   src={pitch.thumbnailUrl || "/placeholder.svg"}
                   alt={`${pitch.presentationTitle} の発表スライド サムネイル`}
@@ -91,7 +98,6 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
                     external
                     variant="ghost"
                   >
-                    <Paperclip className="size-4" aria-hidden="true" />
                     補足資料を見る
                   </ExternalLinkButton>
                 ) : null}

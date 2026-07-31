@@ -34,11 +34,11 @@ export function SpaceTypeDiagnosisFeature({ feature }: { feature: SpaceTypeFeatu
                 </div>
                 <h2
                   id="space-type-heading"
-                  className="mt-3 text-2xl font-bold text-balance sm:text-3xl"
+                  className="mt-3 text-2xl font-bold text-balance sm:text-3xl text-slate-900"
                 >
                   {feature.title}
                 </h2>
-                <p className="mt-2 text-pretty leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-pretty leading-relaxed text-slate-600">
                   {feature.description}
                 </p>
 
@@ -48,9 +48,9 @@ export function SpaceTypeDiagnosisFeature({ feature }: { feature: SpaceTypeFeatu
                       key={info.label}
                       className="rounded-2xl border border-border/70 bg-card/80 p-3 text-center backdrop-blur"
                     >
-                      <info.icon className="mx-auto size-4 text-primary" aria-hidden="true" />
-                      <dt className="mt-1 text-[11px] text-muted-foreground">{info.label}</dt>
-                      <dd className="text-sm font-bold text-foreground">{info.value}</dd>
+                      <info.icon className="mx-auto size-4 text-indigo-600" aria-hidden="true" />
+                      <dt className="mt-1 text-[11px] text-slate-500">{info.label}</dt>
+                      <dd className="text-sm font-bold text-slate-900">{info.value}</dd>
                     </div>
                   ))}
                 </dl>

@@ -18,7 +18,7 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
       ? { icon: Store, label: "ブース", value: event.boothNumber }
       : null,
     event.pitchTime
-      ? { icon: Clock3, label: "ピッチ時間", value: event.pitchTime }
+      ? { icon: Clock3, label: "イベント時間", value: event.pitchTime }
       : null,
   ].filter(Boolean) as { icon: typeof CalendarDays; label: string; value: string }[]
 
@@ -39,7 +39,7 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
       <div className="relative mx-auto max-w-6xl px-4">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge label="イベント限定ページ" tone="purple" />
-          <StatusBadge label={status.label} tone={status.tone} />
+          {event.status !== "live" && <StatusBadge label={status.label} tone={status.tone} />}
         </div>
 
         <h1
@@ -54,9 +54,11 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
           {event.participationType}
         </p>
 
-        <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
-          {event.message}
-        </p>
+        {event.message ? (
+          <p className="mt-3 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
+            {event.message}
+          </p>
+        ) : null}
 
         <dl className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {infoItems.map((item) => (
@@ -75,7 +77,7 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
           ))}
         </dl>
 
-        <p className="mt-4 text-xs text-muted-foreground">出展者：{event.exhibitorName}</p>
+        <p className="mt-4 text-xs text-muted-foreground">参加者：{event.exhibitorName}</p>
       </div>
     </section>
   )
