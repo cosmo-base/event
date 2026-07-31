@@ -1,4 +1,3 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { M_PLUS_Rounded_1c, Noto_Sans_JP } from 'next/font/google'
 import '../globals.css'
@@ -45,7 +44,6 @@ export default function RootLayout({
     <html lang="ja" className={`bg-background ${rounded.variable} ${notoSans.variable}`}>
       <body className="font-sans antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
