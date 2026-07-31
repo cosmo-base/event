@@ -500,17 +500,17 @@ export const eventPageData: EventPageData = {
     //   requiresPassword: true,
     //   external: true,
     // },
-    {
-      id: "l-survey",
-      title: "イベントアンケート",
-      description: "ご意見をお聞かせください。今後のコンテンツづくりに活用します。",
-      href: "/event/survey",
-      duration: "約1分",
-      labels: ["イベント限定"],
-      status: "limited",
-      availableUntil: "2026年8月2日 23:59",
-      external: true,
-    },
+   // {
+  //    id: "l-survey",
+  //    title: "イベントアンケート",
+  //    description: "ご意見をお聞かせください。今後のコンテンツづくりに活用します。",
+ //     href: "/event/survey",
+ //     duration: "約1分",
+ //     labels: ["イベント限定"],
+//      status: "limited",
+//      availableUntil: "2026年8月2日 23:59",
+//      external: true,
+//    },
   ],
 
   cosmoBase: {
