@@ -60,6 +60,7 @@ export interface PitchData {
   presentationTime?: string
   thumbnailUrl?: string
   slideUrl: string
+  embedUrl?: string
   pdfUrl?: string
   supplementaryUrl?: string
 }
@@ -213,7 +214,7 @@ export const eventPageData: EventPageData = {
     pitchTime: "17:00〜18:00",
     participationType: "講演会",
     exhibitorName: "眞鍋 和士",
-    message: "宇宙をもっと身近にするコンテンツを、ぜひ会場で体験してください。",
+    message: "",
     // "upcoming" | "live" | "ended" を切り替えると表示が変わります
     status: "live",
     reportUrl: "https://example.com/placeholder-event-report",
@@ -367,16 +368,17 @@ export const eventPageData: EventPageData = {
 
   pitch: {
     title: "ピッチ発表資料",
-    presentationTitle: "2人5か月で7万行。宇宙コンテンツを生み出す開発プロセス",
+    presentationTitle: "ものづくりとは何なのか？",
     description:
-      "Cosmo Base で提供しているクイズ、診断、データベースなどのコンテンツを、少人数で継続的に開発するための仕組みとプロセスを紹介します。発表時間内にご紹介できなかった内容も掲載しています。",
+      "ソフトやハードなど様々に関わった経験から見えてきたものづくりの本質",
     speakerName: "眞鍋 和士",
     presentationDate: "2026年8月1日",
     presentationTime: "17:00",
     thumbnailUrl: "/images/pitch-thumb.png",
     // すべてプレースホルダー URL（本番のスライド／PDF に差し替えてください）
-    slideUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/edit?usp=sharing&ouid=109838281381786096340&rtpof=true&sd=true",
-    pdfUrl: "/event/documents/kurawaku.pdf",
+    slideUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/pub?start=false&loop=false&delayms=3000",
+    embedUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/embed?start=false&loop=false&delayms=3000",
+    pdfUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/export/pdf",
     supplementaryUrl: "",
   },
 
@@ -468,8 +470,8 @@ export const eventPageData: EventPageData = {
   limitedContents: [
     {
       id: "l-quiz",
-      title: "ピッチ内容に関する限定クイズ",
-      description: "今日のピッチで紹介した内容から出題する、この会場だけの特別クイズ。",
+      title: "イベント参加者限定の宇宙クイズ",
+      description: "イベント参加者だけが体験できる特別な宇宙クイズ。",
       href: "https://example.com/placeholder-limited-quiz",
       duration: "約2分",
       labels: ["イベント限定", "期間限定"],
