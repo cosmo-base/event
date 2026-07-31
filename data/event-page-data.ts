@@ -556,7 +556,7 @@ export const eventPageData: EventPageData = {
     primaryHref: "https://discord.gg/X78w86XE3v",
     secondaryLinks: [
       { label: "公式サイトを見る", href: "https://fsifofficial.github.io/CosmoBase/", event: "click_cosmo_base_website" },
-      { label: "宇宙タイプ診断を試す", href: "https://example.com/placeholder-space-type", event: "click_space_type_diagnosis" },
+      { label: "宇宙タイプ診断を試す", href: "/event/kurawaku2/type", event: "click_space_type_diagnosis" },
       { label: "SNSを見る", href: "#social", anchor: true },
     ],
   },
