@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         openGraph: {
             title: `${data.title} | Cosmo Base 宇宙タイプ診断`,
             description: '30秒の診断で、あなたが宇宙で活躍する未来がわかる。',
-            url: `${siteUrl}/type/result/${type}`,
+            url: `${siteUrl}/kurawaku2/type/result/${type}`,
             siteName: 'Cosmo Base',
             images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `宇宙タイプ診断結果: ${data.title}` }],
             type: 'website',
@@ -129,7 +129,7 @@ export default async function StaticResultPage({ params }: Props) {
                 </div>
             </div>
 
-            <Link href="/type" className="w-full max-w-sm mb-12">
+            <Link href="/kurawaku2/type" className="w-full max-w-sm mb-12">
                 <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-bold py-4 rounded-full text-lg shadow-lg transform transition hover:scale-105 flex items-center justify-center gap-2">
                     🚀 自分も宇宙タイプを診断してみる
                 </button>
@@ -161,7 +161,7 @@ export default async function StaticResultPage({ params }: Props) {
                     })}
                 </div>
 
-                <Link href="/type" className="block mt-6 text-center">
+                <Link href="/kurawaku2/type" className="block mt-6 text-center">
                     <p className="text-sm text-blue-400 font-bold hover:underline">
                         あなたのタイプを診断する ›
                     </p>

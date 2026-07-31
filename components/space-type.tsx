@@ -151,7 +151,7 @@ function ResultScreen({ answers }: { answers: number[] }) {
     <div className="bg-[#0B0F19] text-white p-6 flex flex-col items-center font-sans pb-20 animate-fade-in">
       <div className="bg-[#0B0F19] text-white p-4 flex flex-col items-center font-sans pt-10 pb-6 animate-fade-in">
         <div className="fixed top-6 left-6 z-50">
-          <Link href="/type"
+          <Link href="/kurawaku2/type"
             className="glass inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-[#EEEEFF] hover:text-cyan-400 transition-colors">
             <ArrowLeft className="h-4 w-4" />
             <span>トップに戻る</span>
