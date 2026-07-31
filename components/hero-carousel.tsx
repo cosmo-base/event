@@ -76,7 +76,10 @@ export function HeroCarousel({ slides }: { slides: CarouselSlide[] }) {
               className="relative min-w-full"
             >
               <div
-                className="relative flex min-h-[300px] flex-col justify-end p-6 sm:min-h-[380px] sm:p-10"
+                className={cn(
+                  "relative flex min-h-[300px] flex-col p-6 sm:min-h-[380px] sm:p-10",
+                  slide.centered ? "items-center justify-center" : "justify-end",
+                )}
                 style={{ background: slide.gradient ?? "linear-gradient(135deg,#1e3a8a,#2563eb)" }}
               >
                 {slide.imageUrl ? (
@@ -95,18 +98,20 @@ export function HeroCarousel({ slides }: { slides: CarouselSlide[] }) {
                   <div aria-hidden="true" className="cb-stars absolute inset-0 opacity-70" />
                 )}
 
-                <div className="relative max-w-xl">
+                <div className={cn("relative", slide.centered ? "w-full text-center flex flex-col items-center" : "max-w-xl")}>
                   {slide.label ? (
                     <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
                       {slide.label}
                     </span>
                   ) : null}
-                  <h2 className="mt-3 text-2xl font-bold text-balance text-white sm:text-4xl">
+                  <h2 className={cn("mt-3 font-bold text-balance text-white", slide.centered ? "text-3xl sm:text-5xl whitespace-pre-line" : "text-2xl sm:text-4xl")}>
                     {slide.title}
                   </h2>
-                  <p className="mt-2 max-w-md text-pretty text-sm leading-relaxed text-white/85 sm:text-base">
-                    {slide.description}
-                  </p>
+                  {slide.description ? (
+                    <p className={cn("mt-2 text-pretty text-sm leading-relaxed text-white/85 sm:text-base", slide.centered ? "max-w-md" : "max-w-md")}>
+                      {slide.description}
+                    </p>
+                  ) : null}
                   {slide.buttonLabel ? (
                     <div className="mt-5 flex flex-wrap gap-2.5">
                       <ExternalLinkButton
