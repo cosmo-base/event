@@ -46,7 +46,7 @@ export function SpaceTypeDiagnosisFeature({ feature }: { feature: SpaceTypeFeatu
                   {infos.map((info) => (
                     <div
                       key={info.label}
-                      className="rounded-2xl border border-border/70 bg-card/80 p-3 text-center backdrop-blur"
+                      className="rounded-2xl border border-white/40 bg-white/80 p-3 text-center backdrop-blur"
                     >
                       <info.icon className="mx-auto size-4 text-indigo-600" aria-hidden="true" />
                       <dt className="mt-1 text-[11px] text-slate-500">{info.label}</dt>
@@ -57,7 +57,6 @@ export function SpaceTypeDiagnosisFeature({ feature }: { feature: SpaceTypeFeatu
 
                 <ExternalLinkButton
                   href={feature.href}
-                  external
                   variant="primary"
                   size="lg"
                   block
