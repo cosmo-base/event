@@ -54,7 +54,7 @@ export function EventHeader({ logoUrl }: { logoUrl?: string }) {
           <span className="flex flex-col items-start leading-none">
             <img
               className="h-6 w-max"
-              src="CB_logo.png"
+              src="/event/CB_logo.png"
               alt="CB"
               aria-hidden="true"
             />

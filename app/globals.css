@@ -184,6 +184,39 @@
   }
 }
 
+@theme inline {
+  --color-cyan: #00f2fe;
+}
+
+/* Glass / glow utilities used by space-type diagnosis pages */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glow {
+    box-shadow: 0 0 20px rgba(131, 203, 235, 0.3);
+  }
+  .glow-sm {
+    box-shadow: 0 0 10px rgba(131, 203, 235, 0.2);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(79, 172, 254, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(0, 242, 254, 0.6); }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
 @layer utilities {
   .cb-reveal {
     opacity: 0;
