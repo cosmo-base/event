@@ -277,6 +277,16 @@ export const eventPageData: EventPageData = {
 
   quickLinks: [
     {
+      id: "ql-pitch",
+      title: "発表スライドを見る",
+      description: "当日のピッチ資料",
+      href: "#pitch",
+      icon: "presentation",
+      external: false,
+      featured: true,
+      event: "click_pitch_slide",
+    },
+    {
       id: "ql-cosmo-site",
       title: "Cosmo Base 公式サイト",
       description: "コミュニティの詳細",

@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Presentation, FileText, User, CalendarDays, Clock3 } from "lucide-react"
+import { FileText, User, CalendarDays, Clock3 } from "lucide-react"
 import type { PitchData } from "@/data/event-page-data"
 import { SectionHeading } from "@/components/section-heading"
 import { ExternalLinkButton } from "@/components/external-link-button"
@@ -71,25 +71,16 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
               </dl>
 
               <div className="mt-1 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
-                <ExternalLinkButton
-                  href={pitch.slideUrl}
-                  external
-                  variant="primary"
-                  event="click_pitch_slide"
-                  className="sm:flex-1"
-                >
-                  <Presentation className="size-4" aria-hidden="true" />
-                  発表スライドを見る
-                </ExternalLinkButton>
                 {pitch.pdfUrl ? (
                   <ExternalLinkButton
                     href={pitch.pdfUrl}
                     external
-                    variant="outline"
+                    variant="primary"
                     event="click_pitch_pdf"
+                    download="くらわくトーク#2_FSIF眞鍋.pdf"
                   >
                     <FileText className="size-4" aria-hidden="true" />
-                    PDFで見る
+                    PDFをダウンロード
                   </ExternalLinkButton>
                 ) : null}
                 {pitch.supplementaryUrl ? (

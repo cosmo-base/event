@@ -51,6 +51,8 @@ interface ExternalLinkButtonProps extends VariantProps<typeof linkButtonVariants
   event?: string
   eventProps?: Record<string, string | number | boolean>
   disabled?: boolean
+  /** download 属性（ファイル名を指定してダウンロード） */
+  download?: string
 }
 
 export function ExternalLinkButton({
@@ -66,6 +68,7 @@ export function ExternalLinkButton({
   event,
   eventProps,
   disabled,
+  download,
 }: ExternalLinkButtonProps) {
   const isInternalAnchor = href.startsWith("#")
   const isExternal = external ?? (!isInternalAnchor && /^https?:\/\//.test(href))
@@ -91,6 +94,7 @@ export function ExternalLinkButton({
       aria-label={ariaLabel}
       onClick={handleClick}
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      {...(download ? { download } : {})}
       className={cn(linkButtonVariants({ variant, size, block }), className)}
     >
       {children}
