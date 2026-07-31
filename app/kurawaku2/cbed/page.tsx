@@ -1,8 +1,5 @@
-import { EventHeader } from "@/components/event-header"
-import { SocialFooter } from "@/components/social-footer"
-import { eventPageData } from "@/data/event-page-data"
 import { fetchEventsData, SpaceEvent } from "@/data/cbed"
-import { Calendar, MapPin, ExternalLink, ArrowLeft } from "lucide-react"
+import { Calendar, MapPin, ExternalLink } from "lucide-react"
 import Link from "next/link"
 
 export const metadata = {
@@ -22,8 +19,7 @@ function OrgBadge({ event }: { event: SpaceEvent }) {
   const isCosmoBase = event.organizer
     ? String(event.organizer).replace(/\s+/g, "").toLowerCase().includes("cosmobase")
     : false
-  const isPartner =
-    event.isPartner === true || String(event.isPartner).toUpperCase() === "TRUE"
+  const isPartner = event.isPartner === true || String(event.isPartner).toUpperCase() === "TRUE"
 
   if (isCosmoBase)
     return (
@@ -45,127 +41,81 @@ function OrgBadge({ event }: { event: SpaceEvent }) {
 }
 
 export default async function CbedPage() {
-  const data = eventPageData
   const allEvents = await fetchEventsData()
   const futureEvents = allEvents
     .filter((e) => e.title && String(e.title).trim() !== "" && isFutureEvent(e))
     .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
 
   return (
-    <div className="min-h-dvh bg-[#000033]">
-      <EventHeader logoUrl={data.site.logoUrl} />
+    <>
+      <h1 className="text-2xl font-bold text-white mb-2">宇宙イベント一覧</h1>
+      <p className="text-white/50 text-sm mb-6">
+        Cosmo Base Event Database — 今後開催される宇宙関連イベントをまとめています。
+      </p>
 
-      <main className="pt-14">
-        <div className="max-w-4xl mx-auto px-4 py-10">
-          {/* Back to kurawaku2 */}
-          <Link
-            href="/kurawaku2"
-            className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white mb-8 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            くらわくトーク#2 イベントページに戻る
-          </Link>
+      {futureEvents.length === 0 ? (
+        <div className="text-center py-20 text-white/30 border border-dashed border-white/10 rounded-xl">
+          現在掲載中のイベントはありません。
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {futureEvents.map((event) => {
+            const displayTypes = event.type
+              ? String(event.type).split(",").map((t) => t.trim()).filter(Boolean)
+              : []
 
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            宇宙イベント一覧
-          </h1>
-          <p className="text-white/60 text-sm mb-8">
-            Cosmo Base Event Database (CBED) — 今後開催される宇宙関連イベントをまとめています。
-          </p>
-
-          {futureEvents.length === 0 ? (
-            <div className="text-center py-20 text-white/40 border border-dashed border-white/20 rounded-xl">
-              <p className="font-medium">現在掲載中のイベントはありません。</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {futureEvents.map((event) => {
-                const displayTypes = event.type
-                  ? String(event.type)
-                      .split(",")
-                      .map((t) => t.trim())
-                      .filter(Boolean)
-                  : []
-
-                return (
-                  <div
-                    key={event.id}
-                    className="rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/8 transition-colors"
-                  >
-                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <OrgBadge event={event} />
-                          {displayTypes.map((t, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                          {event.difficulty && (
-                            <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-white/10 text-white/50 border border-white/20">
-                              {event.difficulty}
-                            </span>
-                          )}
-                        </div>
-
-                        <h2 className="text-base font-bold text-white mb-3 break-words">
-                          {event.title}
-                        </h2>
-
-                        <div className="flex flex-col gap-1.5 text-sm text-white/60">
-                          {(event.date || event.time) && (
-                            <div className="flex items-start gap-2">
-                              <Calendar className="w-4 h-4 shrink-0 mt-0.5 text-purple-400" />
-                              <span>
-                                {event.endDate
-                                  ? `${event.date} 〜 ${event.endDate}`
-                                  : event.date}
-                                {event.time ? ` ${event.time}` : ""}
-                              </span>
-                            </div>
-                          )}
-                          {event.location && (
-                            <div className="flex items-start gap-2">
-                              <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
-                              <span>{event.location}</span>
-                            </div>
-                          )}
-                        </div>
+            return (
+              <Link href={`/kurawaku2/cbed/${event.id}`} key={event.id} className="block group">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/8 hover:border-white/20 transition-colors">
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <OrgBadge event={event} />
+                        {displayTypes.map((t, idx) => (
+                          <span key={idx} className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                            {t}
+                          </span>
+                        ))}
+                        {event.difficulty && (
+                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-white/10 text-white/50 border border-white/20">
+                            {event.difficulty}
+                          </span>
+                        )}
                       </div>
-
-                      {event.link && (
-                        <a
-                          href={event.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors"
-                        >
-                          詳細・申込
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
+                      <h2 className="text-base font-bold text-white group-hover:text-white/90 mb-3 break-words">
+                        {event.title}
+                      </h2>
+                      <div className="flex flex-col gap-1.5 text-sm text-white/50">
+                        {(event.date || event.time) && (
+                          <div className="flex items-start gap-2">
+                            <Calendar className="w-4 h-4 shrink-0 mt-0.5 text-purple-400" />
+                            <span>
+                              {event.endDate ? `${event.date} 〜 ${event.endDate}` : event.date}
+                              {event.time ? ` ${event.time}` : ""}
+                            </span>
+                          </div>
+                        )}
+                        {event.location && (
+                          <div className="flex items-start gap-2">
+                            <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
+                            <span>{event.location}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-1.5 text-sm font-medium text-white/50 group-hover:text-white/80 transition-colors">
+                      詳細 <ExternalLink className="w-3.5 h-3.5" />
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          )}
-
-          <p className="mt-10 text-xs text-white/30 leading-relaxed">
-            掲載されているイベントの内容は予告なく変更・中止される場合があります。参加にあたってはご自身の判断と責任において、必ず主催者の公式情報をご確認ください。
-          </p>
+                </div>
+              </Link>
+            )
+          })}
         </div>
-      </main>
-
-      <SocialFooter
-        cosmoBase={data.cosmoBase}
-        fsif={data.fsif}
-        socialLinks={data.socialLinks}
-        legalLinks={data.legalLinks}
-      />
-    </div>
+      )}
+      <p className="mt-10 text-xs text-white/20 leading-relaxed">
+        掲載されているイベントの内容は予告なく変更・中止される場合があります。参加にあたってはご自身の判断と責任において、必ず主催者の公式情報をご確認ください。
+      </p>
+    </>
   )
 }
