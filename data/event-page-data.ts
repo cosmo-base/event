@@ -250,7 +250,7 @@ export const eventPageData: EventPageData = {
       description: "5つの質問に答えるだけ。宇宙の知識がなくても楽しめます。",
       buttonLabel: "宇宙タイプ診断を始める",
       href: "/event/kurawaku2/type",
-      external: true,
+      external: false,
       gradient: "linear-gradient(135deg,#2563eb 0%,#6d5ee6 55%,#7c3aed 100%)",
     },
     {
@@ -318,7 +318,7 @@ export const eventPageData: EventPageData = {
       description: "約2分・知識不要",
       href: "/event/kurawaku2/type",
       icon: "sparkles",
-      external: true,
+      external: false,
       event: "click_space_type_diagnosis",
     },
  //   {

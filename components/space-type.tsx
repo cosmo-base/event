@@ -149,14 +149,7 @@ function ResultScreen({ answers }: { answers: number[] }) {
 
   return (
     <div className="bg-[#0B0F19] text-white p-6 flex flex-col items-center font-sans pb-20 animate-fade-in">
-      <div className="bg-[#0B0F19] text-white p-4 flex flex-col items-center font-sans pt-10 pb-6 animate-fade-in">
-        <div className="fixed top-6 left-6 z-50">
-          <Link href="/kurawaku2/type"
-            className="glass inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-[#EEEEFF] hover:text-cyan-400 transition-colors">
-            <ArrowLeft className="h-4 w-4" />
-            <span>トップに戻る</span>
-          </Link>
-        </div>
+      <div className="bg-[#0B0F19] text-white p-4 flex flex-col items-center font-sans pt-6 pb-6 animate-fade-in">
         <div
           className="rounded-2xl p-6 w-full max-w-md shadow-2xl border-4 border-white/20"
           style={{ backgroundColor: data.color }}
@@ -233,6 +226,13 @@ function ResultScreen({ answers }: { answers: number[] }) {
         </div>
       </div>
       <FullDiagnosisCard />
+
+      <div className="w-full max-w-md mt-8 pt-6 border-t border-gray-800 text-center">
+        <Link href="/kurawaku2" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors inline-flex items-center gap-1">
+          <ArrowLeft className="h-3 w-3" />
+          くらわくトーク#2 イベントページに戻る
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { EventHeader } from "@/components/event-header"
+import { SocialFooter } from "@/components/social-footer"
+import { eventPageData } from "@/data/event-page-data"
 
 export function generateStaticParams() {
     return [{ type: 'RI' }, { type: 'DI' }, { type: 'RO' }, { type: 'DO' },];
@@ -103,13 +106,16 @@ export default async function StaticResultPage({ params }: Props) {
     const resolvedParams = await params;
     const type = resolvedParams.type.toUpperCase();
     const data = RESULT_DATA[type];
+    const pageData = eventPageData
 
     if (!data) return <div className="p-10 text-center text-white bg-[#0B0F19] min-h-screen">タイプが見つかりません</div>;
 
     const otherTypes = Object.keys(RESULT_DATA).filter(key => key !== type);
 
     return (
-        <div className="min-h-screen bg-[#000033] text-white flex flex-col items-center justify-center p-6 font-sans">
+        <div className="min-h-screen bg-[#000033]">
+          <EventHeader logoUrl={pageData.site.logoUrl} />
+          <div className="min-h-screen text-white flex flex-col items-center pt-20 pb-6 px-6 font-sans">
             <img src="/event/CB_type.png" alt="CBtype" className="w-50 pb-6 h-auto object-contain rounded-xl filter" />
 
             <div
@@ -166,7 +172,20 @@ export default async function StaticResultPage({ params }: Props) {
                         あなたのタイプを診断する ›
                     </p>
                 </Link>
+
+                <div className="mt-8 pt-6 border-t border-gray-800 text-center">
+                    <Link href="/kurawaku2" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                        ← くらわくトーク#2 イベントページに戻る
+                    </Link>
+                </div>
             </div>
+          </div>
+          <SocialFooter
+            cosmoBase={pageData.cosmoBase}
+            fsif={pageData.fsif}
+            socialLinks={pageData.socialLinks}
+            legalLinks={pageData.legalLinks}
+          />
         </div>
     );
 }
