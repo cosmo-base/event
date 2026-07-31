@@ -37,6 +37,8 @@ export interface CarouselSlide {
   external?: boolean
   /** フォールバック用のグラデーション（imageUrl が無い場合に使用） */
   gradient?: string
+  /** テキストをスライド中央に配置する */
+  centered?: boolean
 }
 
 export interface QuickLink {
@@ -223,16 +225,13 @@ export const eventPageData: EventPageData = {
   carousel: [
     {
       id: "slide-main",
-      label: "イベント出展中",
-      title: "宇宙を、もっと身近に。",
+      title: "くらわくトーク#2\n変える力",
       description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
-      imageUrl: "/images/hero-event.png",
       buttonLabel: "コンテンツを見る",
       href: "#contents",
-      secondaryLabel: "発表スライド",
-      secondaryHref: "#pitch",
       external: false,
       gradient: "linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)",
+      centered: true,
     },
     {
       id: "slide-pitch",
@@ -277,16 +276,6 @@ export const eventPageData: EventPageData = {
   ],
 
   quickLinks: [
-    {
-      id: "ql-pitch",
-      title: "発表スライドを見る",
-      description: "当日のピッチ資料",
-      href: "#pitch",
-      icon: "presentation",
-      external: false,
-      featured: true,
-      event: "click_pitch_slide",
-    },
     {
       id: "ql-cosmo-site",
       title: "Cosmo Base 公式サイト",
@@ -468,19 +457,6 @@ export const eventPageData: EventPageData = {
   ],
 
   limitedContents: [
-    {
-      id: "l-quiz",
-      title: "イベント参加者限定の宇宙クイズ",
-      description: "イベント参加者だけが体験できる特別な宇宙クイズ。",
-      href: "https://example.com/placeholder-limited-quiz",
-      duration: "約2分",
-      labels: ["イベント限定", "期間限定"],
-      status: "limited",
-      availableFrom: "2026年8月1日",
-      availableUntil: "2026年8月2日 23:59",
-      requiresPassword: false,
-      external: true,
-    },
     // {
     //   id: "l-diagnosis",
     //   title: "イベント限定 宇宙タイプ診断",

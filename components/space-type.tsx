@@ -282,7 +282,7 @@ export function SpaceType() {
           const axis1 = R >= D ? 'R' : 'D';
           const axis2 = I >= E ? 'I' : 'O';
           const resultType = `${axis1}${axis2}`;
-          const GAS_URL = "https://script.google.com/macros/s/AKfycbxVB4AVfOcXCcUlIwGSEAlZ988OzzvfjV8Biq_J7WwyvnkFbgMZzoOicK1_LRAfT497/exec";
+          const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec";
 
           await fetch(GAS_URL, {
             method: "POST",

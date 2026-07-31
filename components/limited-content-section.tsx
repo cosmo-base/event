@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/section-heading"
 import { StatusBadge } from "@/components/status-badge"
 import { ExternalLinkButton } from "@/components/external-link-button"
 import { Reveal } from "@/components/reveal"
+import { EventQuiz } from "@/components/event-quiz"
 
 export function LimitedContentSection({
   items,
@@ -32,7 +33,13 @@ export function LimitedContentSection({
           }
         />
 
-        <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-8 mb-4">
+          <Reveal>
+            <EventQuiz />
+          </Reveal>
+        </div>
+
+        <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {items.map((item, i) => {
             const ended = isEnded || item.status === "ended"
             return (
