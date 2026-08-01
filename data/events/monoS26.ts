@@ -1,0 +1,202 @@
+// ============================================================================
+// monoS26 イベント固有データ
+// 組織・SNSなどの恒常情報は data/org-data.ts を参照してください。
+// ============================================================================
+
+import type {
+  EventStatus,
+  CarouselSlide,
+  QuickLink,
+  PitchData,
+  SpaceTypeFeature,
+  ContentItem,
+  LimitedContentItem,
+  EventSpecificData,
+} from "@/data/event-page-data"
+
+export const monoS26Data: EventSpecificData = {
+  site: {
+    pageTitle: "Cosmo Base イベント特設ページ｜monoS26",
+    pageDescription:
+      "Cosmo Base のイベント特設ページ。発表スライド、宇宙タイプ診断などのコンテンツを、その場で体験できます。",
+    siteName: "Cosmo Base",
+    url: "https://cosmo-base.example.com",
+    logoUrl: "/logos/cosmo-base-placeholder.svg",
+    fsifLogoUrl: "/logos/fsif-placeholder.svg",
+    accentColor: "#f59e0b",
+    ogImage: "/images/hero-event.png",
+    noindex: true,
+  },
+
+  event: {
+    name: "monoS26",
+    shortName: "monoS26",
+    date: "2026年XX月XX日",
+    venue: "会場名",
+    boothNumber: "",
+    pitchTime: "",
+    participationType: "展示会",
+    exhibitorName: "Cosmo Base",
+    message: "",
+    status: "upcoming" as EventStatus,
+    reportUrl: "",
+  },
+
+  carousel: [
+    {
+      id: "slide-main",
+      title: "monoS26",
+      description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
+      buttonLabel: "コンテンツを見る",
+      href: "#contents",
+      external: false,
+      gradient: "linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)",
+      centered: true,
+    },
+    {
+      id: "slide-diagnosis",
+      label: "人気コンテンツ",
+      title: "あなたはどんな宇宙タイプ？",
+      description: "5つの質問に答えるだけ。宇宙の知識がなくても楽しめます。",
+      buttonLabel: "宇宙タイプ診断を始める",
+      href: "https://fsifofficial.github.io/CosmoBase/type",
+      external: true,
+      gradient: "linear-gradient(135deg,#2563eb 0%,#6d5ee6 55%,#7c3aed 100%)",
+    },
+    {
+      id: "slide-community",
+      label: "コミュニティ",
+      title: "イベントの続きを、Cosmo Base で。",
+      description: "宇宙好きが集まるコミュニティに参加しませんか？",
+      buttonLabel: "Cosmo Base に参加する",
+      href: "https://discord.gg/X78w86XE3v",
+      external: true,
+      gradient: "linear-gradient(135deg,#0f1e3d 0%,#312e81 55%,#7c3aed 100%)",
+    },
+  ] as CarouselSlide[],
+
+  quickLinks: [
+    {
+      id: "ql-cosmo-site",
+      title: "Cosmo Base 公式サイト",
+      description: "コミュニティの詳細",
+      href: "https://fsifofficial.github.io/CosmoBase/",
+      icon: "rocket",
+      external: true,
+      event: "click_cosmo_base_website",
+    },
+    {
+      id: "ql-fsif-site",
+      title: "未来宇宙産業フォーラム",
+      description: "運営団体の公式サイト",
+      href: "https://fsifofficial.wixsite.com/future-space-industr",
+      icon: "building",
+      external: true,
+      event: "click_fsif_website",
+    },
+    {
+      id: "ql-diagnosis",
+      title: "宇宙タイプ診断",
+      description: "約2分・知識不要",
+      href: "https://fsifofficial.github.io/CosmoBase/type",
+      icon: "sparkles",
+      external: true,
+      event: "click_space_type_diagnosis",
+    },
+    {
+      id: "ql-join",
+      title: "Cosmo Base に参加する",
+      description: "コミュニティへ",
+      href: "https://discord.gg/X78w86XE3v",
+      icon: "users",
+      external: true,
+      event: "click_community_join",
+    },
+    {
+      id: "ql-contact",
+      title: "問い合わせ",
+      description: "ご質問・ご相談はこちら",
+      href: "https://fsifofficial.github.io/CosmoBase/contact",
+      icon: "message",
+      external: true,
+    },
+    {
+      id: "ql-sns",
+      title: "SNS",
+      description: "最新情報をチェック",
+      href: "#social",
+      icon: "external",
+      external: false,
+    },
+  ] as QuickLink[],
+
+  pitch: {
+    title: "講演資料",
+    presentationTitle: "発表タイトル",
+    description: "発表の説明",
+    speakerName: "Cosmo Base",
+    presentationDate: "2026年XX月XX日",
+    presentationTime: "",
+    thumbnailUrl: "",
+    slideUrl: "",
+    embedUrl: "",
+    pdfUrl: "",
+    supplementaryUrl: "",
+  } as PitchData,
+
+  spaceType: {
+    badges: ["人気コンテンツ", "知識不要"],
+    title: "あなたはどんな宇宙タイプ？",
+    description:
+      "簡単な質問に答えて、あなたに合った宇宙との関わり方を見つけましょう。宇宙の知識がなくても参加できます。",
+    duration: "約2分",
+    questionCount: "5問",
+    requirement: "宇宙の知識：不要",
+    buttonLabel: "宇宙タイプ診断を始める",
+    href: "https://fsifofficial.github.io/CosmoBase/type",
+    imageUrl: "/images/space-type.png",
+  } as SpaceTypeFeature,
+
+  contents: [
+    {
+      id: "c-space-type",
+      title: "宇宙タイプ診断",
+      description: "5つの質問であなたの宇宙タイプが分かる、人気の診断コンテンツ。",
+      href: "https://fsifofficial.github.io/CosmoBase/type",
+      duration: "約2分",
+      audience: "初心者向け",
+      labels: ["人気コンテンツ", "知識不要", "スマートフォン対応"],
+      status: "available",
+      external: true,
+      icon: "sparkles",
+      imageUrl: "/event/CBtype_logo.png",
+    },
+    {
+      id: "c-event-db",
+      title: "Cosmo Base Event Database",
+      description: "全国の宇宙イベント情報を検索できるデータベース。",
+      href: "/event/monoS26/cbed",
+      audience: "だれでも",
+      labels: ["データベース"],
+      status: "available",
+      external: true,
+      icon: "rocket",
+      imageUrl: "/event/CBED_logo.png",
+    },
+  ] as ContentItem[],
+
+  limitedContents: [] as LimitedContentItem[],
+
+  communityCta: {
+    title: "イベントの続きを、Cosmo Base で",
+    description:
+      "イベントをきっかけに宇宙へ興味を持った方へ。Cosmo Base では、宇宙クイズ、ニュース、イベント情報、診断、交流企画など、宇宙と関われるさまざまなコンテンツを提供しています。",
+    primaryLabel: "Cosmo Base に参加する",
+    primaryHref: "https://discord.gg/X78w86XE3v",
+    secondaryLinks: [
+      { label: "公式サイトを見る", href: "https://fsifofficial.github.io/CosmoBase/", event: "click_cosmo_base_website" },
+      { label: "宇宙タイプ診断を試す", href: "https://fsifofficial.github.io/CosmoBase/type", event: "click_space_type_diagnosis" },
+      { label: "SNSを見る", href: "#social", anchor: true },
+    ],
+  },
+}
