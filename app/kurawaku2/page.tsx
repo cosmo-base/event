@@ -25,7 +25,7 @@ export default function Page() {
         本文へスキップ
       </a>
 
-      <EventHeader logoUrl={data.site.logoUrl} />
+      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
         {/* イベント情報 */}

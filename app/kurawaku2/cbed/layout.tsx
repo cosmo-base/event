@@ -14,7 +14,7 @@ export default function CbedLayout({ children }: { children: React.ReactNode }) 
   const data = eventPageData
   return (
     <div className="min-h-dvh bg-[#000033]">
-      <EventHeader logoUrl={data.site.logoUrl} />
+      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
       <main className="pt-14">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">

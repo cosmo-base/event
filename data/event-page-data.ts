@@ -235,8 +235,8 @@ export const eventPageData: EventPageData = {
     },
     {
       id: "slide-pitch",
-      label: "ピッチ発表資料",
-      title: "当日のピッチスライドを公開中",
+      label: "講演資料",
+      title: "当日の講演スライドを公開中",
       description: "発表時間内にご紹介できなかった内容も掲載しています。",
       buttonLabel: "発表資料を見る",
       href: "#pitch",
@@ -279,7 +279,7 @@ export const eventPageData: EventPageData = {
     {
       id: "ql-pitch",
       title: "発表スライドを見る",
-      description: "当日のピッチ資料",
+      description: "当日の講演資料",
       href: "#pitch",
       icon: "presentation",
       external: false,
@@ -366,7 +366,7 @@ export const eventPageData: EventPageData = {
   ],
 
   pitch: {
-    title: "ピッチ発表資料",
+    title: "講演資料",
     presentationTitle: "ものづくりとは何なのか？",
     description:
       "ソフトやハードなど様々に関わった経験から見えてきたものづくりの本質",
@@ -406,6 +406,7 @@ export const eventPageData: EventPageData = {
       status: "available",
       external: true,
       icon: "sparkles",
+      imageUrl: "/event/CBtype_logo.png",
     },
     // {
     //   id: "c-quiz",
@@ -452,6 +453,7 @@ export const eventPageData: EventPageData = {
        status: "available",
        external: true,
        icon: "rocket",
+       imageUrl: "/event/CBED_logo.png",
      },
    // {
   //    id: "c-news",

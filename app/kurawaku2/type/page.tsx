@@ -13,7 +13,7 @@ export default function SpaceTypePage() {
   const data = eventPageData
   return (
     <div className="min-h-dvh bg-[#000033]">
-      <EventHeader logoUrl={data.site.logoUrl} />
+      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
       <div className="pt-14">
         <SpaceTypeDiagnosis />
       </div>

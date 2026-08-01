@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: "SNS", href: "#social" },
 ];
 
-export function EventHeader({ logoUrl }: { logoUrl?: string }) {
+export function EventHeader({ logoUrl, eventName }: { logoUrl?: string; eventName?: string }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -38,17 +38,18 @@ export function EventHeader({ logoUrl }: { logoUrl?: string }) {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b transition-colors",
+        "fixed inset-x-0 top-0 z-50 border-b transition-colors relative",
         scrolled
           ? "border-border bg-background/85 backdrop-blur-md shadow-sm"
           : "border-transparent bg-background/60 backdrop-blur",
       )}
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center px-4">
+        {/* 左: ロゴ */}
         <button
           type="button"
           onClick={scrollTop}
-          className="flex items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           aria-label="ページ最上部へ戻る"
         >
           <span className="flex flex-col items-start leading-none">
@@ -64,33 +65,40 @@ export function EventHeader({ logoUrl }: { logoUrl?: string }) {
           </span>
         </button>
 
-        {/* デスクトップ用インラインナビ */}
-        <nav
-          className="hidden md:flex md:items-center md:gap-1"
-          aria-label="メインナビゲーション"
-        >
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        {/* 中央: イベント名 */}
+        {eventName && (
+          <span className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap">
+            {eventName}
+          </span>
+        )}
 
-        {/* モバイル用ハンバーガー */}
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:hidden"
-          aria-label="メニューを開く"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-        >
-          <Menu className="size-6" aria-hidden="true" />
-        </button>
+        {/* 右: ナビ / ハンバーガー */}
+        <div className="ml-auto flex items-center">
+          <nav
+            className="hidden md:flex md:items-center md:gap-1"
+            aria-label="メインナビゲーション"
+          >
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:hidden"
+            aria-label="メニューを開く"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+          >
+            <Menu className="size-6" aria-hidden="true" />
+          </button>
+        </div>
       </div>
 
       {/* モバイルメニュー（Drawer） */}
