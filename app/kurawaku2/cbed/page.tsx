@@ -1,121 +1,111 @@
-import { fetchEventsData, SpaceEvent } from "@/data/cbed"
-import { Calendar, MapPin, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { Database, Map, Calendar, Filter, List } from "lucide-react"
 
 export const metadata = {
-  title: "宇宙イベント一覧 | くらわくトーク#2",
-  description: "Cosmo Base Event Database — 今後開催される宇宙関連イベントの一覧です。",
+  title: "Cosmo Base Event Database | くらわくトーク#2",
+  description: "全国の宇宙関連イベントを地図・カレンダー・検索で探せるデータベース。",
 }
 
-function isFutureEvent(event: SpaceEvent): boolean {
-  const targetDate = event.endDate || event.date || ""
-  if (!targetDate) return true
-  const today = new Date()
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
-  return targetDate >= todayStr
-}
-
-function OrgBadge({ event }: { event: SpaceEvent }) {
-  const isCosmoBase = event.organizer
-    ? String(event.organizer).replace(/\s+/g, "").toLowerCase().includes("cosmobase")
-    : false
-  const isPartner = event.isPartner === true || String(event.isPartner).toUpperCase() === "TRUE"
-
-  if (isCosmoBase)
-    return (
-      <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/30">
-        主催イベント
-      </span>
-    )
-  if (isPartner)
-    return (
-      <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-        パートナー
-      </span>
-    )
-  return (
-    <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full border bg-white/10 text-white/60 border-white/20">
-      外部イベント
-    </span>
-  )
-}
-
-export default async function CbedPage() {
-  const allEvents = await fetchEventsData()
-  const futureEvents = allEvents
-    .filter((e) => e.title && String(e.title).trim() !== "" && isFutureEvent(e))
-    .sort((a, b) => (a.date || "").localeCompare(b.date || ""))
-
+export default function CbedPage() {
   return (
     <>
-      <h1 className="text-2xl font-bold text-white mb-2">宇宙イベント一覧</h1>
-      <p className="text-white/50 text-sm mb-6">
-        Cosmo Base Event Database — 今後開催される宇宙関連イベントをまとめています。
-      </p>
-
-      {futureEvents.length === 0 ? (
-        <div className="text-center py-20 text-white/30 border border-dashed border-white/10 rounded-xl">
-          現在掲載中のイベントはありません。
+      {/* Hero */}
+      <div className="glass-card rounded-xl p-8 mb-8 border border-white/10">
+        <div className="flex items-start gap-4">
+          <div className="p-3 rounded-lg bg-purple-500/20 shrink-0">
+            <Database className="w-8 h-8 text-purple-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-white mb-2">
+              あなたにぴったりの宇宙イベントが、ここなら見つかる。
+            </h2>
+            <div className="text-white/60 leading-relaxed space-y-3 text-sm">
+              <p>
+                全国で開催される宇宙関連のイベント情報を、カレンダー形式で一覧できるデータベースです。「どこで探せばいいか分からない」「気づいたら終わっていた」という悩みを解決するために生まれました。
+              </p>
+              <p>
+                気軽な交流会から専門的なカンファレンスまで幅広く掲載しており、探しやすさと見つけやすさにこだわっています。一つひとつ探し回らなくても、ここを見るだけでイベントの全体像をつかむことができます。
+              </p>
+              <p>
+                じっくり学びたい方も、まずは気軽に参加してみたい方も、ご自身の興味やスケジュールに合わせて探せます。
+              </p>
+              <p className="text-xs text-white/30 mt-4">
+                掲載されているイベントの内容は予告なく変更・中止される場合があります。ご参加にあたってはご自身の判断と責任において、必ず主催者の公式情報をご確認ください。
+              </p>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {futureEvents.map((event) => {
-            const displayTypes = event.type
-              ? String(event.type).split(",").map((t) => t.trim()).filter(Boolean)
-              : []
+      </div>
 
-            return (
-              <Link href={`/kurawaku2/cbed/${event.id}`} key={event.id} className="block group">
-                <div className="rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/8 hover:border-white/20 transition-colors">
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <OrgBadge event={event} />
-                        {displayTypes.map((t, idx) => (
-                          <span key={idx} className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                            {t}
-                          </span>
-                        ))}
-                        {event.difficulty && (
-                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-white/10 text-white/50 border border-white/20">
-                            {event.difficulty}
-                          </span>
-                        )}
-                      </div>
-                      <h2 className="text-base font-bold text-white group-hover:text-white/90 mb-3 break-words">
-                        {event.title}
-                      </h2>
-                      <div className="flex flex-col gap-1.5 text-sm text-white/50">
-                        {(event.date || event.time) && (
-                          <div className="flex items-start gap-2">
-                            <Calendar className="w-4 h-4 shrink-0 mt-0.5 text-purple-400" />
-                            <span>
-                              {event.endDate ? `${event.date} 〜 ${event.endDate}` : event.date}
-                              {event.time ? ` ${event.time}` : ""}
-                            </span>
-                          </div>
-                        )}
-                        {event.location && (
-                          <div className="flex items-start gap-2">
-                            <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-blue-400" />
-                            <span>{event.location}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="shrink-0 flex items-center gap-1.5 text-sm font-medium text-white/50 group-hover:text-white/80 transition-colors">
-                      詳細 <ExternalLink className="w-3.5 h-3.5" />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
+      {/* Feature cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="glass-card rounded-xl p-6 border border-white/10">
+          <div className="flex items-center gap-3 mb-4">
+            <List className="w-5 h-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-white">一覧で見る</h3>
+          </div>
+          <p className="text-white/60 text-sm mb-4">
+            今後開催予定のイベントを日付順に一覧表示します。<br />
+            まずはここから探してみましょう。
+          </p>
+          <Link
+            href="/kurawaku2/cbed/list"
+            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg border border-white/20 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-colors"
+          >
+            一覧で見る
+          </Link>
         </div>
-      )}
-      <p className="mt-10 text-xs text-white/20 leading-relaxed">
-        掲載されているイベントの内容は予告なく変更・中止される場合があります。参加にあたってはご自身の判断と責任において、必ず主催者の公式情報をご確認ください。
-      </p>
+
+        <div className="glass-card rounded-xl p-6 border border-white/10">
+          <div className="flex items-center gap-3 mb-4">
+            <Map className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">地図で探す</h3>
+          </div>
+          <p className="text-white/60 text-sm mb-4">
+            日本地図上でイベントを探せます。<br />
+            お近くのイベントを見つけましょう。
+          </p>
+          <Link
+            href="/kurawaku2/cbed/map"
+            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg border border-white/20 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-colors"
+          >
+            地図で探す
+          </Link>
+        </div>
+
+        <div className="glass-card rounded-xl p-6 border border-white/10">
+          <div className="flex items-center gap-3 mb-4">
+            <Calendar className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">カレンダーで探す</h3>
+          </div>
+          <p className="text-white/60 text-sm mb-4">
+            月間カレンダーでイベントをチェック。<br />
+            スケジュール管理に便利です。
+          </p>
+          <Link
+            href="/kurawaku2/cbed/calendar"
+            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg border border-white/20 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-colors"
+          >
+            カレンダーで探す
+          </Link>
+        </div>
+
+        <div className="glass-card rounded-xl p-6 border border-white/10">
+          <div className="flex items-center gap-3 mb-4">
+            <Filter className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-white">詳細検索</h3>
+          </div>
+          <p className="text-white/60 text-sm mb-4">
+            日付、エリア、カテゴリ、参加費など<br />様々な条件で絞り込み検索。
+          </p>
+          <Link
+            href="/kurawaku2/cbed/search"
+            className="w-full inline-flex items-center justify-center px-4 py-2 rounded-lg border border-white/20 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-colors"
+          >
+            詳細検索
+          </Link>
+        </div>
+      </div>
     </>
   )
 }
