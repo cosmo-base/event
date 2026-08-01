@@ -35,7 +35,7 @@ export function QuickAccessGrid({ links }: { links: QuickLink[] }) {
                   <span
                     className={cn(
                       "flex size-10 items-center justify-center rounded-xl",
-                      link.featured ? "bg-white/15 text-white" : "bg-secondary text-primary",
+                      link.featured ? "bg-primary-foreground/15 text-primary-foreground" : "bg-secondary text-primary",
                     )}
                   >
                     <QuickIcon name={link.icon} className="size-5" />
@@ -44,7 +44,7 @@ export function QuickAccessGrid({ links }: { links: QuickLink[] }) {
                     <ExternalLink
                       className={cn(
                         "size-4 shrink-0",
-                        link.featured ? "text-white/70" : "text-muted-foreground",
+                        link.featured ? "text-primary-foreground/70" : "text-muted-foreground",
                       )}
                       aria-hidden="true"
                     />
@@ -55,7 +55,7 @@ export function QuickAccessGrid({ links }: { links: QuickLink[] }) {
                   <p
                     className={cn(
                       "mt-0.5 text-xs leading-snug",
-                      link.featured ? "text-white/75" : "text-muted-foreground",
+                      link.featured ? "text-primary-foreground/75" : "text-muted-foreground",
                     )}
                   >
                     {link.description}
