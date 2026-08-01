@@ -402,7 +402,7 @@ export const eventPageData: EventPageData = {
       href: "/event/kurawaku2/type",
       duration: "約2分",
       audience: "初心者向け",
-      labels: ["人気コンテンツ", "知識不要", "スマートフォン対応"],
+      labels: ["人気コンテンツ", "知識不要"],
       status: "available",
       external: true,
       icon: "sparkles",
