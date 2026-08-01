@@ -50,7 +50,7 @@ export function ContentCard({
             alt={`${content.title} のイメージ`}
             fill
             sizes="(max-width: 640px) 100vw, 360px"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div aria-hidden="true" className="absolute inset-0" style={{ background: gradient }}>

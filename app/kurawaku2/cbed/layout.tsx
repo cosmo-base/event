@@ -4,7 +4,8 @@ import { eventPageData } from "@/data/event-page-data"
 import Link from "next/link"
 
 const navLinks = [
-  { href: "/kurawaku2/cbed", label: "一覧" },
+  { href: "/kurawaku2/cbed", label: "TOP" },
+  { href: "/kurawaku2/cbed/list", label: "一覧" },
   { href: "/kurawaku2/cbed/calendar", label: "カレンダー" },
   { href: "/kurawaku2/cbed/map", label: "地図" },
   { href: "/kurawaku2/cbed/search", label: "検索" },
