@@ -17,7 +17,7 @@ export default function CbedPage() {
         </h1>
         <div className="shrink-0">
           <Image
-            src="/CBED_logo.png"
+            src="/event/CBED_logo.png"
             alt="CBED logo"
             width={200}
             height={96}
