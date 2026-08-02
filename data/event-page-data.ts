@@ -16,8 +16,6 @@ export type { OrgData } from "@/data/org-data"
 // 共通の型
 // ─────────────────────────────────────────────
 
-export type EventStatus = "upcoming" | "live" | "ended"
-
 export type ContentStatus = "available" | "limited" | "coming-soon" | "ended"
 
 export type IconName =
@@ -140,7 +138,6 @@ export interface EventSpecificData {
     participationType: string
     exhibitorName: string
     message: string
-    status: EventStatus
     reportUrl?: string
   }
 

@@ -24,8 +24,8 @@ const RESULT_DATA: Record<ResultType, any> = {
     howToSpend: '👉 まずは"見るだけ"でOK',
     contents: ["毎日宇宙クイズ", "週刊宇宙ニュース", "Cosmo Baseで宇宙知っトク"],
     shareText: "宇宙、ロマンすぎない？って思ってる【天文台トラベラー】でした🔭 #CosmoBase宇宙タイプ診断",
-    img: "RI.png",
-    img_share: "RI_share.png",
+    img: "type/RI.png",
+    img_share: "type/RI_share.png",
     color: "#cbace4",
   },
   DI: {
@@ -36,8 +36,8 @@ const RESULT_DATA: Record<ResultType, any> = {
     howToSpend: "👉 気になるところからつまみ食いでOK",
     contents: ["週刊宇宙ニュース", "Cosmo Baseで宇宙教えて", "Cosmo Base Library"],
     shareText: "いろんな角度から宇宙楽しみたい【人工衛星】タイプでした🛰️ #CosmoBase宇宙タイプ診断",
-    img: "DI.png",
-    img_share: "DI_share.png",
+    img: "type/DI.png",
+    img_share: "type/DI_share.png",
     color: "#85c68b",
   },
   RO: {
@@ -48,8 +48,8 @@ const RESULT_DATA: Record<ResultType, any> = {
     howToSpend: "👉 小さくてもいいから1回動いてみる",
     contents: ["宇宙に行っといで", "Cosmo Base Event Database", "Cosmo Baseで宇宙教えて"],
     shareText: "気づいたら一歩踏み出してる【ロケット打ち上げ】でした🚀 #CosmoBase宇宙タイプ診断",
-    img: "RO.png",
-    img_share: "RO_share.png",
+    img: "type/RO.png",
+    img_share: "type/RO_share.png",
     color: "#EEEEBB",
   },
   DO: {
@@ -60,8 +60,8 @@ const RESULT_DATA: Record<ResultType, any> = {
     howToSpend: '👉 知識を"誰かに話す"と一気に楽しくなる',
     contents: ["Space Voyager 検定", "Cosmo Base Library", "宇宙のイベント行ってきた"],
     shareText: "気づいたら詳しくなってる【宇宙ステーション】でした🌍 #CosmoBase宇宙タイプ診断",
-    img: "DO.png",
-    img_share: "DO_share.png",
+    img: "type/DO.png",
+    img_share: "type/DO_share.png",
     color: "#83CBEB",
   }
 };

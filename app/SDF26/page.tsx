@@ -47,13 +47,13 @@ export default function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <LimitedContentSection items={data.limitedContents} eventStatus={data.event.status} />
+        <LimitedContentSection items={data.limitedContents} />
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <CommunityCta cta={data.communityCta} eventStatus={data.event.status} reportUrl={data.event.reportUrl} />
+        <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 
         <SocialLinksSection socialLinks={data.socialLinks} />
       </main>

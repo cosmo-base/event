@@ -2,15 +2,7 @@ import { CalendarDays, MapPin, Store, Clock3, Mic2 } from "lucide-react"
 import type { EventPageData } from "@/data/event-page-data"
 import { StatusBadge } from "@/components/status-badge"
 
-const statusConfig = {
-  upcoming: { label: "開催予定", tone: "sky" as const },
-  live: { label: "本日開催", tone: "live" as const },
-  ended: { label: "イベントは終了しました", tone: "muted" as const },
-}
-
 export function EventInformation({ event }: { event: EventPageData["event"] }) {
-  const status = statusConfig[event.status]
-
   const infoItems = [
     { icon: CalendarDays, label: "開催日", value: event.date },
     { icon: MapPin, label: "会場", value: event.venue },
@@ -39,7 +31,6 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
       <div className="relative mx-auto max-w-6xl px-4">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge label="イベント限定ページ" tone="purple" />
-          {event.status !== "live" && <StatusBadge label={status.label} tone={status.tone} />}
         </div>
 
         <h1

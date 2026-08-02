@@ -1,5 +1,5 @@
 import { Clock3, Lock, CalendarClock } from "lucide-react"
-import type { LimitedContentItem, EventStatus } from "@/data/event-page-data"
+import type { LimitedContentItem } from "@/data/event-page-data"
 import { SectionHeading } from "@/components/section-heading"
 import { StatusBadge } from "@/components/status-badge"
 import { ExternalLinkButton } from "@/components/external-link-button"
@@ -8,14 +8,9 @@ import { EventQuiz } from "@/components/event-quiz"
 
 export function LimitedContentSection({
   items,
-  eventStatus,
 }: {
   items: LimitedContentItem[]
-  eventStatus: EventStatus
 }) {
-  // イベント終了後は、限定コンテンツを終了扱いにする
-  const isEnded = eventStatus === "ended"
-
   return (
     <section
       id="limited"
@@ -26,11 +21,7 @@ export function LimitedContentSection({
         <SectionHeading
           eyebrow="Limited"
           title="このイベント限定コンテンツ"
-          description={
-            isEnded
-              ? "こちらのイベント限定コンテンツは公開を終了しました。通常のコンテンツやコミュニティは引き続きお楽しみいただけます。"
-              : "イベント参加者だけが体験できる特別なコンテンツを公開しています。"
-          }
+          description="イベント参加者だけが体験できる特別なコンテンツを公開しています。"
         />
 
         <div className="mt-8 mb-4">
@@ -41,7 +32,7 @@ export function LimitedContentSection({
 
         <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {items.map((item, i) => {
-            const ended = isEnded || item.status === "ended"
+            const ended = item.status === "ended"
             return (
               <Reveal as="li" key={item.id} delay={(i % 2) * 80} className="h-full">
                 <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-sm">

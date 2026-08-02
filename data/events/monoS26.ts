@@ -4,7 +4,6 @@
 // ============================================================================
 
 import type {
-  EventStatus,
   CarouselSlide,
   QuickLink,
   PitchData,
@@ -21,8 +20,8 @@ export const monoS26Data: EventSpecificData = {
       "Cosmo Base のイベント特設ページ。発表スライド、宇宙タイプ診断などのコンテンツを、その場で体験できます。",
     siteName: "Cosmo Base",
     url: "https://cosmo-base.example.com",
-    logoUrl: "/logos/cosmo-base-placeholder.svg",
-    fsifLogoUrl: "/logos/fsif-placeholder.svg",
+    logoUrl: "/CB_logo.png",
+    fsifLogoUrl: "/FSIF_logo.png",
     accentColor: "#f59e0b",
     ogImage: "/images/hero-event.png",
     noindex: true,
@@ -38,7 +37,6 @@ export const monoS26Data: EventSpecificData = {
     participationType: "展示会",
     exhibitorName: "Cosmo Base",
     message: "",
-    status: "upcoming" as EventStatus,
     reportUrl: "",
   },
 
@@ -154,7 +152,7 @@ export const monoS26Data: EventSpecificData = {
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
     href: "https://fsifofficial.github.io/CosmoBase/type",
-    imageUrl: "/images/space-type.png",
+    imageUrl: "/type/space-type.png",
   } as SpaceTypeFeature,
 
   contents: [
