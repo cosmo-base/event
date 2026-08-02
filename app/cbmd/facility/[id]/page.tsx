@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import {
   MapPin, Clock, Calendar, DollarSign, Train,
-  ExternalLink, Globe, Star, ChevronLeft, Twitter, Instagram, Youtube, Edit3
+  ExternalLink, Globe, Star, ChevronLeft, Twitter, Instagram, Youtube
 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
@@ -121,13 +121,8 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
               )}
 
               {facility.updatedAt && (
-                <div className="mt-6 pt-4 border-t border-border/30 flex flex-col items-center gap-4">
-                  <p className="text-xs text-muted-foreground">最終更新: {facility.updatedAt}</p>
-                  <Link href={`/cbmd/inquiry?facility=${encodeURIComponent(facility.name)}`} className="w-full">
-                    <Button variant="outline" className="w-full text-xs text-muted-foreground hover:text-primary border-border/50 hover:bg-primary/10">
-                      <Edit3 className="w-3 h-3 mr-2" />この施設の情報を修正・更新する
-                    </Button>
-                  </Link>
+                <div className="mt-6 pt-4 border-t border-border/30">
+                  <p className="text-xs text-muted-foreground text-center">最終更新: {facility.updatedAt}</p>
                 </div>
               )}
             </GlassCard>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Map, Search, Database, ArrowRight, Sparkles, AlertCircle, MessageSquarePlus } from "lucide-react"
+import { Map, Search, Database, ArrowRight, Sparkles, AlertCircle } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
@@ -191,22 +191,6 @@ export default function CbmdPage() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Inquiry CTA */}
-      <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">CBMDをみんなで作る</h2>
-          <p className="text-muted-foreground mb-8">
-            「近所の科学館がまだ載っていない」「営業時間が変わっていた」などの情報がありましたら、ぜひお知らせください。
-          </p>
-          <Link href="/cbmd/inquiry">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 glow px-8 rounded-full">
-              <MessageSquarePlus className="w-5 h-5 mr-2" />
-              施設追加・修正リクエストを送る
-            </Button>
-          </Link>
         </div>
       </section>
 
