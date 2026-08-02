@@ -175,9 +175,9 @@ export const kurawaku2Data: EventSpecificData = {
     presentationDate: "2026年8月1日",
     presentationTime: "17:00",
     thumbnailUrl: "/images/pitch-thumb.png",
-    slideUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/pub?start=false&loop=false&delayms=3000",
-    embedUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/embed?start=false&loop=false&delayms=3000",
-    pdfUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/export/pdf",
+    slideUrl: "",
+    embedUrl: "/event/documents/kurawaku.pdf",
+    pdfUrl: "/event/documents/kurawaku.pdf",
     supplementaryUrl: "",
   } as PitchData,
 
