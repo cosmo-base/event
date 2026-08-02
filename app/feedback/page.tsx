@@ -4,26 +4,13 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, ClipboardList, Loader2, Send } from "lucide-react"
 
-const EVENT_NAMES = [
-  "Cosmo Baseで宇宙知っトク#001",
-  "Cosmo Baseで宇宙知っトク#002",
-  "Cosmo Baseで宇宙知っトク#003",
-  "Cosmo Baseで宇宙知っトク#004",
-  "Cosmo Baseで宇宙知っトク#005",
-  "Cosmo Baseで宇宙知っトク#006",
-  "Cosmo Baseで宇宙知っトク#007",
-  "Cosmo Baseで宇宙知っトク#008",
-  "Cosmo Baseで宇宙知っトク#009",
-  "Cosmo Baseで宇宙知っトク#010",
-]
-
 const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSftfcnBxZVaMgmitAxRAWFTlYkFcT6AaRubrhNuGAUAuS_2ZA/formResponse"
 
 export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [formData, setFormData] = useState({
-    eventName: EVENT_NAMES[EVENT_NAMES.length - 1],
+    eventName: "",
     satisfaction: "",
     satisfactionReason: "",
     purposes: [] as string[],
@@ -105,24 +92,17 @@ export default function FeedbackPage() {
 
         <div>
           <label className="block text-sm font-bold text-foreground mb-3">
-            イベント名称 <span className="text-destructive">*</span>
+            イベント名 <span className="text-destructive">*</span>
           </label>
-          <div className="grid grid-cols-1 gap-3 max-h-64 overflow-y-auto pr-2">
-            {EVENT_NAMES.map((option) => (
-              <label key={option} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${formData.eventName === option ? 'border-primary bg-primary/10' : 'border-border/50 bg-secondary/20 hover:bg-secondary/50'}`}>
-                <input
-                  required
-                  type="radio"
-                  name="eventName"
-                  value={option}
-                  checked={formData.eventName === option}
-                  onChange={handleChange}
-                  className="w-4 h-4 shrink-0"
-                />
-                <span className="text-sm text-foreground font-medium">{option}</span>
-              </label>
-            ))}
-          </div>
+          <input
+            required
+            type="text"
+            name="eventName"
+            value={formData.eventName}
+            onChange={handleChange}
+            placeholder="参加されたイベント名をご記入ください"
+            className="w-full p-3 rounded-md border border-input bg-secondary/50 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
         </div>
 
         <div className="w-full h-px bg-border/50" />
