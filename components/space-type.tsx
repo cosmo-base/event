@@ -238,7 +238,7 @@ function ResultScreen({ answers }: { answers: number[] }) {
   );
 }
 
-export function SpaceType() {
+export function SpaceType({ eventId = "type" }: { eventId?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [isFading, setIsFading] = useState(false);
@@ -283,7 +283,7 @@ export function SpaceType() {
           const axis1 = R >= D ? 'R' : 'D';
           const axis2 = I >= E ? 'I' : 'O';
           const resultType = `${axis1}${axis2}`;
-          await sendToGas({ type: "CBタイプ", answers, resultType });
+          await sendToGas({ type: "CBタイプ", eventId, answers, resultType });
         } catch (error) {
           // sendToGas handles network failures internally
         }

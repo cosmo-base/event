@@ -70,7 +70,7 @@ export default function ConstellationDiagnosePage() {
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(finalStats[key] - (bestConstellation.stats[key] || 5)), 0)
     const matchPercent = Math.max(60, Math.min(99, Math.round(100 - totalDiff * 1.2)))
 
-    const payload: Record<string, any> = { type: "constellation", rocket: bestConstellation.name, matchPercent, ...finalStats }
+    const payload: Record<string, any> = { type: "constellation", eventId: "CM星座", rocket: bestConstellation.name, matchPercent, ...finalStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
     await sendToGas(payload).catch(() => {})
 

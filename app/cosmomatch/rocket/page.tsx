@@ -148,7 +148,7 @@ export default function RocketDiagnosePage() {
     })
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(userStats[key] - bestRocket.stats[key]), 0)
     const matchPercent = Math.max(78, Math.min(98, Math.round(100 - totalDiff * 2.5)))
-    const payload: Record<string, any> = { type: "rocket", rocket: bestRocket.name, matchPercent, ...userStats }
+    const payload: Record<string, any> = { type: "rocket", eventId: "CMrocket", rocket: bestRocket.name, matchPercent, ...userStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
     await sendToGas(payload).catch(() => {})
     const encodedStats = STAT_KEYS.map(k => Math.min(35, userStats[k] || 0).toString(36)).join('')

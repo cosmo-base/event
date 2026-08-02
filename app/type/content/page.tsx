@@ -9,7 +9,7 @@ export default function SpaceTypeContentPage() {
     <div className="min-h-dvh bg-[#0B0F19]">
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
       <div className="pt-14">
-        <SpaceType />
+        <SpaceType eventId="type" />
       </div>
       <SocialFooter
         cosmoBase={data.cosmoBase}
