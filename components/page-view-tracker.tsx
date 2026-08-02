@@ -6,6 +6,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeX
 
 export function PageViewTracker({ eventId }: { eventId: string }) {
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("ref") === "list") return
     const key = `pv_${eventId}`
     if (sessionStorage.getItem(key)) return
     sessionStorage.setItem(key, "1")

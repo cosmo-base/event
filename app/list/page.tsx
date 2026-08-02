@@ -129,7 +129,7 @@ export default function EventListPage() {
             {EVENTS.map((ev) => {
               const s = STATUS[ev.status]
               return (
-                <Link key={ev.id} href={ev.path} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
+                <Link key={ev.id} href={`${ev.path}?ref=list`} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/event/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
                   <div className="flex-1 min-w-0">
