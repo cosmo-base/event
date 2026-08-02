@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -12,9 +14,10 @@ const NAV_ITEMS = [
   { label: "SNS", href: "#social" },
 ];
 
-export function EventHeader({ logoUrl, eventName }: { logoUrl?: string; eventName?: string }) {
+export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string; eventName?: string; homeHref?: string }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -30,6 +33,10 @@ export function EventHeader({ logoUrl, eventName }: { logoUrl?: string; eventNam
     };
   }, [open]);
 
+  // Resolve the home destination: explicit prop wins, then auto-detect from pathname
+  const resolvedHome = homeHref
+    ?? (pathname?.match(/^\/(kurawaku2|monoS26|monoK26|SDF26)\/.+/) ? `/${pathname.split("/")[1]}` : null)
+
   const scrollTop = () => {
     setOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -38,7 +45,7 @@ export function EventHeader({ logoUrl, eventName }: { logoUrl?: string; eventNam
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b transition-colors relative",
+        "fixed inset-x-0 top-0 z-50 border-b transition-colors",
         scrolled
           ? "border-border bg-background/85 backdrop-blur-md shadow-sm"
           : "border-transparent bg-background/60 backdrop-blur",
@@ -46,30 +53,51 @@ export function EventHeader({ logoUrl, eventName }: { logoUrl?: string; eventNam
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center px-4">
         {/* 左: ロゴ */}
-        <button
-          type="button"
-          onClick={scrollTop}
-          className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-          aria-label="ページ最上部へ戻る"
-        >
-          <span className="flex flex-col items-start leading-none">
-            <img
-              className="h-6 w-max"
-              src="/event/CB_logo.png"
-              alt="CB"
-              aria-hidden="true"
-            />
-            <span className="text-[10px] font-medium text-muted-foreground">
-              イベント特設ページ
+        {resolvedHome ? (
+          <Link
+            href={resolvedHome}
+            onClick={() => setOpen(false)}
+            className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            aria-label="イベントトップへ戻る"
+          >
+            <span className="flex flex-col items-start leading-none">
+              <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+              <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
             </span>
-          </span>
-        </button>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={scrollTop}
+            className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            aria-label="ページ最上部へ戻る"
+          >
+            <span className="flex flex-col items-start leading-none">
+              <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+              <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
+            </span>
+          </button>
+        )}
 
         {/* 中央: イベント名 */}
         {eventName && (
-          <span className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap">
-            {eventName}
-          </span>
+          resolvedHome ? (
+            <Link
+              href={resolvedHome}
+              onClick={() => setOpen(false)}
+              className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+            >
+              {eventName}
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={scrollTop}
+              className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+            >
+              {eventName}
+            </button>
+          )
         )}
 
         {/* 右: ナビ / ハンバーガー */}

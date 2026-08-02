@@ -1,5 +1,7 @@
 import Link from "next/link"
-import { ExternalLink, MapPin, Calendar, Lock } from "lucide-react"
+import { ExternalLink, MapPin, Calendar, Lock, TableProperties } from "lucide-react"
+import { EventGacha } from "@/components/event-gacha"
+import type { GachaPrize } from "@/components/event-gacha"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
@@ -107,6 +109,15 @@ const TOOLS = [
   },
 ]
 
+const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1X1K1dPUDsWSp8Z61wuniinQIg5L166QDH6eQJ5KAhxY/edit?gid=1933865187#gid=1933865187"
+
+const GACHA_PRIZES: GachaPrize[] = [
+  { name: "シール", weight: 40, emoji: "🌟" },
+  { name: "クリアファイル", weight: 30, emoji: "📂" },
+  { name: "ステッカーセット", weight: 20, emoji: "✨" },
+  { name: "特製グッズ", weight: 10, emoji: "🎁" },
+]
+
 export default function EventListPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -155,6 +166,20 @@ export default function EventListPage() {
           </div>
         </section>
 
+        {/* Spreadsheet link */}
+        <div className="mb-8">
+          <a
+            href={SPREADSHEET_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-colors"
+          >
+            <TableProperties className="w-4 h-4" />
+            データスプレッドシートを開く
+            <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+          </a>
+        </div>
+
         {/* Tools */}
         <section className="mb-12">
           <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
@@ -202,6 +227,17 @@ export default function EventListPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Gacha */}
+        <section className="mb-12">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+            ガチャ（モック）
+          </h2>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 max-w-sm">
+            <p className="text-xs text-zinc-500 mb-4">景品抽選に使用。結果はスプシの「ガチャ」シートに記録されます。</p>
+            <EventGacha eventId="list" prizes={GACHA_PRIZES} />
           </div>
         </section>
 

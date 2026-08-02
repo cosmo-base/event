@@ -62,10 +62,10 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <section aria-labelledby="survey-heading" className="py-12">
+        <section id="survey" aria-labelledby="survey-heading" className="py-12">
           <div className="mx-auto max-w-2xl px-4">
             <h2 id="survey-heading" className="text-xl font-bold mb-6">アンケート</h2>
-            <EventSurvey eventId="monoK26" eventName={data.event.shortName} questions={SURVEY_QUESTIONS} />
+            <EventSurvey eventId="monoK26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
           </div>
         </section>
 
