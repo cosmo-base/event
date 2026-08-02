@@ -53,7 +53,7 @@ export default function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         {/* 限定コンテンツ */}
-        <LimitedContentSection items={data.limitedContents} />
+        <LimitedContentSection items={data.limitedContents} eventId="kurawaku2" />
 
         {/* Cosmo Base 紹介 */}
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />

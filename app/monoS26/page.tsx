@@ -47,7 +47,7 @@ export default function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <LimitedContentSection items={data.limitedContents} />
+        <LimitedContentSection items={data.limitedContents} eventId="monoS26" />
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 

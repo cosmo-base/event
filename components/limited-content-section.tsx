@@ -8,8 +8,10 @@ import { EventQuiz } from "@/components/event-quiz"
 
 export function LimitedContentSection({
   items,
+  eventId,
 }: {
   items: LimitedContentItem[]
+  eventId: string
 }) {
   return (
     <section
@@ -26,7 +28,7 @@ export function LimitedContentSection({
 
         <div className="mt-8 mb-4">
           <Reveal>
-            <EventQuiz />
+            <EventQuiz eventId={eventId} />
           </Reveal>
         </div>
 
