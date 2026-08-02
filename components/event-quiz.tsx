@@ -59,7 +59,13 @@ export function EventQuiz({ eventId }: { eventId: string }) {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ type: "quiz", eventId, selected: i, correct: i === CORRECT_INDEX }),
+                    body: JSON.stringify({
+                      type: "quiz",
+                      eventId,
+                      question: QUESTION,
+                      selected: OPTIONS[i],
+                      correctOption: OPTIONS[CORRECT_INDEX],
+                    }),
                   }).catch(() => {})
                 }}
                 className={cn(
