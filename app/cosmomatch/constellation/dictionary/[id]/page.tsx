@@ -9,8 +9,13 @@ export const dynamic = "force-static"
 export const dynamicParams = false
 
 export async function generateStaticParams() {
-  const constellations = await getConstellations()
-  return constellations.map((c) => ({ id: c.slug }))
+  try {
+    const constellations = await getConstellations()
+    if (!constellations || constellations.length === 0) return [{ id: "_placeholder" }]
+    return constellations.map((c) => ({ id: c.slug }))
+  } catch {
+    return [{ id: "_placeholder" }]
+  }
 }
 
 function RelationLinks({ text, allData, type }: { text: string; allData: Constellation[]; type: 'rival' | 'similar' }) {

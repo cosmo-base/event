@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ExternalLink, MapPin, Calendar } from "lucide-react"
+import { ExternalLink, MapPin, Calendar, Lock } from "lucide-react"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
@@ -55,8 +55,10 @@ const TOOLS = [
     name: "CBMD",
     description: "Cosmo Base Museum Database\n宇宙系展示施設データベース",
     logo: "/event/CBMD_logo.png",
+    previewUrl: "/kurawaku2/cbmd?preview=locked",
     links: [
       { label: "TOP", href: "/cbmd" },
+      { label: "くらわく2入口", href: "/kurawaku2/cbmd" },
       { label: "マップ", href: "/cbmd/map" },
       { label: "検索", href: "/cbmd/search" },
       { label: "DB", href: "/cbmd/database" },
@@ -66,6 +68,7 @@ const TOOLS = [
     name: "CBED",
     description: "Cosmo Base Event Database\n宇宙系イベントデータベース",
     logo: "/event/CBED_logo.png",
+    previewUrl: "/kurawaku2/cbed?preview=locked",
     links: [
       { label: "TOP", href: "/kurawaku2/cbed" },
       { label: "マップ", href: "/kurawaku2/cbed/map" },
@@ -77,8 +80,10 @@ const TOOLS = [
     name: "CosmoMatch",
     description: "推し診断ツール\nロケット編・88星座編",
     logo: "/event/CosmoMatch_logo.png",
+    previewUrl: "/kurawaku2/CMrocket?preview=locked",
     links: [
       { label: "TOP", href: "/cosmomatch" },
+      { label: "ロケット診断(くらわく2)", href: "/kurawaku2/CMrocket" },
       { label: "ロケット診断", href: "/cosmomatch/rocket" },
       { label: "ロケット図鑑", href: "/cosmomatch/rocket/dictionary" },
       { label: "星座診断", href: "/cosmomatch/constellation" },
@@ -90,6 +95,7 @@ const TOOLS = [
     name: "宇宙タイプ診断",
     description: "あなたの宇宙タイプを診断\nRI / RO / DI / DO の4タイプ",
     logo: "/event/CBtype_logo.png",
+    previewUrl: "/kurawaku2/type?preview=locked",
     links: [
       { label: "診断", href: "/kurawaku2/type" },
     ],
@@ -187,6 +193,16 @@ export default function EventListPage() {
                       {link.label}
                     </Link>
                   ))}
+                  {"previewUrl" in tool && tool.previewUrl && (
+                    <Link
+                      href={tool.previewUrl}
+                      className="text-xs font-medium text-zinc-600 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-2.5 py-1 rounded-md transition-colors inline-flex items-center gap-1"
+                      title="コンテンツロック画面をプレビュー"
+                    >
+                      <Lock className="w-3 h-3" />
+                      ロック確認
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}

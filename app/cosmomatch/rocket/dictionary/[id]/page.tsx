@@ -8,8 +8,13 @@ export const dynamic = "force-static"
 export const dynamicParams = false
 
 export async function generateStaticParams() {
-  const rockets = await getRockets()
-  return rockets.map((rocket) => ({ id: encodeURIComponent(rocket.slug) }))
+  try {
+    const rockets = await getRockets()
+    if (!rockets || rockets.length === 0) return [{ id: "_placeholder" }]
+    return rockets.map((rocket) => ({ id: encodeURIComponent(rocket.slug) }))
+  } catch {
+    return [{ id: "_placeholder" }]
+  }
 }
 
 function SpecRow({ label, value }: { label: string; value: string }) {

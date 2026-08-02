@@ -16,10 +16,10 @@ export const dynamicParams = false
 export async function generateStaticParams() {
   try {
     const facilities = await fetchFacilitiesData()
-    if (!facilities || facilities.length === 0) return []
+    if (!facilities || facilities.length === 0) return [{ id: "_placeholder" }]
     return facilities.map((f) => ({ id: String(f.id).trim() }))
   } catch {
-    return []
+    return [{ id: "_placeholder" }]
   }
 }
 
