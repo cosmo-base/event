@@ -17,7 +17,9 @@ const CORRECT_INDEX = 2
 const EXPLANATION =
   "宇宙機では、重量をできるだけ抑えながら十分な強度を確保することが重要です。そのため、比強度の高いアルミニウム合金やチタン合金、さらに用途によってはCFRP（炭素繊維強化プラスチック）なども広く使用されています。"
 
-export function EventQuiz() {
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
+
+export function EventQuiz({ eventId }: { eventId: string }) {
   const [selected, setSelected] = useState<number | null>(null)
   const answered = selected !== null
   const correct = selected === CORRECT_INDEX
@@ -51,7 +53,21 @@ export function EventQuiz() {
               <button
                 type="button"
                 disabled={answered}
-                onClick={() => setSelected(i)}
+                onClick={() => {
+                  setSelected(i)
+                  fetch(GAS_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({
+                      type: "quiz",
+                      eventId,
+                      question: QUESTION,
+                      selected: OPTIONS[i],
+                      correctOption: OPTIONS[CORRECT_INDEX],
+                    }),
+                  }).catch(() => {})
+                }}
                 className={cn(
                   "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-default",
                   stateClass,

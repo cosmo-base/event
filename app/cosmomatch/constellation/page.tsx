@@ -69,8 +69,8 @@ export default function ConstellationDiagnosePage() {
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(finalStats[key] - (bestConstellation.stats[key] || 5)), 0)
     const matchPercent = Math.max(60, Math.min(99, Math.round(100 - totalDiff * 1.2)))
 
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzKpF42RXOL2ttx6JYu7OfKWeceTlLmOTNjKZFbYQFGU9Zr9B9dNbwJBfdpObPXIJ15pg/exec"
-    const payload: Record<string, any> = { rocket: bestConstellation.name, matchPercent, ...finalStats }
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
+    const payload: Record<string, any> = { type: "constellation", rocket: bestConstellation.name, matchPercent, ...finalStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
     try {
       await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
