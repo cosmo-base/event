@@ -28,13 +28,13 @@ export const monoK26Data: EventSpecificData = {
   },
 
   event: {
-    name: "monoK26",
+    name: "全日本学生ものづくりExpo@関東",
     shortName: "monoK26",
-    date: "2026年XX月XX日",
-    venue: "会場名",
+    date: "2026年8月28日（金）",
+    venue: "東京都立産業貿易センター台東館",
     boothNumber: "",
-    pitchTime: "",
-    participationType: "展示会",
+    pitchTime: "13:30〜19:00",
+    participationType: "ブース出展",
     exhibitorName: "Cosmo Base",
     message: "",
     reportUrl: "",
@@ -43,7 +43,7 @@ export const monoK26Data: EventSpecificData = {
   carousel: [
     {
       id: "slide-main",
-      title: "monoK26",
+      title: "全日本学生\nものづくりExpo@関東",
       description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
       buttonLabel: "コンテンツを見る",
       href: "#contents",
@@ -74,6 +74,24 @@ export const monoK26Data: EventSpecificData = {
   ] as CarouselSlide[],
 
   quickLinks: [
+    {
+      id: "ql-event-hp",
+      title: "イベント公式サイト",
+      description: "全日本学生ものづくりExpo",
+      href: "https://biz.cross-campus.jp/monozukuri-2026",
+      icon: "building",
+      external: true,
+      event: "click_event_website",
+    },
+    {
+      id: "ql-venue",
+      title: "会場サイト",
+      description: "東京都立産業貿易センター台東館",
+      href: "https://www.sanbo.metro.tokyo.lg.jp/taito/",
+      icon: "building",
+      external: true,
+      event: "click_venue_website",
+    },
     {
       id: "ql-cosmo-site",
       title: "Cosmo Base 公式サイト",

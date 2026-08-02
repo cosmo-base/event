@@ -28,13 +28,13 @@ export const monoS26Data: EventSpecificData = {
   },
 
   event: {
-    name: "monoS26",
+    name: "全日本学生ものづくりExpo@信州",
     shortName: "monoS26",
-    date: "2026年XX月XX日",
-    venue: "会場名",
+    date: "2026年8月20日（木）",
+    venue: "ホテルメトロポリタン長野",
     boothNumber: "",
-    pitchTime: "",
-    participationType: "展示会",
+    pitchTime: "13:30〜19:00（受付13:00〜）",
+    participationType: "ブース出展",
     exhibitorName: "Cosmo Base",
     message: "",
     reportUrl: "",
@@ -43,7 +43,7 @@ export const monoS26Data: EventSpecificData = {
   carousel: [
     {
       id: "slide-main",
-      title: "monoS26",
+      title: "全日本学生\nものづくりExpo@信州",
       description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
       buttonLabel: "コンテンツを見る",
       href: "#contents",
@@ -74,6 +74,15 @@ export const monoS26Data: EventSpecificData = {
   ] as CarouselSlide[],
 
   quickLinks: [
+    {
+      id: "ql-event-hp",
+      title: "イベント公式サイト",
+      description: "全日本学生ものづくりExpo",
+      href: "https://biz.cross-campus.jp/monozukuri-2026",
+      icon: "building",
+      external: true,
+      event: "click_event_website",
+    },
     {
       id: "ql-cosmo-site",
       title: "Cosmo Base 公式サイト",

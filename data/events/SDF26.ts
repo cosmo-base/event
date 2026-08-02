@@ -28,13 +28,13 @@ export const SDF26Data: EventSpecificData = {
   },
 
   event: {
-    name: "SDF26",
+    name: "宇宙開発フォーラム2026",
     shortName: "SDF26",
-    date: "2026年XX月XX日",
-    venue: "会場名",
+    date: "2026年8月28日（木）",
+    venue: "日本科学未来館 7F コンファレンスルーム",
     boothNumber: "",
-    pitchTime: "",
-    participationType: "展示会",
+    pitchTime: "17:50〜19:30（DAY1 ポスターセッション）",
+    participationType: "ポスターセッション",
     exhibitorName: "Cosmo Base",
     message: "",
     reportUrl: "",
@@ -43,8 +43,8 @@ export const SDF26Data: EventSpecificData = {
   carousel: [
     {
       id: "slide-main",
-      title: "SDF26",
-      description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
+      title: "宇宙開発フォーラム2026",
+      description: "テーマ：Space Shapes Society｜Cosmo Base のコンテンツをこの会場で体験できます。",
       buttonLabel: "コンテンツを見る",
       href: "#contents",
       external: false,
