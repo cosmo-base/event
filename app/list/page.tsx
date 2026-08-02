@@ -1,161 +1,198 @@
+import Image from "next/image"
 import Link from "next/link"
-import { ExternalLink, Calendar, Users, Database, Heart, ClipboardList } from "lucide-react"
+import { ExternalLink, MapPin, Calendar } from "lucide-react"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
 }
 
-const EVENT_PAGES = [
+const EVENTS = [
   {
     id: "kurawaku2",
-    name: "くらわく 第2回",
     path: "/kurawaku2",
-    status: "active",
-    description: "宇宙 × ビジネスの交流イベント第2回",
-    features: ["診断", "ピッチ", "クイズ"],
+    name: "くらわくトーク#2",
+    fullName: "くらわくトーク#2 変える力",
+    date: "2026年8月1日",
+    venue: "クラフトワーク京島",
+    type: "講演会",
+    status: "archived" as const,
+  },
+  {
+    id: "monoS26",
+    path: "/monoS26",
+    name: "monoS26",
+    fullName: "全日本学生ものづくりExpo@信州",
+    date: "2026年8月20日（木）",
+    venue: "ホテルメトロポリタン長野",
+    type: "ブース出展",
+    status: "active" as const,
+  },
+  {
+    id: "monoK26",
+    path: "/monoK26",
+    name: "monoK26",
+    fullName: "全日本学生ものづくりExpo@関東",
+    date: "2026年8月28日（金）",
+    venue: "東京都立産業貿易センター台東館",
+    type: "ブース出展",
+    status: "active" as const,
+  },
+  {
+    id: "SDF26",
+    path: "/SDF26",
+    name: "SDF26",
+    fullName: "宇宙開発フォーラム2026",
+    date: "2026年8月28日（木）",
+    venue: "日本科学未来館 7F",
+    type: "ポスターセッション",
+    status: "active" as const,
   },
 ]
+
+const STATUS: Record<string, { label: string; dot: string; bg: string; border: string }> = {
+  active:   { label: "公開中",     dot: "bg-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/20" },
+  draft:    { label: "準備中",     dot: "bg-yellow-400",  bg: "bg-yellow-400/10",  border: "border-yellow-400/20" },
+  archived: { label: "終了",       dot: "bg-zinc-500",    bg: "bg-zinc-500/10",    border: "border-zinc-500/20" },
+}
 
 const TOOLS = [
   {
     name: "CBMD",
-    description: "Cosmo Base Museum Database — 宇宙系展示施設データベース",
+    description: "Cosmo Base Museum Database\n宇宙系展示施設データベース",
     path: "/cbmd",
-    icon: Database,
-    color: "text-blue-400",
-    bg: "bg-blue-400/10",
-    border: "border-blue-400/20",
+    logo: "/CBMD_logo.png",
+    links: [
+      { label: "TOP", href: "/cbmd" },
+      { label: "マップ", href: "/cbmd/map" },
+      { label: "検索", href: "/cbmd/search" },
+      { label: "DB", href: "/cbmd/database" },
+      { label: "問合せ", href: "/cbmd/inquiry" },
+    ],
   },
   {
-    name: "Cosmo Match",
-    description: "推し診断ツール — ロケット編・88星座編",
+    name: "CosmoMatch",
+    description: "推し診断ツール\nロケット編・88星座編",
     path: "/cosmomatch",
-    icon: Heart,
-    color: "text-pink-400",
-    bg: "bg-pink-400/10",
-    border: "border-pink-400/20",
+    logo: "/CosmoMatch_logo.png",
+    links: [
+      { label: "TOP", href: "/cosmomatch" },
+      { label: "ロケット診断", href: "/cosmomatch/rocket" },
+      { label: "ロケット図鑑", href: "/cosmomatch/rocket/dictionary" },
+      { label: "星座診断", href: "/cosmomatch/constellation" },
+      { label: "星空マップ", href: "/cosmomatch/constellation/dictionary" },
+      { label: "星座一覧", href: "/cosmomatch/constellation/dictionary/list" },
+    ],
+  },
+  {
+    name: "宇宙タイプ診断",
+    description: "あなたの宇宙タイプを診断\nRI / RO / DI / DO の4タイプ",
+    path: "/kurawaku2/type",
+    logo: "/CBtype_logo.png",
+    links: [
+      { label: "TOP", href: "/kurawaku2/type" },
+    ],
   },
   {
     name: "アンケート",
-    description: "イベント参加後アンケート (宇宙知っトク用)",
+    description: "イベント参加後アンケート\n宇宙知っトク用",
     path: "/feedback",
-    icon: ClipboardList,
-    color: "text-emerald-400",
-    bg: "bg-emerald-400/10",
-    border: "border-emerald-400/20",
+    logo: null,
+    icon: "📋",
+    links: [
+      { label: "アンケート", href: "/feedback" },
+    ],
   },
 ]
 
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  active: { label: "● 公開中", color: "text-emerald-400" },
-  draft: { label: "◆ 準備中", color: "text-yellow-400" },
-  archived: { label: "✖ アーカイブ", color: "text-muted-foreground" },
-}
-
 export default function EventListPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="mb-10">
-          <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
-            <Calendar className="w-8 h-8 text-primary" />
-            イベントリスト
-          </h1>
-          <p className="text-muted-foreground text-sm">Cosmo Base 運営用ページ一覧</p>
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <div className="max-w-5xl mx-auto px-4 py-10">
+
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-10">
+          <Image src="/CB_icon.png" alt="Cosmo Base" width={48} height={48} className="rounded-xl" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Cosmo Base 運営ポータル</h1>
+            <p className="text-sm text-zinc-400">イベントページ・コンテンツ一覧</p>
+          </div>
         </div>
 
+        {/* Events */}
         <section className="mb-12">
-          <h2 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2 flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
             イベントページ
           </h2>
-          <div className="space-y-4">
-            {EVENT_PAGES.map((event) => {
-              const status = STATUS_LABEL[event.status] || STATUS_LABEL.draft
+          <div className="space-y-3">
+            {EVENTS.map((ev) => {
+              const s = STATUS[ev.status]
               return (
-                <div key={event.id} className="border border-border rounded-xl p-5 bg-secondary/10">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-bold text-foreground">{event.name}</h3>
-                        <span className={`text-xs font-bold ${status.color}`}>{status.label}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{event.description}</p>
+                <div key={ev.id} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 transition-colors group">
+                  <Image src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-white text-sm">{ev.fullName}</span>
+                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.border} border`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                        {s.label}
+                      </span>
                     </div>
-                    <div className="flex gap-2 shrink-0">
-                      {event.features.map(f => (
-                        <span key={f} className="text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full">{f}</span>
-                      ))}
+                    <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>
+                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>
+                      <span className="text-zinc-600">{ev.type}</span>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Link
-                      href={event.path}
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-accent transition-colors border border-primary/30 bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-lg"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      ページを開く
-                    </Link>
-                  </div>
+                  <Link
+                    href={ev.path}
+                    className="shrink-0 flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    開く
+                  </Link>
                 </div>
               )
             })}
           </div>
         </section>
 
+        {/* Tools */}
         <section className="mb-12">
-          <h2 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2">共通ツール・機能</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+            共通コンテンツ・ツール
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {TOOLS.map((tool) => {
-              const Icon = tool.icon
-              return (
-                <Link
-                  key={tool.name}
-                  href={tool.path}
-                  className={`group block border ${tool.border} rounded-xl p-5 ${tool.bg} hover:opacity-90 transition-all`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-lg ${tool.bg} border ${tool.border} shrink-0`}>
-                      <Icon className={`w-5 h-5 ${tool.color}`} />
-                    </div>
-                    <div>
-                      <h3 className={`font-bold mb-1 ${tool.color}`}>{tool.name}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{tool.description}</p>
-                    </div>
+            {TOOLS.map((tool) => (
+              <div key={tool.name} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-600 transition-colors">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
+                    {tool.logo ? (
+                      <Image src={tool.logo} alt={tool.name} width={48} height={48} className="object-contain w-full h-full p-1" />
+                    ) : (
+                      <span className="text-2xl">{tool.icon}</span>
+                    )}
                   </div>
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2">クイックリンク</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              { label: "CBMD TOP", href: "/cbmd" },
-              { label: "CBMD マップ", href: "/cbmd/map" },
-              { label: "CBMD 検索", href: "/cbmd/search" },
-              { label: "CBMD DB", href: "/cbmd/database" },
-              { label: "CBMD 問合せ", href: "/cbmd/inquiry" },
-              { label: "CosmoMatch TOP", href: "/cosmomatch" },
-              { label: "ロケット診断", href: "/cosmomatch/rocket" },
-              { label: "ロケット図鑑", href: "/cosmomatch/rocket/dictionary" },
-              { label: "星座診断", href: "/cosmomatch/constellation" },
-              { label: "星空マップ", href: "/cosmomatch/constellation/dictionary" },
-              { label: "星座一覧", href: "/cosmomatch/constellation/dictionary/list" },
-              { label: "アンケート", href: "/feedback" },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-center text-sm font-medium text-muted-foreground hover:text-foreground border border-border/50 rounded-lg px-3 py-2.5 bg-secondary/10 hover:bg-secondary/30 transition-colors"
-              >
-                {link.label}
-              </Link>
+                  <div>
+                    <h3 className="font-bold text-white text-sm mb-0.5">{tool.name}</h3>
+                    <p className="text-xs text-zinc-500 leading-relaxed whitespace-pre-line">{tool.description}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tool.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs font-medium text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-2.5 py-1 rounded-md transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </section>
+
       </div>
     </div>
   )
