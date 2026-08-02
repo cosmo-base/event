@@ -13,12 +13,14 @@ import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
+import { PageViewTracker } from "@/components/page-view-tracker"
 
 export default function Page() {
   const data = { ...orgData, ...monoK26Data }
 
   return (
     <div className="min-h-dvh bg-background">
+      <PageViewTracker eventId="monoK26" />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
