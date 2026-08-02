@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/glass-card"
 import { getRockets, Rocket, RocketStats } from "@/data/CMrockets"
 import { Zap, Clock, Rocket as RocketIcon, Loader2, ChevronLeft, ChevronRight, BookOpen } from "lucide-react"
+import { sendToGas } from "@/lib/gas-queue"
 
 const QUESTIONS = [
   {
@@ -147,14 +148,9 @@ export default function RocketDiagnosePage() {
     })
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(userStats[key] - bestRocket.stats[key]), 0)
     const matchPercent = Math.max(78, Math.min(98, Math.round(100 - totalDiff * 2.5)))
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
-    const payload: Record<string, any> = { type: "rocket", rocket: bestRocket.name, matchPercent, ...userStats }
+    const payload: Record<string, any> = { type: "rocket", eventId: "CMrocket", rocket: bestRocket.name, matchPercent, ...userStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
-    try {
-      await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-    } catch (err) {
-      console.error("GAS送信エラー:", err)
-    }
+    await sendToGas(payload).catch(() => {})
     const encodedStats = STAT_KEYS.map(k => Math.min(35, userStats[k] || 0).toString(36)).join('')
     setTimeout(() => {
       router.push(`/cosmomatch/rocket/result?r=${encodeURIComponent(bestRocket.slug)}&s=${encodedStats}`)

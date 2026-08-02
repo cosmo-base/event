@@ -1,6 +1,7 @@
 "use client";
 import { Telescope, Satellite, Rocket, Building, ArrowLeft, Earth, } from "lucide-react"
 import React, { useState, useEffect, useMemo } from 'react';
+import { sendToGas } from "@/lib/gas-queue"
 import Link from 'next/link';
 
 import { FullDiagnosisCard } from "@/components/full-diagnosis-card"
@@ -237,7 +238,7 @@ function ResultScreen({ answers }: { answers: number[] }) {
   );
 }
 
-export function SpaceType() {
+export function SpaceType({ eventId = "type" }: { eventId?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [isFading, setIsFading] = useState(false);
@@ -282,18 +283,9 @@ export function SpaceType() {
           const axis1 = R >= D ? 'R' : 'D';
           const axis2 = I >= E ? 'I' : 'O';
           const resultType = `${axis1}${axis2}`;
-          const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec";
-
-          await fetch(GAS_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({
-              answers: answers,
-              resultType: resultType
-            })
-          });
+          await sendToGas({ type: "タイプ診断", eventId, answers, resultType });
         } catch (error) {
-          console.error("データ送信エラー:", error);
+          // sendToGas handles network failures internally
         }
       };
 

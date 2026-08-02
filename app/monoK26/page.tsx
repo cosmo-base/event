@@ -14,6 +14,13 @@ import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
+import { EventSurvey } from "@/components/event-survey"
+
+const SURVEY_QUESTIONS = [
+  "本日のブースはいかがでしたか？",
+  "Cosmo Baseを知ったきっかけを教えてください。",
+  "今後、どんなコンテンツや活動に期待しますか？",
+]
 
 export default function Page() {
   const data = { ...orgData, ...monoK26Data }
@@ -54,6 +61,13 @@ export default function Page() {
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 
         <FsifIntroduction fsif={data.fsif} />
+
+        <section aria-labelledby="survey-heading" className="py-12">
+          <div className="mx-auto max-w-2xl px-4">
+            <h2 id="survey-heading" className="text-xl font-bold mb-6">アンケート</h2>
+            <EventSurvey eventId="monoK26" eventName={data.event.shortName} questions={SURVEY_QUESTIONS} />
+          </div>
+        </section>
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 
