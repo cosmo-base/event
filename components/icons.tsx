@@ -24,7 +24,6 @@ const iconMap: Record<IconName, LucideIcon> = {
   users: Users,
   message: MessageCircle,
   external: ExternalLink,
-  quiz: CircleHelp,
 }
 
 export function QuickIcon({ name, className }: { name: IconName; className?: string }) {

@@ -1,6 +1,5 @@
 "use client"
 
-import { Rocket } from "lucide-react"
 import type { EventPageData } from "@/data/event-page-data"
 import { socialIconMap, socialLabelMap, type SocialKey } from "@/components/icons"
 import { trackEvent } from "@/lib/analytics"

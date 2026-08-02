@@ -1,4 +1,4 @@
-import { Rocket, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import type { EventPageData } from "@/data/event-page-data"
 import { SectionHeading } from "@/components/section-heading"
 import { ExternalLinkButton } from "@/components/external-link-button"
