@@ -144,6 +144,14 @@ export const monoK26Data: EventSpecificData = {
       icon: "external",
       external: false,
     },
+    {
+      id: "ql-survey",
+      title: "アンケート",
+      description: "ご回答をお願いします",
+      href: "#survey",
+      icon: "file",
+      external: false,
+    },
   ] as QuickLink[],
 
   pitch: {
