@@ -5,11 +5,9 @@ import { Reveal } from "@/components/reveal"
 
 export function CommunityCta({
   cta,
-  eventStatus,
   reportUrl,
 }: {
   cta: EventPageData["communityCta"]
-  eventStatus: EventPageData["event"]["status"]
   reportUrl?: string
 }) {
   return (
@@ -71,7 +69,7 @@ export function CommunityCta({
                       {link.label}
                     </ExternalLinkButton>
                   ))}
-                  {eventStatus === "ended" && reportUrl ? (
+                  {reportUrl ? (
                     <ExternalLinkButton
                       href={reportUrl}
                       external

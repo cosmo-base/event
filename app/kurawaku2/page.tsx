@@ -53,7 +53,7 @@ export default function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         {/* 限定コンテンツ */}
-        <LimitedContentSection items={data.limitedContents} eventStatus={data.event.status} />
+        <LimitedContentSection items={data.limitedContents} />
 
         {/* Cosmo Base 紹介 */}
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
@@ -62,7 +62,7 @@ export default function Page() {
         <FsifIntroduction fsif={data.fsif} />
 
         {/* コミュニティ参加 CTA */}
-        <CommunityCta cta={data.communityCta} eventStatus={data.event.status} reportUrl={data.event.reportUrl} />
+        <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 
         {/* SNS リンク */}
         <SocialLinksSection socialLinks={data.socialLinks} />

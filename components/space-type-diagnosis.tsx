@@ -60,7 +60,7 @@ export function SpaceTypeDiagnosis() {
             <div className="max-w-6xl mx-auto w-full">
               <div className="text-center mb-20">
                 <div className="max-w-4xl mx-auto flex flex-col items-center">
-                  <img src="/event/CB_type.png" alt="宇宙タイプ診断" className="w-48 md:w-64 h-auto object-contain mb-2"/>
+                  <img src="/event/type/CB_type.png" alt="宇宙タイプ診断" className="w-48 md:w-64 h-auto object-contain mb-2"/>
                 </div>
                 <div className="inline-flex items-center gap-2 mb-6">
                    <Rocket className="h-5 w-5 text-cyan-400" />
