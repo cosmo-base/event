@@ -75,6 +75,15 @@ export const SDF26Data: EventSpecificData = {
 
   quickLinks: [
     {
+      id: "ql-event-hp",
+      title: "イベント公式サイト",
+      description: "宇宙開発フォーラム2026",
+      href: "https://pink603609.studio.site/",
+      icon: "building",
+      external: true,
+      event: "click_event_website",
+    },
+    {
       id: "ql-cosmo-site",
       title: "Cosmo Base 公式サイト",
       description: "コミュニティの詳細",
