@@ -1,11 +1,15 @@
-import type { Metadata } from "next"
-import EventHome from "@/components/home"
+"use client"
 
-export const metadata: Metadata = {
-  title: "Cosmo Base宇宙用語集",
-  description: "「宇宙を身近なものにする」「宇宙をすべての産業の選択肢にする」をビジョンに掲げる宇宙コミュニティ『Cosmo Base（コスモベース）』。初心者から宇宙産業に関心がある人まで、誰もが交流できる優しい場所です。",
-}
+import { useEffect } from "react"
 
-export default async function Home() {
-  return <EventHome />
+const REDIRECT_URL = "https://fsifofficial.github.io/CosmoBase/"
+
+export default function Home() {
+  useEffect(() => {
+    window.location.replace(REDIRECT_URL)
+  }, [])
+
+  return (
+    <meta httpEquiv="refresh" content={`0;url=${REDIRECT_URL}`} />
+  )
 }
