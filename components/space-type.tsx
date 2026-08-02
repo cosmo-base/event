@@ -283,7 +283,7 @@ export function SpaceType({ eventId = "type" }: { eventId?: string }) {
           const axis1 = R >= D ? 'R' : 'D';
           const axis2 = I >= E ? 'I' : 'O';
           const resultType = `${axis1}${axis2}`;
-          await sendToGas({ type: "CBタイプ", eventId, answers, resultType });
+          await sendToGas({ type: "タイプ診断", eventId, answers, resultType });
         } catch (error) {
           // sendToGas handles network failures internally
         }
