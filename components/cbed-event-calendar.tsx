@@ -3,8 +3,8 @@
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Calendar, MapPin, Users, Award, X, Bookmark, Rocket, ExternalLink } from "lucide-react"
-import { TagBadge } from "@/components/cbed-tag-badge"
-import { GlassCard } from "@/components/cbed-glass-card"
+import { TagBadge } from "@/components/tag-badge"
+import { GlassCard } from "@/components/glass-card"
 import { SpaceEvent } from "@/data/cbed"
 import { LaunchEvent } from "@/data/launches"
 
@@ -154,7 +154,7 @@ export default function CbedEventCalendar({
   return (
     <>
       {/* Filters */}
-      <GlassCard className="mb-6 p-4">
+      <GlassCard variant="glass-card" className="mb-6 p-4">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-white/70">種別:</span>
@@ -191,7 +191,7 @@ export default function CbedEventCalendar({
       </GlassCard>
 
       {/* Calendar grid */}
-      <GlassCard className="p-4 sm:p-6 overflow-hidden">
+      <GlassCard variant="glass-card" className="p-4 sm:p-6 overflow-hidden">
         <div className="flex items-center justify-between mb-6">
           <button onClick={previousMonth} className="p-2 rounded-lg hover:bg-white/10 text-white transition-colors">
             <ChevronLeft className="h-5 w-5" />
@@ -320,6 +320,7 @@ export default function CbedEventCalendar({
                   className="text-left w-full rounded-xl transition-all hover:scale-[1.02]"
                 >
                   <GlassCard
+                    variant="glass-card"
                     className={`h-full flex flex-col gap-2 ${
                       isHostEvent ? "border border-purple-500/30" : isPartnerEvent ? "border border-emerald-500/30" : ""
                     }`}

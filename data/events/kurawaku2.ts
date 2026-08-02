@@ -175,9 +175,9 @@ export const kurawaku2Data: EventSpecificData = {
     presentationDate: "2026年8月1日",
     presentationTime: "17:00",
     thumbnailUrl: "/images/pitch-thumb.png",
-    slideUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/pub?start=false&loop=false&delayms=3000",
-    embedUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/embed?start=false&loop=false&delayms=3000",
-    pdfUrl: "https://docs.google.com/presentation/d/1agIQiMmx-KcgELP2k_GhZYXRjqoWXB4X/export/pdf",
+    slideUrl: "",
+    embedUrl: "/event/documents/kurawaku.pdf",
+    pdfUrl: "/event/documents/kurawaku.pdf",
     supplementaryUrl: "",
   } as PitchData,
 
@@ -191,7 +191,7 @@ export const kurawaku2Data: EventSpecificData = {
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
     href: "/event/kurawaku2/type",
-    imageUrl: "/CBtype_logo.png",
+    imageUrl: "/event/CBtype_logo.png",
   } as SpaceTypeFeature,
 
   contents: [

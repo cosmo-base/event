@@ -169,7 +169,7 @@ export const SDF26Data: EventSpecificData = {
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
     href: "https://fsifofficial.github.io/CosmoBase/type",
-    imageUrl: "/CBtype_logo.png",
+    imageUrl: "/event/CBtype_logo.png",
   } as SpaceTypeFeature,
 
   contents: [
