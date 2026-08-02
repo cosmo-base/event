@@ -10,13 +10,13 @@ interface Props {
 }
 
 export function ContentExpiryGate({ expiryDate, discordUrl, children }: Props) {
-  const [expired, setExpired] = useState<boolean | null>(null)
+  const [expired, setExpired] = useState(false)
 
   useEffect(() => {
-    setExpired(new Date() >= new Date(expiryDate))
+    const isExpired = new Date() >= new Date(expiryDate)
+    const isPreview = new URLSearchParams(window.location.search).get("preview") === "locked"
+    setExpired(isExpired || isPreview)
   }, [expiryDate])
-
-  if (expired === null) return null
 
   if (expired) {
     return (
