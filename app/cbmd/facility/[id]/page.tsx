@@ -8,7 +8,6 @@ import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData } from "@/data/CBMD"
-import { LinkedEvents } from "./linked-events"
 import { FacilityImage } from "@/components/facility-image"
 
 export const dynamic = "force-static"
@@ -53,7 +52,6 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
                 <TagBadge variant="primary">{facility.category}</TagBadge>
                 {facility.hasPlanetarium && <TagBadge variant="accent"><Star className="w-3 h-3 mr-1" />プラネタリウム</TagBadge>}
                 {facility.isFree && <TagBadge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">無料</TagBadge>}
-                {facility.hasEvent && <TagBadge variant="accent"><Calendar className="w-3 h-3 mr-1" />イベント開催中</TagBadge>}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">{facility.name}</h1>
               <a
@@ -90,9 +88,6 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
               </GlassCard>
             )}
 
-            {facility.events && facility.events.length > 0 && (
-              <LinkedEvents events={facility.events} />
-            )}
           </div>
 
           <div className="space-y-6 mt-8 lg:mt-0">

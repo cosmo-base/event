@@ -2,25 +2,20 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Map, Search, Database, ArrowRight, Calendar, Sparkles, AlertCircle, MessageSquarePlus } from "lucide-react"
+import { Map, Search, Database, ArrowRight, Sparkles, AlertCircle, MessageSquarePlus } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData, spacecraftTags, Facility } from "@/data/CBMD"
-import { fetchEventsData, SpaceEvent } from "@/data/cbed"
 import { FacilityImage } from "@/components/facility-image"
 
 export default function CbmdPage() {
   const [featuredFacilities, setFeaturedFacilities] = useState<Facility[]>([])
   const [recentFacilities, setRecentFacilities] = useState<Facility[]>([])
-  const [recentEvents, setRecentEvents] = useState<SpaceEvent[]>([])
 
   useEffect(() => {
     async function loadData() {
-      const [fetchedFacilities, fetchedEvents] = await Promise.all([
-        fetchFacilitiesData(),
-        fetchEventsData(),
-      ])
+      const fetchedFacilities = await fetchFacilitiesData()
 
       setFeaturedFacilities([...fetchedFacilities].sort(() => Math.random() - 0.5).slice(0, 4))
       setRecentFacilities(
@@ -28,27 +23,6 @@ export default function CbmdPage() {
           .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
           .slice(0, 4)
       )
-
-      const parseDate = (dStr: string) => {
-        if (!dStr) return null
-        const match = dStr.match(/(\d{4})[-/年\.]\s*(\d{1,2})[-/月\.]\s*(\d{1,2})/)
-        if (!match) return null
-        return new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10))
-      }
-
-      const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }))
-      today.setHours(0, 0, 0, 0)
-
-      const activeEvents = fetchedEvents.filter((e) => {
-        const isAtFacility = fetchedFacilities.some((f) => e.location && e.location.includes(f.name))
-        if (!isAtFacility) return false
-        const start = parseDate(e.date || "")
-        const end = parseDate(e.endDate || "") || start
-        if (!start || !end) return false
-        return today >= start && today <= end
-      })
-
-      setRecentEvents(activeEvents.slice(0, 3))
     }
     loadData()
   }, [])
@@ -160,31 +134,6 @@ export default function CbmdPage() {
           </div>
         </div>
       </section>
-
-      {/* Events Section */}
-      {recentEvents.length > 0 && (
-        <section className="py-20 px-4 bg-secondary/10">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">施設で開催中のイベント</h2>
-              <p className="text-muted-foreground">CBMD登録施設で今注目のイベント</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {recentEvents.map((event) => (
-                <GlassCard key={event.id} className="h-full">
-                  <div className="space-y-3">
-                    <p className="text-xs text-primary font-medium">
-                      {event.endDate ? `${event.date} 〜 ${event.endDate}` : event.date}
-                    </p>
-                    <h3 className="font-semibold text-foreground line-clamp-2">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground">{event.location}</p>
-                  </div>
-                </GlassCard>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Recently Added */}
       <section className="py-20 px-4">

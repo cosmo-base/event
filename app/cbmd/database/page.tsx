@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
-import { MapPin, Star, Calendar, ArrowUpDown, Grid3X3, List, Filter, ExternalLink, Loader2 } from "lucide-react"
+import { MapPin, Star, ArrowUpDown, Grid3X3, List, Filter, ExternalLink, Loader2 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,6 @@ export default function DatabasePage() {
   const [viewMode, setViewMode] = useState<ViewMode>("card")
   const [selectedRegions, setSelectedRegions] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [hasEvent, setHasEvent] = useState(false)
   const [onlyFree, setOnlyFree] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
 
@@ -40,7 +39,6 @@ export default function DatabasePage() {
     let filtered = [...facilities]
     if (selectedRegions.length > 0) filtered = filtered.filter((f) => selectedRegions.includes(f.region))
     if (selectedCategories.length > 0) filtered = filtered.filter((f) => selectedCategories.includes(f.category))
-    if (hasEvent) filtered = filtered.filter((f) => f.hasEvent)
     if (onlyFree) filtered = filtered.filter((f) => f.isFree)
 
     return filtered.sort((a, b) => {
@@ -55,13 +53,13 @@ export default function DatabasePage() {
         default: return 0
       }
     })
-  }, [facilities, sortBy, selectedRegions, selectedCategories, hasEvent, onlyFree])
+  }, [facilities, sortBy, selectedRegions, selectedCategories, onlyFree])
 
   const handleRegionToggle = (region: string) =>
     setSelectedRegions((prev) => prev.includes(region) ? prev.filter((r) => r !== region) : [...prev, region])
   const handleCategoryToggle = (category: string) =>
     setSelectedCategories((prev) => prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category])
-  const clearFilters = () => { setSelectedRegions([]); setSelectedCategories([]); setHasEvent(false); setOnlyFree(false) }
+  const clearFilters = () => { setSelectedRegions([]); setSelectedCategories([]); setOnlyFree(false) }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -121,10 +119,6 @@ export default function DatabasePage() {
               </div>
               <div className="space-y-2 pt-2 border-t border-border/30">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="has-event" checked={hasEvent} onCheckedChange={(checked) => setHasEvent(checked === true)} />
-                  <Label htmlFor="has-event" className="text-sm text-muted-foreground cursor-pointer">イベント開催中のみ</Label>
-                </div>
-                <div className="flex items-center space-x-2">
                   <Checkbox id="only-free" checked={onlyFree} onCheckedChange={(checked) => setOnlyFree(checked === true)} />
                   <Label htmlFor="only-free" className="text-sm text-emerald-400 font-medium cursor-pointer">入館料無料のみ</Label>
                 </div>
@@ -162,7 +156,6 @@ export default function DatabasePage() {
                       </div>
                       <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
                         <span>更新: {facility.updatedAt}</span>
-                        {facility.hasEvent && <span className="flex items-center gap-1 text-accent"><Calendar className="w-3 h-3" />イベント</span>}
                       </div>
                     </div>
                   </GlassCard>
@@ -189,7 +182,6 @@ export default function DatabasePage() {
                         <span className="font-medium text-foreground">{facility.name}</span>
                         <div className="flex items-center gap-2 mt-1">
                           {facility.hasPlanetarium && <Star className="w-3 h-3 text-accent" />}
-                          {facility.hasEvent && <Calendar className="w-3 h-3 text-accent" />}
                         </div>
                       </td>
                       <td className="py-4 px-4 hidden md:table-cell"><TagBadge variant="primary">{facility.category}</TagBadge></td>

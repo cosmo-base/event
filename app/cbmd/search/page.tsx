@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Search, MapPin, Star, Calendar, X, Loader2, Filter, Coins } from "lucide-react"
+import { Search, MapPin, Star, X, Loader2, Filter, Coins } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Input } from "@/components/ui/input"
@@ -215,11 +215,6 @@ function SearchContent() {
                   <div className="flex flex-wrap gap-1">
                     {facility.tags.slice(0, 4).map((tag) => <TagBadge key={tag}>{tag}</TagBadge>)}
                   </div>
-                  {facility.hasEvent && (
-                    <div className="flex items-center gap-1 text-xs text-accent mt-auto pt-2">
-                      <Calendar className="w-3 h-3" />イベント開催中
-                    </div>
-                  )}
                 </div>
               </GlassCard>
             </Link>

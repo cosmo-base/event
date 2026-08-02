@@ -1,5 +1,3 @@
-import { fetchEventsData, SpaceEvent } from "@/data/cbed"
-
 export interface Facility {
   id: string
   name: string
@@ -13,7 +11,6 @@ export interface Facility {
   image: string
   tags: string[]
   hasPlanetarium: boolean
-  hasEvent: boolean
   openingHours: string
   closedDays: string
   admissionFee: string
@@ -22,7 +19,6 @@ export interface Facility {
   twitter?: string
   instagram?: string
   youtube?: string
-  events?: SpaceEvent[]
   updatedAt: string
   lat?: number
   lng?: number
@@ -61,37 +57,6 @@ function getRegionByPrefecture(pref: string): string {
   return "その他"
 }
 
-export function isEventActive(event: SpaceEvent): boolean {
-  const parseDateTime = (dStr?: string, tStr?: string, isEnd = false) => {
-    if (!dStr) return null
-    const match = dStr.match(/(\d{4})[-/年\.]\s*(\d{1,2})[-/月\.]\s*(\d{1,2})/)
-    if (!match) return null
-    const year = parseInt(match[1], 10)
-    const month = parseInt(match[2], 10) - 1
-    const day = parseInt(match[3], 10)
-    const date = new Date(year, month, day)
-    if (tStr) {
-      const timeMatch = isEnd
-        ? tStr.match(/(?:〜|-|~)\s*(\d{1,2}):(\d{2})/) || tStr.match(/(\d{1,2}):(\d{2})/)
-        : tStr.match(/(\d{1,2}):(\d{2})/)
-      if (timeMatch) {
-        date.setHours(parseInt(timeMatch[1], 10), parseInt(timeMatch[2], 10), 0, 0)
-      } else {
-        isEnd ? date.setHours(23, 59, 59, 999) : date.setHours(0, 0, 0, 0)
-      }
-    } else {
-      isEnd ? date.setHours(23, 59, 59, 999) : date.setHours(0, 0, 0, 0)
-    }
-    return date
-  }
-
-  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" }))
-  const start = parseDateTime(event.date, event.time, false)
-  const end = parseDateTime(event.endDate || event.date, event.time, true)
-
-  if (!end) return false
-  return now <= end
-}
 
 function parseFacilityCSV(csvText: string): any[] {
   const arr: string[][] = []
@@ -127,18 +92,16 @@ function parseFacilityCSV(csvText: string): any[] {
 export async function fetchFacilitiesData(): Promise<Facility[]> {
   try {
     const cacheBusterUrl = `${CBMD_SPREADSHEET_BASE_URL}&_t=${BUILD_TIMESTAMP}`
-    const [facilitiesRes, allEvents] = await Promise.all([fetch(cacheBusterUrl), fetchEventsData()])
+    const res = await fetch(cacheBusterUrl)
 
-    if (!facilitiesRes.ok) throw new Error(`CBMDデータの取得に失敗: HTTP ${facilitiesRes.status}`)
+    if (!res.ok) throw new Error(`CBMDデータの取得に失敗: HTTP ${res.status}`)
 
-    const text = await facilitiesRes.text()
+    const text = await res.text()
     const rawFacilities = parseFacilityCSV(text)
 
     return rawFacilities.map((raw) => {
       const prefecture = String(raw.prefecture || "").trim()
       const region = getRegionByPrefecture(prefecture)
-      const relatedEvents = allEvents.filter((event) => event.location && event.location.includes(raw.name))
-      const hasActiveEvent = relatedEvents.some((event) => isEventActive(event))
       const tags = raw.tags ? String(raw.tags).split(",").map((t: string) => t.trim()).filter(Boolean) : []
       const fee = String(raw.admissionFee || "").trim()
       const isFree = fee.includes("無料") || fee.includes("0円") || fee === "0"
@@ -156,7 +119,6 @@ export async function fetchFacilitiesData(): Promise<Facility[]> {
         image: String(raw.image || "/images/placeholder.jpg").trim(),
         tags,
         hasPlanetarium: String(raw.hasPlanetarium).toUpperCase() === "TRUE",
-        hasEvent: hasActiveEvent,
         openingHours: String(raw.openingHours || "").trim(),
         closedDays: String(raw.closedDays || "").trim(),
         admissionFee: fee,
@@ -165,7 +127,6 @@ export async function fetchFacilitiesData(): Promise<Facility[]> {
         twitter: raw.twitter ? String(raw.twitter).trim() : undefined,
         instagram: raw.instagram ? String(raw.instagram).trim() : undefined,
         youtube: raw.youtube ? String(raw.youtube).trim() : undefined,
-        events: relatedEvents,
         updatedAt: String(raw.updatedAt || "").trim(),
         lat: raw.lat ? parseFloat(String(raw.lat)) : undefined,
         lng: raw.lng ? parseFloat(String(raw.lng)) : undefined,
