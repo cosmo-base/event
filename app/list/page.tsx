@@ -129,7 +129,7 @@ export default function EventListPage() {
             {EVENTS.map((ev) => {
               const s = STATUS[ev.status]
               return (
-                <div key={ev.id} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 transition-colors">
+                <Link key={ev.id} href={ev.path} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/event/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
                   <div className="flex-1 min-w-0">
@@ -146,14 +146,8 @@ export default function EventListPage() {
                       <span className="text-zinc-600">{ev.type}</span>
                     </div>
                   </div>
-                  <Link
-                    href={ev.path}
-                    className="shrink-0 flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-3 py-1.5 rounded-lg transition-colors"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    開く
-                  </Link>
-                </div>
+                  <ExternalLink className="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                </Link>
               )
             })}
           </div>
@@ -166,7 +160,9 @@ export default function EventListPage() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {TOOLS.map((tool) => (
-              <div key={tool.name} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-600 transition-colors">
+              <div key={tool.name} className="relative bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
+                {/* stretched link — covers whole card, goes to first (TOP) link */}
+                <Link href={tool.links[0].href} className="absolute inset-0 rounded-xl" aria-label={tool.name} />
                 <div className="flex items-start gap-3 mb-4">
                   <div className="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
                     {tool.logo ? (
@@ -181,7 +177,7 @@ export default function EventListPage() {
                     <p className="text-xs text-zinc-500 leading-relaxed whitespace-pre-line">{tool.description}</p>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="relative z-10 flex flex-wrap gap-2">
                   {tool.links.map((link) => (
                     <Link
                       key={link.href}
