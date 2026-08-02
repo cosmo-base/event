@@ -147,8 +147,8 @@ export default function RocketDiagnosePage() {
     })
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(userStats[key] - bestRocket.stats[key]), 0)
     const matchPercent = Math.max(78, Math.min(98, Math.round(100 - totalDiff * 2.5)))
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxfhx-DlgYauECo0vPZ8TJNjs1pIL96GxhifeB4FTfxN__jIpYoz9JdNMnLub9euDtORQ/exec"
-    const payload: Record<string, any> = { rocket: bestRocket.name, matchPercent, ...userStats }
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
+    const payload: Record<string, any> = { type: "rocket", rocket: bestRocket.name, matchPercent, ...userStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
     try {
       await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
