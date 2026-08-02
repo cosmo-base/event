@@ -1,6 +1,7 @@
 import { EventHeader } from "@/components/event-header"
 import { SocialFooter } from "@/components/social-footer"
 import { eventPageData } from "@/data/event-page-data"
+import { ContentExpiryGate } from "@/components/content-expiry-gate"
 import Link from "next/link"
 
 const navLinks = [
@@ -13,6 +14,7 @@ const navLinks = [
 export default function CbedLayout({ children }: { children: React.ReactNode }) {
   const data = eventPageData
   return (
+    <ContentExpiryGate expiryDate="2026-08-08" discordUrl="https://discord.gg/X78w86XE3v">
     <div className="min-h-dvh bg-[#000033]">
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
       <main className="pt-14">
@@ -46,5 +48,6 @@ export default function CbedLayout({ children }: { children: React.ReactNode }) 
         legalLinks={data.legalLinks}
       />
     </div>
+    </ContentExpiryGate>
   )
 }
