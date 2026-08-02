@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { GlassCard } from "@/components/glass-card"
 import { Constellation, ConstellationStats, QUESTIONS, getConstellations } from "@/data/CMconstellation"
 import { Zap, Clock, Stars as ConstellationIcon, Loader2, ChevronLeft, ChevronRight, BookOpen } from "lucide-react"
+import { sendToGas } from "@/lib/gas-queue"
 
 const STAT_KEYS = ['origin', 'energy', 'role', 'bond', 'form', 'mood', 'presence'] as const
 
@@ -69,14 +70,9 @@ export default function ConstellationDiagnosePage() {
     const totalDiff = STAT_KEYS.reduce((acc, key) => acc + Math.abs(finalStats[key] - (bestConstellation.stats[key] || 5)), 0)
     const matchPercent = Math.max(60, Math.min(99, Math.round(100 - totalDiff * 1.2)))
 
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
     const payload: Record<string, any> = { type: "constellation", rocket: bestConstellation.name, matchPercent, ...finalStats }
     for (let i = 1; i <= QUESTIONS.length; i++) payload[`q${i}`] = userAnswers[i] || ""
-    try {
-      await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
-    } catch (err) {
-      console.error("GAS送信エラー:", err)
-    }
+    await sendToGas(payload).catch(() => {})
 
     const encodedStats = STAT_KEYS.map(k => Math.min(35, finalStats[k] || 5).toString(36)).join('')
     setTimeout(() => {
