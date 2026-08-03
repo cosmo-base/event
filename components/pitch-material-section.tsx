@@ -20,26 +20,12 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             {/* スライド埋め込み / サムネイル */}
             <div className="relative aspect-video md:aspect-auto">
               {pitch.embedUrl ? (
-                pitch.embedUrl.endsWith(".pdf") ? (
-                  <object
-                    data={pitch.embedUrl}
-                    type="application/pdf"
-                    title={pitch.presentationTitle}
-                    className="absolute inset-0 h-full w-full border-0"
-                  >
-                    <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground p-4">
-                      PDF を表示できません。
-                      {pitch.pdfUrl && <a href={pitch.pdfUrl} className="ml-1 underline">ダウンロードしてご覧ください。</a>}
-                    </p>
-                  </object>
-                ) : (
-                  <iframe
-                    src={pitch.embedUrl}
-                    title={pitch.presentationTitle}
-                    className="absolute inset-0 h-full w-full border-0"
-                    allowFullScreen
-                  />
-                )
+                <iframe
+                  src={pitch.embedUrl}
+                  title={pitch.presentationTitle}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allowFullScreen
+                />
               ) : pitch.thumbnailUrl ? (
                 <Image
                   src={pitch.thumbnailUrl || "/placeholder.svg"}

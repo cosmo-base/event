@@ -176,8 +176,8 @@ export const kurawaku2Data: EventSpecificData = {
     presentationTime: "17:00",
     thumbnailUrl: "/images/pitch-thumb.png",
     slideUrl: "",
-    embedUrl: "/event/documents/kurawaku.pdf",
-    pdfUrl: "/event/documents/kurawaku.pdf",
+    embedUrl: "",
+    pdfUrl: "",
     supplementaryUrl: "",
   } as PitchData,
 
