@@ -4,6 +4,7 @@ import type { PitchData } from "@/data/event-page-data"
 import { SectionHeading } from "@/components/section-heading"
 import { ExternalLinkButton } from "@/components/external-link-button"
 import { Reveal } from "@/components/reveal"
+import { PdfSlideViewer } from "@/components/pdf-slide-viewer"
 
 export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
   return (
@@ -20,12 +21,16 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             {/* スライド埋め込み / サムネイル */}
             <div className="relative aspect-video md:aspect-auto">
               {pitch.embedUrl ? (
-                <iframe
-                  src={pitch.embedUrl}
-                  title={pitch.presentationTitle}
-                  className="absolute inset-0 h-full w-full border-0"
-                  allowFullScreen
-                />
+                pitch.embedUrl.endsWith(".pdf") ? (
+                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} />
+                ) : (
+                  <iframe
+                    src={pitch.embedUrl}
+                    title={pitch.presentationTitle}
+                    className="absolute inset-0 h-full w-full border-0"
+                    allowFullScreen
+                  />
+                )
               ) : pitch.thumbnailUrl ? (
                 <Image
                   src={pitch.thumbnailUrl || "/placeholder.svg"}
