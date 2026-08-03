@@ -176,8 +176,8 @@ export const kurawaku2Data: EventSpecificData = {
     presentationTime: "17:00",
     thumbnailUrl: "/images/pitch-thumb.png",
     slideUrl: "",
-    embedUrl: "",
-    pdfUrl: "",
+    embedUrl: "https://docs.google.com/viewer?url=https%3A%2F%2Fcosmo-base.github.io%2Fevent%2Fdocuments%2Fkurawaku2.pdf&embedded=true",
+    pdfUrl: "/event/documents/kurawaku2.pdf",
     supplementaryUrl: "",
   } as PitchData,
 
