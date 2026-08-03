@@ -1,14 +1,16 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2 } from "lucide-react"
 
 interface PdfSlideViewerProps {
   url: string
   title?: string
+  downloadUrl?: string
+  downloadName?: string
 }
 
-export function PdfSlideViewer({ url, title }: PdfSlideViewerProps) {
+export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSlideViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const viewerRef = useRef<HTMLDivElement>(null)
   const [totalPages, setTotalPages] = useState(0)
@@ -82,7 +84,6 @@ export function PdfSlideViewer({ url, title }: PdfSlideViewerProps) {
     if (loading || error) return
     const handler = () => {
       setIsFullscreen(!!document.fullscreenElement)
-      // Wait a frame for the browser to resize the element before re-rendering
       requestAnimationFrame(() => renderPage(currentPage))
     }
     document.addEventListener("fullscreenchange", handler)
@@ -154,6 +155,17 @@ export function PdfSlideViewer({ url, title }: PdfSlideViewerProps) {
             >
               <ChevronRight className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
             </button>
+            {isFullscreen && downloadUrl && (
+              <a
+                href={downloadUrl}
+                download={downloadName}
+                className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors ml-1"
+                aria-label="ダウンロード"
+                title="PDFをダウンロード"
+              >
+                <Download className="w-5 h-5" />
+              </a>
+            )}
             <button
               onClick={toggleFullscreen}
               className={`${isFullscreen ? "p-2" : "p-1.5"} rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors ml-1`}

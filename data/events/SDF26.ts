@@ -184,7 +184,7 @@ export const SDF26Data: EventSpecificData = {
       status: "available",
       external: true,
       icon: "sparkles",
-      imageUrl: "/event/type/CB_type.png",
+      imageUrl: "/event/CBtype_logo.png",
     },
     {
       id: "c-event-db",
