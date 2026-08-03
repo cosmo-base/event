@@ -36,8 +36,13 @@ async function postToGas(payload: Record<string, unknown>): Promise<void> {
   })
 }
 
+function isOperatorMode(): boolean {
+  try { return sessionStorage.getItem("operator_mode") === "1" } catch { return false }
+}
+
 /** Enqueue payload, attempt to send immediately. Falls back to queue on network error. */
 export async function sendToGas(payload: Record<string, unknown>): Promise<void> {
+  if (isOperatorMode()) return
   const item: QueuedItem = {
     id: typeof crypto !== "undefined" ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
     ts: Date.now(),
@@ -62,6 +67,7 @@ export async function sendToGas(payload: Record<string, unknown>): Promise<void>
 
 /** Retry all queued items. Call once on page load. */
 export async function flushGasQueue(): Promise<void> {
+  if (isOperatorMode()) return
   const q = readQueue()
   if (q.length === 0) return
 

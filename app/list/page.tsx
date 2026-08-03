@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ExternalLink, MapPin, Calendar, Lock, TableProperties } from "lucide-react"
 import { EventGacha } from "@/components/event-gacha"
 import type { GachaPrize } from "@/components/event-gacha"
+import { OperatorModeSetter } from "@/components/operator-mode-setter"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
@@ -121,6 +122,7 @@ const GACHA_PRIZES: GachaPrize[] = [
 export default function EventListPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <OperatorModeSetter />
       <div className="max-w-5xl mx-auto px-4 py-10">
 
         {/* Header */}
