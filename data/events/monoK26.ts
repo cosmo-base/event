@@ -29,7 +29,7 @@ export const monoK26Data: EventSpecificData = {
 
   event: {
     name: "全日本学生ものづくりExpo@関東",
-    shortName: "monoK26",
+    shortName: "ものづくりExpo関東",
     date: "2026年8月28日（金）",
     venue: "東京都立産業貿易センター台東館",
     boothNumber: "",
@@ -130,7 +130,7 @@ export const monoK26Data: EventSpecificData = {
     },
     {
       id: "ql-contact",
-      title: "問い合わせ",
+      title: "お問い合わせ",
       description: "ご質問・ご相談はこちら",
       href: "https://fsifofficial.github.io/CosmoBase/contact",
       icon: "message",
@@ -155,11 +155,11 @@ export const monoK26Data: EventSpecificData = {
   ] as QuickLink[],
 
   pitch: {
-    title: "講演資料",
-    presentationTitle: "発表タイトル",
-    description: "発表の説明",
-    speakerName: "Cosmo Base",
-    presentationDate: "2026年XX月XX日",
+    title: "ピッチ資料",
+    presentationTitle: "",
+    description: "",
+    speakerName: "",
+    presentationDate: "",
     presentationTime: "",
     thumbnailUrl: "",
     slideUrl: "",
@@ -186,10 +186,10 @@ export const monoK26Data: EventSpecificData = {
       id: "c-space-type",
       title: "宇宙タイプ診断",
       description: "5つの質問であなたの宇宙タイプが分かる、人気の診断コンテンツ。",
-      href: "https://fsifofficial.github.io/CosmoBase/type",
+      href: "/event/monoK26/type/",
       duration: "約2分",
       audience: "初心者向け",
-      labels: ["人気コンテンツ", "知識不要", "スマートフォン対応"],
+      labels: ["人気コンテンツ", "知識不要"],
       status: "available",
       external: true,
       icon: "sparkles",
