@@ -15,7 +15,7 @@ import type {
 
 export const kurawaku2Data: EventSpecificData = {
   site: {
-    pageTitle: "Cosmo Base イベント特設ページ｜くらわくトーク#2",
+    pageTitle: "くらわくトーク#2｜Cosmo Base イベント特設ページ",
     pageDescription:
       "Cosmo Base のイベント特設ページ。発表スライド、宇宙タイプ診断、宇宙クイズなどのコンテンツを、その場で体験できます。",
     siteName: "Cosmo Base",
@@ -151,7 +151,7 @@ export const kurawaku2Data: EventSpecificData = {
     },
     {
       id: "ql-contact",
-      title: "問い合わせ",
+      title: "お問い合わせ",
       description: "ご質問・ご相談はこちら",
       href: "https://fsifofficial.github.io/CosmoBase/contact",
       icon: "message",
@@ -202,7 +202,7 @@ export const kurawaku2Data: EventSpecificData = {
       href: "/event/kurawaku2/type",
       duration: "約2分",
       audience: "初心者向け",
-      labels: ["人気コンテンツ", "知識不要", "スマートフォン対応"],
+      labels: ["人気コンテンツ", "知識不要"],
       status: "available",
       external: true,
       icon: "sparkles",
