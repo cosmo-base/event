@@ -22,7 +22,7 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             <div className="relative aspect-video md:aspect-auto">
               {pitch.embedUrl ? (
                 pitch.embedUrl.endsWith(".pdf") ? (
-                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} />
+                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName="くらわくトーク#2_FSIF眞鍋.pdf" />
                 ) : (
                   <iframe
                     src={pitch.embedUrl}
