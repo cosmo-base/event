@@ -169,7 +169,7 @@ export const monoS26Data: EventSpecificData = {
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
     href: "https://fsifofficial.github.io/CosmoBase/type",
-    imageUrl: "/event/CBtype_logo.png",
+    imageUrl: "/event/type/CB_type.png",
   } as SpaceTypeFeature,
 
   contents: [
@@ -184,7 +184,7 @@ export const monoS26Data: EventSpecificData = {
       status: "available",
       external: true,
       icon: "sparkles",
-      imageUrl: "/event/CBtype_logo.png",
+      imageUrl: "/event/type/CB_type.png",
     },
     {
       id: "c-event-db",
