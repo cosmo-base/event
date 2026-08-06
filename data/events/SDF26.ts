@@ -146,7 +146,9 @@ export const SDF26Data: EventSpecificData = {
   ] as QuickLink[],
 
   pitch: {
-    title: "",
+    title: "ポスター",
+    eyebrow: "Poster",
+    sectionDescription: "当日のポスターをご覧いただけます。",
     presentationTitle: "",
     description: "",
     speakerName: "",

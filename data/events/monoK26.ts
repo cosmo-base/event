@@ -156,6 +156,10 @@ export const monoK26Data: EventSpecificData = {
 
   pitch: {
     title: "ピッチ資料",
+    eyebrow: "Pitch",
+    sectionDescription: "当日のピッチ資料をご覧いただけます。",
+    pitchLockFrom: "13:30",
+    pitchLockUntil: "15:55",
     presentationTitle: "",
     description: "",
     speakerName: "",

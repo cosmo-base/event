@@ -15,6 +15,7 @@ import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { EventSurvey } from "@/components/event-survey"
+import { PitchLockGate } from "@/components/pitch-lock-gate"
 
 const SURVEY_QUESTIONS = [
   "本日のブースはいかがでしたか？",
@@ -26,6 +27,7 @@ export default function Page() {
   const data = { ...orgData, ...monoS26Data }
 
   return (
+    <PitchLockGate pitch={data.pitch}>
     <div className="min-h-dvh bg-background">
       <PageViewTracker eventId="monoS26" />
       <a
@@ -81,5 +83,6 @@ export default function Page() {
         legalLinks={data.legalLinks}
       />
     </div>
+    </PitchLockGate>
   )
 }
