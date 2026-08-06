@@ -63,7 +63,7 @@ export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
       )}
       <div className="shrink-0 py-3 px-6 bg-black/70 text-center">
         <p className="text-white/40 text-xs">
-          ピッチ終了後（{pitch.pitchLockUntil}〜）はコンテンツページもお楽しみいただけます
+          ピッチ終了後（{pitch.pitchLockUntil}〜）は、参加者限定の Cosmo Base コンテンツを特別に公開しています
         </p>
       </div>
     </div>
