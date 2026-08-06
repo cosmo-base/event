@@ -158,7 +158,8 @@ export const monoK26Data: EventSpecificData = {
     title: "ピッチ資料",
     eyebrow: "Pitch",
     sectionDescription: "当日のピッチ資料をご覧いただけます。",
-    pitchLockUntil: "", // HH:MM — ピッチ終了時刻を設定するとそれまでスライド全画面ロック
+    pitchLockFrom: "13:30",
+    pitchLockUntil: "15:55",
     presentationTitle: "発表タイトル",
     description: "発表の説明",
     speakerName: "Cosmo Base",

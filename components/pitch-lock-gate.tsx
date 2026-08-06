@@ -9,36 +9,40 @@ interface PitchLockGateProps {
   children: React.ReactNode
 }
 
-function isBeforeTime(hhmm: string): boolean {
+function toMinutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number)
-  const unlock = new Date()
-  unlock.setHours(h, m, 0, 0)
-  return new Date() < unlock
+  return h * 60 + m
+}
+
+function isLocked(from: string | undefined, until: string): boolean {
+  if (!/^\d{2}:\d{2}$/.test(until)) return false
+  const now = new Date()
+  const currentMin = now.getHours() * 60 + now.getMinutes()
+  const untilMin = toMinutes(until)
+  const fromMin = from && /^\d{2}:\d{2}$/.test(from) ? toMinutes(from) : 0
+  return currentMin >= fromMin && currentMin < untilMin
 }
 
 export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
   const [locked, setLocked] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const { pitchLockUntil } = pitch
+    const { pitchLockFrom, pitchLockUntil } = pitch
     if (!pitchLockUntil || !/^\d{2}:\d{2}$/.test(pitchLockUntil)) {
       setLocked(false)
       return
     }
 
     const check = () => {
-      const before = isBeforeTime(pitchLockUntil)
-      setLocked(before)
-      if (!before) clearInterval(id)
+      const active = isLocked(pitchLockFrom, pitchLockUntil)
+      setLocked(active)
     }
     check()
     const id = setInterval(check, 30_000)
     return () => clearInterval(id)
   }, [pitch])
 
-  // not yet mounted — render nothing to avoid hydration mismatch
   if (locked === null) return null
-
   if (!locked) return <>{children}</>
 
   return (
@@ -59,7 +63,7 @@ export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
       )}
       <div className="shrink-0 py-3 px-6 bg-black/70 text-center">
         <p className="text-white/40 text-xs">
-          {pitch.pitchLockUntil} からコンテンツ全体にアクセスできます
+          ピッチ終了後（{pitch.pitchLockUntil}〜）はコンテンツページもお楽しみいただけます
         </p>
       </div>
     </div>

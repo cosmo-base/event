@@ -59,7 +59,9 @@ export interface PitchData {
   title: string
   eyebrow?: string
   sectionDescription?: string
-  /** HH:MM (JST) — while current time is before this, page is gated to pitch slide only */
+  /** HH:MM (JST) — lock starts at this time (defaults to start of day if omitted) */
+  pitchLockFrom?: string
+  /** HH:MM (JST) — lock ends at this time; gate is inactive when empty or unset */
   pitchLockUntil?: string
   presentationTitle: string
   description: string
