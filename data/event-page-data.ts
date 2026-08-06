@@ -57,6 +57,10 @@ export interface QuickLink {
 
 export interface PitchData {
   title: string
+  eyebrow?: string
+  sectionDescription?: string
+  /** HH:MM (JST) — while current time is before this, page is gated to pitch slide only */
+  pitchLockUntil?: string
   presentationTitle: string
   description: string
   speakerName: string

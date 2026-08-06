@@ -11,9 +11,9 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
     <section id="pitch" className="scroll-mt-16 border-t border-border py-14">
       <div className="mx-auto max-w-6xl px-4">
         <SectionHeading
-          eyebrow="Presentation"
+          eyebrow={pitch.eyebrow ?? "Presentation"}
           title={pitch.title}
-          description="当日の発表スライドをご覧いただけます。"
+          description={pitch.sectionDescription ?? "当日の発表スライドをご覧いただけます。"}
         />
 
         <Reveal className="mt-8">

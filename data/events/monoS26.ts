@@ -146,7 +146,10 @@ export const monoS26Data: EventSpecificData = {
   ] as QuickLink[],
 
   pitch: {
-    title: "講演資料",
+    title: "ピッチ資料",
+    eyebrow: "Pitch",
+    sectionDescription: "当日のピッチ資料をご覧いただけます。",
+    pitchLockUntil: "", // HH:MM — ピッチ終了時刻を設定するとそれまでスライド全画面ロック
     presentationTitle: "発表タイトル",
     description: "発表の説明",
     speakerName: "Cosmo Base",
