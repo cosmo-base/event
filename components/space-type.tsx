@@ -79,7 +79,7 @@ const CONTENT_LINKS: Record<string, string> = {
   "宇宙のイベント行ってきた": "https://note.com/cosmobase/n/n6de912259db4"
 };
 
-function ResultScreen({ answers }: { answers: number[] }) {
+function ResultScreen({ answers, backHref, backLabel }: { answers: number[]; backHref: string; backLabel: string }) {
   const resultType = useMemo<ResultType>(() => {
     if (!answers || answers.length < 5) return 'RI';
     const R = answers[0];
@@ -229,16 +229,16 @@ function ResultScreen({ answers }: { answers: number[] }) {
       <FullDiagnosisCard />
 
       <div className="w-full max-w-md mt-8 pt-6 border-t border-gray-800 text-center">
-        <Link href="/kurawaku2" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors inline-flex items-center gap-1">
+        <Link href={backHref} className="text-sm text-gray-400 hover:text-cyan-400 transition-colors inline-flex items-center gap-1">
           <ArrowLeft className="h-3 w-3" />
-          くらわくトーク#2 イベントページに戻る
+          {backLabel}
         </Link>
       </div>
     </div>
   );
 }
 
-export function SpaceType({ eventId = "type" }: { eventId?: string }) {
+export function SpaceType({ eventId = "type", backHref = "/kurawaku2", backLabel = "くらわくトーク#2 イベントページに戻る" }: { eventId?: string; backHref?: string; backLabel?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [isFading, setIsFading] = useState(false);
@@ -300,7 +300,7 @@ export function SpaceType({ eventId = "type" }: { eventId?: string }) {
   }, [isLoading, answers]);
 
   if (isFinished) {
-    return <ResultScreen answers={answers} />;
+    return <ResultScreen answers={answers} backHref={backHref} backLabel={backLabel} />;
   }
 
   if (isLoading) {

@@ -8,14 +8,16 @@ import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData, regions, facilityTypes, Facility } from "@/data/CBMD"
+import { useCbmdContext } from "@/components/cbmd-region-context"
 
 const FacilityMap = dynamic(() => import("./facility-map"), { ssr: false })
 
 export default function CbmdMapPage() {
+  const { lockedRegion, basePath } = useCbmdContext()
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [filtered, setFiltered] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(lockedRegion)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [onlyPlanetarium, setOnlyPlanetarium] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
@@ -52,11 +54,11 @@ export default function CbmdMapPage() {
         >
           <Filter className="w-4 h-4 mr-2" /> フィルター {showFilters ? "▲" : "▼"}
         </Button>
-        {(selectedRegion || selectedCategory || onlyPlanetarium) && (
+        {((!lockedRegion && selectedRegion) || selectedCategory || onlyPlanetarium) && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => { setSelectedRegion(null); setSelectedCategory(null); setOnlyPlanetarium(false) }}
+            onClick={() => { if (!lockedRegion) setSelectedRegion(null); setSelectedCategory(null); setOnlyPlanetarium(false) }}
             className="text-muted-foreground"
           >
             クリア
@@ -68,20 +70,22 @@ export default function CbmdMapPage() {
       {showFilters && (
         <GlassCard className="mb-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <p className="text-xs font-medium text-foreground mb-2">地方</p>
-              <div className="flex flex-wrap gap-1">
-                {regions.map((r) => (
-                  <button
-                    key={r.name}
-                    onClick={() => setSelectedRegion(selectedRegion === r.name ? null : r.name)}
-                    className={`px-2 py-1 rounded text-xs transition-all ${selectedRegion === r.name ? "bg-primary/20 text-primary" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
-                  >
-                    {r.name}
-                  </button>
-                ))}
+            {!lockedRegion && (
+              <div>
+                <p className="text-xs font-medium text-foreground mb-2">地方</p>
+                <div className="flex flex-wrap gap-1">
+                  {regions.map((r) => (
+                    <button
+                      key={r.name}
+                      onClick={() => setSelectedRegion(selectedRegion === r.name ? null : r.name)}
+                      className={`px-2 py-1 rounded text-xs transition-all ${selectedRegion === r.name ? "bg-primary/20 text-primary" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                    >
+                      {r.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
             <div>
               <p className="text-xs font-medium text-foreground mb-2">施設カテゴリ</p>
               <div className="flex flex-wrap gap-1">
@@ -129,7 +133,7 @@ export default function CbmdMapPage() {
                 <MapPin className="w-3 h-3" />{selected.prefecture} {selected.city}
               </p>
               <p className="text-xs text-muted-foreground line-clamp-3 mb-4">{selected.description}</p>
-              <Link href={`/cbmd/facility/${selected.id}`}>
+              <Link href={`${basePath}/facility/${selected.id}`}>
                 <Button size="sm" className="w-full bg-primary/20 text-primary hover:bg-primary/30">詳細を見る</Button>
               </Link>
             </GlassCard>

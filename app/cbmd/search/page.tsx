@@ -10,12 +10,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData, spacecraftTags, categoryTags, regions, facilityTypes, Facility } from "@/data/CBMD"
 import { FacilityImage } from "@/components/facility-image"
+import { useCbmdContext } from "@/components/cbmd-region-context"
 
 function SearchContent() {
+  const { lockedRegion, basePath } = useCbmdContext()
   const searchParams = useSearchParams()
   const initialTag = searchParams.get("tag") || ""
-  const initialRegion = searchParams.get("region") || null
-  const lockRegion = searchParams.get("lockRegion") === "1" && !!initialRegion
+  const initialRegion = lockedRegion || searchParams.get("region") || null
+  const lockRegion = !!lockedRegion || (searchParams.get("lockRegion") === "1" && !!searchParams.get("region"))
 
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -199,7 +201,7 @@ function SearchContent() {
       ) : filteredFacilities.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFacilities.map((facility) => (
-            <Link key={facility.id} href={`/cbmd/facility/${facility.id}`}>
+            <Link key={facility.id} href={`${basePath}/facility/${facility.id}`}>
               <GlassCard hover className="h-full flex flex-col">
                 <div className="aspect-video rounded-xl bg-secondary/30 mb-4 overflow-hidden relative">
                   <FacilityImage src={facility.image} alt={facility.name} />
