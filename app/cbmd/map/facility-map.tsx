@@ -30,16 +30,20 @@ export default function FacilityMap({
   facilities,
   onSelect,
   selected,
+  initialCenter,
+  initialZoom,
 }: {
   facilities: Facility[]
   onSelect: (f: Facility) => void
   selected: Facility | null
+  initialCenter?: [number, number]
+  initialZoom?: number
 }) {
   return (
     <div className="absolute inset-0">
       <MapContainer
-        center={[35.68, 139.69]}
-        zoom={5}
+        center={initialCenter ?? [35.68, 139.69]}
+        zoom={initialZoom ?? 5}
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={true}
       >

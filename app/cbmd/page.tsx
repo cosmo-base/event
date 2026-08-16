@@ -11,14 +11,18 @@ import { FacilityImage } from "@/components/facility-image"
 import { useCbmdContext } from "@/components/cbmd-region-context"
 
 export default function CbmdPage() {
-  const { lockedRegion, basePath } = useCbmdContext()
+  const { lockedRegion, lockedPrefectures, basePath } = useCbmdContext()
   const [featuredFacilities, setFeaturedFacilities] = useState<Facility[]>([])
   const [recentFacilities, setRecentFacilities] = useState<Facility[]>([])
 
   useEffect(() => {
     async function loadData() {
       const fetchedFacilities = await fetchFacilitiesData()
-      const pool = lockedRegion ? fetchedFacilities.filter((f) => f.region === lockedRegion) : fetchedFacilities
+      const pool = lockedPrefectures
+        ? fetchedFacilities.filter((f) => lockedPrefectures.includes(f.prefecture))
+        : lockedRegion
+        ? fetchedFacilities.filter((f) => f.region === lockedRegion)
+        : fetchedFacilities
 
       setFeaturedFacilities([...pool].sort(() => Math.random() - 0.5).slice(0, 4))
       setRecentFacilities(

@@ -13,11 +13,11 @@ import { FacilityImage } from "@/components/facility-image"
 import { useCbmdContext } from "@/components/cbmd-region-context"
 
 function SearchContent() {
-  const { lockedRegion, basePath } = useCbmdContext()
+  const { lockedRegion, lockedPrefectures, basePath } = useCbmdContext()
   const searchParams = useSearchParams()
   const initialTag = searchParams.get("tag") || ""
   const initialRegion = lockedRegion || searchParams.get("region") || null
-  const lockRegion = !!lockedRegion || (searchParams.get("lockRegion") === "1" && !!searchParams.get("region"))
+  const lockRegion = !!lockedRegion || !!lockedPrefectures || (searchParams.get("lockRegion") === "1" && !!searchParams.get("region"))
 
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -36,6 +36,7 @@ function SearchContent() {
 
   const filteredFacilities = useMemo(() => {
     return facilities.filter((facility) => {
+      if (lockedPrefectures && !lockedPrefectures.includes(facility.prefecture)) return false
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         const match = facility.name.toLowerCase().includes(query)
@@ -52,7 +53,7 @@ function SearchContent() {
       if (onlyFree && !facility.isFree) return false
       return true
     })
-  }, [facilities, searchQuery, selectedTags, selectedRegion, selectedPrefecture, selectedCategory, onlyFree])
+  }, [facilities, lockedPrefectures, searchQuery, selectedTags, selectedRegion, selectedPrefecture, selectedCategory, onlyFree])
 
   const handleTagToggle = (tag: string) =>
     setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])

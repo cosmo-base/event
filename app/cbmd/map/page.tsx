@@ -13,7 +13,7 @@ import { useCbmdContext } from "@/components/cbmd-region-context"
 const FacilityMap = dynamic(() => import("./facility-map"), { ssr: false })
 
 export default function CbmdMapPage() {
-  const { lockedRegion, basePath } = useCbmdContext()
+  const { lockedRegion, lockedPrefectures, mapCenter, mapZoom, basePath } = useCbmdContext()
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [filtered, setFiltered] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -32,11 +32,12 @@ export default function CbmdMapPage() {
 
   useEffect(() => {
     let result = facilities.filter((f) => f.lat && f.lng)
-    if (selectedRegion) result = result.filter((f) => f.region === selectedRegion)
+    if (lockedPrefectures) result = result.filter((f) => lockedPrefectures.includes(f.prefecture))
+    else if (selectedRegion) result = result.filter((f) => f.region === selectedRegion)
     if (selectedCategory) result = result.filter((f) => f.category === selectedCategory)
     if (onlyPlanetarium) result = result.filter((f) => f.hasPlanetarium)
     setFiltered(result)
-  }, [facilities, selectedRegion, selectedCategory, onlyPlanetarium])
+  }, [facilities, lockedPrefectures, selectedRegion, selectedCategory, onlyPlanetarium])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -120,7 +121,13 @@ export default function CbmdMapPage() {
               <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
             </div>
           ) : (
-            <FacilityMap facilities={filtered} onSelect={setSelected} selected={selected} />
+            <FacilityMap
+              facilities={filtered}
+              onSelect={setSelected}
+              selected={selected}
+              initialCenter={mapCenter ?? undefined}
+              initialZoom={mapZoom ?? undefined}
+            />
           )}
         </div>
 
