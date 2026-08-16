@@ -72,6 +72,7 @@ export interface PitchData {
   slideUrl: string
   embedUrl?: string
   pdfUrl?: string
+  pdfDownloadName?: string
   supplementaryUrl?: string
 }
 

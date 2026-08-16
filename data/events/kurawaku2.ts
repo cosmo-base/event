@@ -178,6 +178,7 @@ export const kurawaku2Data: EventSpecificData = {
     slideUrl: "",
     embedUrl: "/event/documents/kurawaku2.pdf",
     pdfUrl: "/event/documents/kurawaku2.pdf",
+    pdfDownloadName: "くらわくトーク#2_FSIF眞鍋.pdf",
     supplementaryUrl: "",
   } as PitchData,
 

@@ -160,6 +160,7 @@ export const monoS26Data: EventSpecificData = {
     slideUrl: "",
     embedUrl: "/event/documents/monoS26.pdf",
     pdfUrl: "/event/documents/monoS26.pdf",
+    pdfDownloadName: "ものづくりExpo信州_未来宇宙産業フォーラム.pdf",
     supplementaryUrl: "",
   } as PitchData,
 

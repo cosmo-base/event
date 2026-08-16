@@ -53,7 +53,7 @@ export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
             url={pitch.embedUrl}
             title={pitch.presentationTitle}
             downloadUrl={pitch.pdfUrl}
-            downloadName={pitch.presentationTitle}
+            downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle}
           />
         </div>
       ) : (
