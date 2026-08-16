@@ -68,12 +68,12 @@ export default function DatabasePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">データベース一覧</h1>
-          <p className="text-muted-foreground">登録されているすべての施設を閲覧（<span className="text-primary font-semibold">{sortedFacilities.length}</span>件）</p>
+          <p className="text-muted-foreground">登録されているすべての施設を閲覧（<span className="text-blue-400 font-semibold">{sortedFacilities.length}</span>件）</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="glass rounded-lg p-1 flex">
-            <button onClick={() => setViewMode("card")} className={`p-2 rounded-md transition-all ${viewMode === "card" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}><Grid3X3 className="w-4 h-4" /></button>
-            <button onClick={() => setViewMode("table")} className={`p-2 rounded-md transition-all ${viewMode === "table" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"}`}><List className="w-4 h-4" /></button>
+            <button onClick={() => setViewMode("card")} className={`p-2 rounded-md transition-all ${viewMode === "card" ? "bg-blue-500/20 text-blue-400" : "text-muted-foreground hover:text-foreground"}`}><Grid3X3 className="w-4 h-4" /></button>
+            <button onClick={() => setViewMode("table")} className={`p-2 rounded-md transition-all ${viewMode === "table" ? "bg-blue-500/20 text-blue-400" : "text-muted-foreground hover:text-foreground"}`}><List className="w-4 h-4" /></button>
           </div>
           <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="lg:hidden glass border-border/30"><Filter className="w-4 h-4" /></Button>
         </div>
@@ -91,7 +91,7 @@ export default function DatabasePage() {
                 <Label className="text-sm font-medium text-foreground mb-2 block">並び替え</Label>
                 <div className="space-y-2">
                   {[{ value: "name", label: "五十音順" }, { value: "region", label: "都道府県順" }, { value: "updated", label: "更新日順" }].map((o) => (
-                    <button key={o.value} onClick={() => setSortBy(o.value as SortType)} className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${sortBy === o.value ? "bg-primary/20 text-primary" : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50"}`}>
+                    <button key={o.value} onClick={() => setSortBy(o.value as SortType)} className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${sortBy === o.value ? "bg-blue-500/20 text-blue-400" : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50"}`}>
                       {o.label}<ArrowUpDown className="w-3 h-3" />
                     </button>
                   ))}
@@ -134,7 +134,7 @@ export default function DatabasePage() {
         <div>
           {isLoading ? (
             <div className="flex flex-col justify-center items-center py-20 gap-4">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
               <p className="text-sm text-muted-foreground">読み込み中...</p>
             </div>
           ) : viewMode === "card" ? (
@@ -185,7 +185,7 @@ export default function DatabasePage() {
                       <td className="py-4 px-4">
                         <span className="font-medium text-foreground">{facility.name}</span>
                         <div className="flex items-center gap-2 mt-1">
-                          {facility.hasPlanetarium && <Star className="w-3 h-3 text-accent" />}
+                          {facility.hasPlanetarium && <Star className="w-3 h-3 text-yellow-400" />}
                         </div>
                       </td>
                       <td className="py-4 px-4 hidden md:table-cell"><TagBadge variant="primary">{facility.category}</TagBadge></td>
@@ -198,7 +198,7 @@ export default function DatabasePage() {
                       <td className="py-4 px-4 text-sm text-muted-foreground">{facility.updatedAt}</td>
                       <td className="py-4 px-4">
                         <Link href={`${basePath}/facility/${facility.id}`}>
-                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80"><ExternalLink className="w-4 h-4" /></Button>
+                          <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300"><ExternalLink className="w-4 h-4" /></Button>
                         </Link>
                       </td>
                     </tr>
