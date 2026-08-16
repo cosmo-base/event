@@ -74,6 +74,7 @@ export interface PitchData {
   pdfUrl?: string
   pdfDownloadName?: string
   supplementaryUrl?: string
+  posters?: Array<{ title: string; embedUrl: string; pdfUrl?: string; downloadName?: string }>
 }
 
 export interface ContentItem {
