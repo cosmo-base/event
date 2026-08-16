@@ -90,7 +90,10 @@ function parseFacilityCSV(csvText: string): any[] {
   return facilities
 }
 
+let _facilitiesCache: Facility[] | null = null
+
 export async function fetchFacilitiesData(): Promise<Facility[]> {
+  if (_facilitiesCache) return _facilitiesCache
   try {
     const cacheBusterUrl = `${CBMD_SPREADSHEET_BASE_URL}&_t=${BUILD_TIMESTAMP}`
     const res = await fetch(cacheBusterUrl)
@@ -100,7 +103,7 @@ export async function fetchFacilitiesData(): Promise<Facility[]> {
     const text = await res.text()
     const rawFacilities = parseFacilityCSV(text)
 
-    return rawFacilities.map((raw) => {
+    const facilities = rawFacilities.map((raw) => {
       const prefecture = String(raw.prefecture || "").trim()
       const region = getRegionByPrefecture(prefecture)
       const tags = raw.tags ? String(raw.tags).split(",").map((t: string) => t.trim()).filter(Boolean) : []
@@ -134,6 +137,8 @@ export async function fetchFacilitiesData(): Promise<Facility[]> {
         isFree,
       } as Facility
     })
+    _facilitiesCache = facilities
+    return facilities
   } catch (error) {
     console.error("CBMD fetch error:", error)
     return []
