@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
 import {
   MapPin, Clock, Calendar, DollarSign, Train,
-  ExternalLink, Globe, Star, ChevronLeft, Twitter, Instagram, Youtube
+  ExternalLink, Globe, Star, Twitter, Instagram, Youtube
 } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData } from "@/data/CBMD"
 import { FacilityImage } from "@/components/facility-image"
+import { CbmdBackLink, CbmdTagLinks } from "@/components/cbmd-facility-links"
 
 export const dynamic = "force-static"
 export const dynamicParams = false
@@ -35,11 +35,7 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-        <Link href="/cbmd/database">
-          <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" /> 一覧に戻る
-          </Button>
-        </Link>
+        <CbmdBackLink />
       </div>
 
       <FacilityImage src={facility.image} alt={facility.name} variant="detail" priority />
@@ -70,13 +66,7 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
               <div>
                 <h2 className="text-lg font-semibold text-foreground mb-3">展示タグ</h2>
                 <div className="flex flex-wrap gap-2">
-                  {facility.tags.map((tag) => (
-                    <Link key={tag} href={`/cbmd/search?tag=${encodeURIComponent(tag)}`}>
-                      <button className="glass px-4 py-2 rounded-full text-foreground text-sm font-medium hover:bg-primary/20 hover:text-primary transition-all">
-                        {tag}
-                      </button>
-                    </Link>
-                  ))}
+                  <CbmdTagLinks tags={facility.tags} />
                 </div>
               </div>
             )}

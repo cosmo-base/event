@@ -49,7 +49,7 @@ const steps = [
   { step: "STEP 4", text: "Cosmo Baseコミュニティへ参加" },
 ]
 
-export function SpaceTypeDiagnosis() {
+export function SpaceTypeDiagnosis({ contentHref = "/kurawaku2/type/content" }: { contentHref?: string }) {
   return (
     <div className="min-h-screen bg-[#000033]">
       <main className="relative min-h-screen overflow-x-hidden">
@@ -74,7 +74,7 @@ export function SpaceTypeDiagnosis() {
                 <p className="text-xl text-[#EEEEFF]/80 font-sans leading-relaxed max-w-3xl mx-auto mb-6">
                   30秒の診断で、あなたが宇宙で活躍する未来がわかる
                 </p>
-              <Link href="/kurawaku2/type/content">
+              <Link href={contentHref}>
                 <button
                   className="group relative inline-flex items-center gap-3 rounded-full px-8 py-4 text-lg font-bold text-[#000033] transition-all duration-300 animate-glow-pulse hover:scale-105 cursor-pointer"
                   style={{ background: "linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)", }}>
@@ -245,7 +245,7 @@ export function SpaceTypeDiagnosis() {
               今すぐ宇宙タイプを診断する
             </h2>
             <p className="text-[#EEEEFF]/60 mb-10">診断は30秒</p>
-            <Link href="/kurawaku2/type/content">
+            <Link href={contentHref}>
               <button
                 className="group relative inline-flex items-center gap-3 rounded-full px-10 py-5 text-lg md:text-xl font-bold text-[#000033] transition-all duration-300 animate-glow-pulse hover:scale-105 cursor-pointer"
                 style={{ background: "linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)" }}

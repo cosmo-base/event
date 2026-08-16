@@ -209,7 +209,7 @@ export const monoS26Data: EventSpecificData = {
       id: "c-museum",
       title: "Cosmo Base Museum Database",
       description: "北信越エリアの宇宙・科学施設を検索できるデータベース。",
-      href: "/event/cbmd/search?region=北信越&lockRegion=1",
+      href: "/event/monoS26/cbmd",
       audience: "だれでも",
       labels: ["データベース"],
       status: "available",

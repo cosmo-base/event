@@ -8,24 +8,27 @@ import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData, spacecraftTags, Facility } from "@/data/CBMD"
 import { FacilityImage } from "@/components/facility-image"
+import { useCbmdContext } from "@/components/cbmd-region-context"
 
 export default function CbmdPage() {
+  const { lockedRegion, basePath } = useCbmdContext()
   const [featuredFacilities, setFeaturedFacilities] = useState<Facility[]>([])
   const [recentFacilities, setRecentFacilities] = useState<Facility[]>([])
 
   useEffect(() => {
     async function loadData() {
       const fetchedFacilities = await fetchFacilitiesData()
+      const pool = lockedRegion ? fetchedFacilities.filter((f) => f.region === lockedRegion) : fetchedFacilities
 
-      setFeaturedFacilities([...fetchedFacilities].sort(() => Math.random() - 0.5).slice(0, 4))
+      setFeaturedFacilities([...pool].sort(() => Math.random() - 0.5).slice(0, 4))
       setRecentFacilities(
-        [...fetchedFacilities]
+        [...pool]
           .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
           .slice(0, 4)
       )
     }
     loadData()
-  }, [])
+  }, [lockedRegion])
 
   return (
     <div className="min-h-screen">
@@ -48,7 +51,7 @@ export default function CbmdPage() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <Link href="/cbmd/map">
+            <Link href={`${basePath}/map`}>
               <GlassCard hover className="h-full">
                 <div className="flex flex-col items-center gap-4 py-4">
                   <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center glow">
@@ -62,7 +65,7 @@ export default function CbmdPage() {
               </GlassCard>
             </Link>
 
-            <Link href="/cbmd/search">
+            <Link href={`${basePath}/search`}>
               <GlassCard hover className="h-full">
                 <div className="flex flex-col items-center gap-4 py-4">
                   <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center">
@@ -76,7 +79,7 @@ export default function CbmdPage() {
               </GlassCard>
             </Link>
 
-            <Link href="/cbmd/database">
+            <Link href={`${basePath}/database`}>
               <GlassCard hover className="h-full">
                 <div className="flex flex-col items-center gap-4 py-4">
                   <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center">
@@ -101,7 +104,7 @@ export default function CbmdPage() {
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">注目施設</h2>
               <p className="text-muted-foreground">人気の宇宙関連施設をピックアップ</p>
             </div>
-            <Link href="/cbmd/database">
+            <Link href={`${basePath}/database`}>
               <Button variant="ghost" className="text-primary hover:text-primary/80">
                 すべて見る <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -110,7 +113,7 @@ export default function CbmdPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredFacilities.length > 0 ? featuredFacilities.map((facility) => (
-              <Link key={facility.id} href={`/cbmd/facility/${facility.id}`}>
+              <Link key={facility.id} href={`${basePath}/facility/${facility.id}`}>
                 <GlassCard hover className="h-full">
                   <div className="aspect-video rounded-xl bg-secondary/30 mb-4 overflow-hidden relative">
                     <FacilityImage src={facility.image} alt={facility.name} />
@@ -143,7 +146,7 @@ export default function CbmdPage() {
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">最近追加された施設</h2>
               <p className="text-muted-foreground">新しく登録された施設情報</p>
             </div>
-            <Link href="/cbmd/database">
+            <Link href={`${basePath}/database`}>
               <Button variant="ghost" className="text-primary hover:text-primary/80">
                 すべて見る <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -152,7 +155,7 @@ export default function CbmdPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recentFacilities.length > 0 ? recentFacilities.map((facility) => (
-              <Link key={facility.id} href={`/cbmd/facility/${facility.id}`}>
+              <Link key={facility.id} href={`${basePath}/facility/${facility.id}`}>
                 <GlassCard hover className="h-full">
                   <div className="aspect-video rounded-xl bg-secondary/30 mb-4 overflow-hidden relative">
                     <FacilityImage src={facility.image} alt={facility.name} />
@@ -184,7 +187,7 @@ export default function CbmdPage() {
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             {spacecraftTags.map((tag) => (
-              <Link key={tag} href={`/cbmd/search?tag=${encodeURIComponent(tag)}`}>
+              <Link key={tag} href={`${basePath}/search?tag=${encodeURIComponent(tag)}`}>
                 <button className="glass px-6 py-3 rounded-full text-foreground font-medium hover:bg-primary/20 hover:text-primary transition-all duration-300 hover:glow">
                   {tag}
                 </button>

@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { fetchFacilitiesData, regions, facilityTypes, Facility } from "@/data/CBMD"
 import { FacilityImage } from "@/components/facility-image"
+import { useCbmdContext } from "@/components/cbmd-region-context"
 
 type SortType = "name" | "region" | "updated"
 type ViewMode = "card" | "table"
@@ -22,11 +23,12 @@ const prefectureOrder = [
 ]
 
 export default function DatabasePage() {
+  const { lockedRegion, basePath } = useCbmdContext()
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [sortBy, setSortBy] = useState<SortType>("name")
   const [viewMode, setViewMode] = useState<ViewMode>("card")
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([])
+  const [selectedRegions, setSelectedRegions] = useState<string[]>(lockedRegion ? [lockedRegion] : [])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [onlyFree, setOnlyFree] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
@@ -59,7 +61,7 @@ export default function DatabasePage() {
     setSelectedRegions((prev) => prev.includes(region) ? prev.filter((r) => r !== region) : [...prev, region])
   const handleCategoryToggle = (category: string) =>
     setSelectedCategories((prev) => prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category])
-  const clearFilters = () => { setSelectedRegions([]); setSelectedCategories([]); setOnlyFree(false) }
+  const clearFilters = () => { setSelectedRegions(lockedRegion ? [lockedRegion] : []); setSelectedCategories([]); setOnlyFree(false) }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -95,17 +97,19 @@ export default function DatabasePage() {
                   ))}
                 </div>
               </div>
-              <div>
-                <Label className="text-sm font-medium text-foreground mb-2 block">地方</Label>
-                <div className="space-y-2">
-                  {regions.map((region) => (
-                    <div key={region.name} className="flex items-center space-x-2">
-                      <Checkbox id={`region-${region.name}`} checked={selectedRegions.includes(region.name)} onCheckedChange={() => handleRegionToggle(region.name)} />
-                      <Label htmlFor={`region-${region.name}`} className="text-sm text-muted-foreground cursor-pointer">{region.name}</Label>
-                    </div>
-                  ))}
+              {!lockedRegion && (
+                <div>
+                  <Label className="text-sm font-medium text-foreground mb-2 block">地方</Label>
+                  <div className="space-y-2">
+                    {regions.map((region) => (
+                      <div key={region.name} className="flex items-center space-x-2">
+                        <Checkbox id={`region-${region.name}`} checked={selectedRegions.includes(region.name)} onCheckedChange={() => handleRegionToggle(region.name)} />
+                        <Label htmlFor={`region-${region.name}`} className="text-sm text-muted-foreground cursor-pointer">{region.name}</Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               <div>
                 <Label className="text-sm font-medium text-foreground mb-2 block">施設カテゴリ</Label>
                 <div className="space-y-2">
@@ -136,7 +140,7 @@ export default function DatabasePage() {
           ) : viewMode === "card" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {sortedFacilities.map((facility) => (
-                <Link key={facility.id} href={`/cbmd/facility/${facility.id}`}>
+                <Link key={facility.id} href={`${basePath}/facility/${facility.id}`}>
                   <GlassCard hover className="h-full flex flex-col">
                     <div className="aspect-video rounded-xl bg-secondary/30 mb-4 overflow-hidden relative">
                       <FacilityImage src={facility.image} alt={facility.name} />
@@ -193,7 +197,7 @@ export default function DatabasePage() {
                       </td>
                       <td className="py-4 px-4 text-sm text-muted-foreground">{facility.updatedAt}</td>
                       <td className="py-4 px-4">
-                        <Link href={`/cbmd/facility/${facility.id}`}>
+                        <Link href={`${basePath}/facility/${facility.id}`}>
                           <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80"><ExternalLink className="w-4 h-4" /></Button>
                         </Link>
                       </td>
