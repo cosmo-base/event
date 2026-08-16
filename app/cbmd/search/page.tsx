@@ -15,6 +15,7 @@ function SearchContent() {
   const searchParams = useSearchParams()
   const initialTag = searchParams.get("tag") || ""
   const initialRegion = searchParams.get("region") || null
+  const lockRegion = searchParams.get("lockRegion") === "1" && !!initialRegion
 
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -54,10 +55,11 @@ function SearchContent() {
   const handleTagToggle = (tag: string) =>
     setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])
   const clearAllFilters = () => {
-    setSearchQuery(""); setSelectedTags([]); setSelectedRegion(null)
+    setSearchQuery(""); setSelectedTags([])
+    if (!lockRegion) setSelectedRegion(null)
     setSelectedPrefecture(null); setSelectedCategory(null); setOnlyFree(false)
   }
-  const hasActiveFilters = searchQuery || selectedTags.length > 0 || selectedRegion || selectedPrefecture || selectedCategory || onlyFree
+  const hasActiveFilters = searchQuery || selectedTags.length > 0 || (!lockRegion && selectedRegion) || selectedPrefecture || selectedCategory || onlyFree
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -79,20 +81,22 @@ function SearchContent() {
 
       <GlassCard className="mb-8">
         <div className="space-y-6">
-          <div>
-            <h3 className="text-sm font-medium text-foreground mb-3">地方で絞り込み</h3>
-            <div className="flex flex-wrap gap-2">
-              {regions.map((region) => (
-                <button
-                  key={region.name}
-                  onClick={() => { setSelectedRegion(selectedRegion === region.name ? null : region.name); setSelectedPrefecture(null) }}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedRegion === region.name ? "bg-primary/20 text-primary glow" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
-                >
-                  {region.name}
-                </button>
-              ))}
+          {!lockRegion && (
+            <div>
+              <h3 className="text-sm font-medium text-foreground mb-3">地方で絞り込み</h3>
+              <div className="flex flex-wrap gap-2">
+                {regions.map((region) => (
+                  <button
+                    key={region.name}
+                    onClick={() => { setSelectedRegion(selectedRegion === region.name ? null : region.name); setSelectedPrefecture(null) }}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedRegion === region.name ? "bg-primary/20 text-primary glow" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                  >
+                    {region.name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {selectedRegion && (
             <div>
@@ -161,7 +165,7 @@ function SearchContent() {
               {selectedTags.map((tag) => (
                 <TagBadge key={tag} variant="primary">{tag}<button onClick={() => handleTagToggle(tag)} className="ml-1"><X className="w-3 h-3" /></button></TagBadge>
               ))}
-              {selectedRegion && (
+              {selectedRegion && !lockRegion && (
                 <TagBadge variant="accent">{selectedRegion}<button onClick={() => { setSelectedRegion(null); setSelectedPrefecture(null) }} className="ml-1"><X className="w-3 h-3" /></button></TagBadge>
               )}
               {selectedPrefecture && (
