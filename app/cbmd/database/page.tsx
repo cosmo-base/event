@@ -23,7 +23,7 @@ const prefectureOrder = [
 ]
 
 export default function DatabasePage() {
-  const { lockedRegion, basePath } = useCbmdContext()
+  const { lockedRegion, lockedPrefectures, basePath } = useCbmdContext()
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [sortBy, setSortBy] = useState<SortType>("name")
@@ -39,7 +39,8 @@ export default function DatabasePage() {
 
   const sortedFacilities = useMemo(() => {
     let filtered = [...facilities]
-    if (selectedRegions.length > 0) filtered = filtered.filter((f) => selectedRegions.includes(f.region))
+    if (lockedPrefectures) filtered = filtered.filter((f) => lockedPrefectures.includes(f.prefecture))
+    else if (selectedRegions.length > 0) filtered = filtered.filter((f) => selectedRegions.includes(f.region))
     if (selectedCategories.length > 0) filtered = filtered.filter((f) => selectedCategories.includes(f.category))
     if (onlyFree) filtered = filtered.filter((f) => f.isFree)
 
@@ -62,6 +63,7 @@ export default function DatabasePage() {
   const handleCategoryToggle = (category: string) =>
     setSelectedCategories((prev) => prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category])
   const clearFilters = () => { setSelectedRegions(lockedRegion ? [lockedRegion] : []); setSelectedCategories([]); setOnlyFree(false) }
+  const hasRegionFilter = !lockedRegion && !lockedPrefectures
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -97,7 +99,7 @@ export default function DatabasePage() {
                   ))}
                 </div>
               </div>
-              {!lockedRegion && (
+              {hasRegionFilter && (
                 <div>
                   <Label className="text-sm font-medium text-foreground mb-2 block">地方</Label>
                   <div className="space-y-2">

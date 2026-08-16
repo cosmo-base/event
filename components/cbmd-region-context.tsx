@@ -4,21 +4,40 @@ import { createContext, useContext } from "react"
 
 interface CbmdContextValue {
   lockedRegion: string | null
+  lockedPrefectures: string[] | null
+  mapCenter: [number, number] | null
+  mapZoom: number | null
   basePath: string
 }
 
-const CbmdContext = createContext<CbmdContextValue>({ lockedRegion: null, basePath: "/cbmd" })
+const CbmdContext = createContext<CbmdContextValue>({
+  lockedRegion: null,
+  lockedPrefectures: null,
+  mapCenter: null,
+  mapZoom: null,
+  basePath: "/cbmd",
+})
 
 export function CbmdContextProvider({
-  lockedRegion,
+  lockedRegion = null,
+  lockedPrefectures = null,
+  mapCenter = null,
+  mapZoom = null,
   basePath,
   children,
 }: {
-  lockedRegion: string | null
+  lockedRegion?: string | null
+  lockedPrefectures?: string[] | null
+  mapCenter?: [number, number] | null
+  mapZoom?: number | null
   basePath: string
   children: React.ReactNode
 }) {
-  return <CbmdContext.Provider value={{ lockedRegion, basePath }}>{children}</CbmdContext.Provider>
+  return (
+    <CbmdContext.Provider value={{ lockedRegion, lockedPrefectures, mapCenter, mapZoom, basePath }}>
+      {children}
+    </CbmdContext.Provider>
+  )
 }
 
 export function useCbmdContext() {

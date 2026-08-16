@@ -214,6 +214,18 @@ export const monoK26Data: EventSpecificData = {
       imageUrl: "/event/CBtype_logo.png",
     },
     {
+      id: "c-cbmd",
+      title: "Cosmo Base Museum Database",
+      description: "東京・神奈川・埼玉・千葉の宇宙関連施設をまとめたデータベース。地図から探せます。",
+      href: "/event/monoK26/cbmd",
+      audience: "だれでも",
+      labels: ["データベース", "関東エリア"],
+      status: "available",
+      external: true,
+      icon: "database",
+      imageUrl: "/event/CBMD_logo.png",
+    },
+    {
       id: "c-event-db",
       title: "Cosmo Base Event Database",
       description: "全国の宇宙イベント情報を検索できるデータベース。",
