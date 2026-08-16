@@ -14,12 +14,13 @@ import { FacilityImage } from "@/components/facility-image"
 function SearchContent() {
   const searchParams = useSearchParams()
   const initialTag = searchParams.get("tag") || ""
+  const initialRegion = searchParams.get("region") || null
 
   const [facilities, setFacilities] = useState<Facility[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>(initialTag ? [initialTag] : [])
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(initialRegion)
   const [selectedPrefecture, setSelectedPrefecture] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [onlyFree, setOnlyFree] = useState(false)
