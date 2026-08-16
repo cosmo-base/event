@@ -170,6 +170,20 @@ export const monoK26Data: EventSpecificData = {
     embedUrl: "",
     pdfUrl: "",
     supplementaryUrl: "",
+    posters: [
+      {
+        title: "未来宇宙産業フォーラム（FSIF）の活動紹介",
+        embedUrl: "/event/documents/mono26_poster_fsif.pdf",
+        pdfUrl: "/event/documents/mono26_poster_fsif.pdf",
+        downloadName: "mono26_poster_fsif.pdf",
+      },
+      {
+        title: "Cosmo Base におけるデジタルコンテンツの開発・運用",
+        embedUrl: "/event/documents/mono26_poster_cbdc.pdf",
+        pdfUrl: "/event/documents/mono26_poster_cbdc.pdf",
+        downloadName: "mono26_poster_cbdc.pdf",
+      },
+    ],
   } as PitchData,
 
   spaceType: {

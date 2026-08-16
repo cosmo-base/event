@@ -22,7 +22,7 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             <div className="relative aspect-video md:aspect-auto">
               {pitch.embedUrl ? (
                 pitch.embedUrl.endsWith(".pdf") ? (
-                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName="くらわくトーク#2_FSIF眞鍋.pdf" />
+                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} />
                 ) : (
                   <iframe
                     src={pitch.embedUrl}
@@ -82,7 +82,7 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
                     external
                     variant="primary"
                     event="click_pitch_pdf"
-                    download="くらわくトーク#2_FSIF眞鍋.pdf"
+                    download={pitch.pdfDownloadName ?? pitch.presentationTitle}
                   >
                     <FileText className="size-4" aria-hidden="true" />
                     PDFをダウンロード
@@ -101,6 +101,28 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             </div>
           </div>
         </Reveal>
+
+        {pitch.posters && pitch.posters.length > 0 && (
+          <div className="mt-10 space-y-6">
+            {pitch.posters.map((poster, i) => (
+              <Reveal key={i}>
+                <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+                  <div className="px-6 pt-6 pb-3">
+                    <p className="text-sm font-semibold text-primary">{poster.title}</p>
+                  </div>
+                  <div className="relative aspect-video">
+                    <PdfSlideViewer
+                      url={poster.embedUrl}
+                      title={poster.title}
+                      downloadUrl={poster.pdfUrl}
+                      downloadName={poster.downloadName ?? poster.title}
+                    />
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
