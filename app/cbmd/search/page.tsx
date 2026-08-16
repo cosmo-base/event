@@ -91,7 +91,7 @@ function SearchContent() {
                   <button
                     key={region.name}
                     onClick={() => { setSelectedRegion(selectedRegion === region.name ? null : region.name); setSelectedPrefecture(null) }}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedRegion === region.name ? "bg-primary/20 text-primary glow" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedRegion === region.name ? "bg-blue-500/20 text-blue-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                   >
                     {region.name}
                   </button>
@@ -108,7 +108,7 @@ function SearchContent() {
                   <button
                     key={pref}
                     onClick={() => setSelectedPrefecture(selectedPrefecture === pref ? null : pref)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedPrefecture === pref ? "bg-primary/20 text-primary" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedPrefecture === pref ? "bg-blue-500/20 text-blue-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                   >
                     {pref}
                   </button>
@@ -125,7 +125,7 @@ function SearchContent() {
                   <button
                     key={type}
                     onClick={() => setSelectedCategory(selectedCategory === type ? null : type)}
-                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedCategory === type ? "bg-accent/20 text-accent" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${selectedCategory === type ? "bg-violet-500/20 text-violet-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                   >
                     {type}
                   </button>
@@ -150,7 +150,7 @@ function SearchContent() {
                 <button
                   key={tag}
                   onClick={() => handleTagToggle(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTags.includes(tag) ? "bg-primary text-primary-foreground glow" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTags.includes(tag) ? "bg-blue-500 text-white" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                 >
                   {tag}
                 </button>
@@ -189,13 +189,13 @@ function SearchContent() {
 
       <div className="mb-6">
         <p className="text-muted-foreground">
-          <span className="text-primary font-semibold text-xl">{filteredFacilities.length}</span> 件の施設が見つかりました
+          <span className="text-blue-400 font-semibold text-xl">{filteredFacilities.length}</span> 件の施設が見つかりました
         </p>
       </div>
 
       {isLoading ? (
         <div className="flex flex-col justify-center items-center py-20 gap-4">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
           <p className="text-sm text-muted-foreground">施設を読み込み中...</p>
         </div>
       ) : filteredFacilities.length > 0 ? (
@@ -232,7 +232,7 @@ function SearchContent() {
           <Filter className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
           <h3 className="text-lg font-semibold text-foreground mb-2">該当する施設が見つかりませんでした</h3>
           <p className="text-muted-foreground mb-4">検索条件を変更してお試しください</p>
-          <Button onClick={clearAllFilters} className="bg-primary/20 text-primary hover:bg-primary/30">フィルターをクリア</Button>
+          <Button onClick={clearAllFilters} className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30">フィルターをクリア</Button>
         </GlassCard>
       )}
     </div>

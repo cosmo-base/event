@@ -36,14 +36,14 @@ export default function CbmdPage() {
       <section className="min-h-[80vh] flex items-center justify-center py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-8">
-            <Sparkles className="w-4 h-4 text-primary" />
+            <Sparkles className="w-4 h-4 text-blue-400" />
             <span className="text-sm text-muted-foreground">宇宙好きのためのミュージアムデータベース</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
             日本中の宇宙展示を
             <br />
-            <span className="text-primary">探しに行こう</span>
+            <span className="text-blue-400">探しに行こう</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
@@ -54,8 +54,8 @@ export default function CbmdPage() {
             <Link href={`${basePath}/map`}>
               <GlassCard hover className="h-full">
                 <div className="flex flex-col items-center gap-4 py-4">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center glow">
-                    <Map className="w-8 h-8 text-primary" />
+                  <div className="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center">
+                    <Map className="w-8 h-8 text-blue-400" />
                   </div>
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-foreground mb-1">地図から探す</h3>
@@ -68,8 +68,8 @@ export default function CbmdPage() {
             <Link href={`${basePath}/search`}>
               <GlassCard hover className="h-full">
                 <div className="flex flex-col items-center gap-4 py-4">
-                  <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center">
-                    <Search className="w-8 h-8 text-accent" />
+                  <div className="w-16 h-16 rounded-2xl bg-violet-500/20 flex items-center justify-center">
+                    <Search className="w-8 h-8 text-violet-400" />
                   </div>
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-foreground mb-1">検索で探す</h3>
@@ -105,7 +105,7 @@ export default function CbmdPage() {
               <p className="text-muted-foreground">人気の宇宙関連施設をピックアップ</p>
             </div>
             <Link href={`${basePath}/database`}>
-              <Button variant="ghost" className="text-primary hover:text-primary/80">
+              <Button variant="ghost" className="text-blue-400 hover:text-blue-300">
                 すべて見る <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -147,7 +147,7 @@ export default function CbmdPage() {
               <p className="text-muted-foreground">新しく登録された施設情報</p>
             </div>
             <Link href={`${basePath}/database`}>
-              <Button variant="ghost" className="text-primary hover:text-primary/80">
+              <Button variant="ghost" className="text-blue-400 hover:text-blue-300">
                 すべて見る <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -188,7 +188,7 @@ export default function CbmdPage() {
           <div className="flex flex-wrap justify-center gap-3">
             {spacecraftTags.map((tag) => (
               <Link key={tag} href={`${basePath}/search?tag=${encodeURIComponent(tag)}`}>
-                <button className="glass px-6 py-3 rounded-full text-foreground font-medium hover:bg-primary/20 hover:text-primary transition-all duration-300 hover:glow">
+                <button className="glass px-6 py-3 rounded-full text-foreground font-medium hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-300">
                   {tag}
                 </button>
               </Link>
@@ -200,16 +200,16 @@ export default function CbmdPage() {
       {/* Disclaimer */}
       <section className="py-8 px-4 mb-8">
         <div className="max-w-4xl mx-auto">
-          <GlassCard className="border-l-4 border-l-primary/50 text-sm">
+          <GlassCard className="border-l-4 border-l-blue-500/50 text-sm">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
               <div className="space-y-2 text-muted-foreground leading-relaxed">
                 <h3 className="font-semibold text-foreground text-base">当サイトをご利用になる皆様へ</h3>
                 <p>
                   CBMDに掲載されている施設情報は、各施設の公式ホームページ等を元に収集したものです。
                   営業時間・休館日・入館料などは変更される場合がありますので、お出かけの際は<strong className="text-foreground">必ず各施設の公式サイトをご確認ください。</strong>
                 </p>
-                <p className="text-accent font-medium pt-2">
+                <p className="text-amber-400 font-medium pt-2">
                   ※ 本サイトの掲載内容に関して、各施設へ直接お問い合わせすることはご遠慮ください。
                 </p>
               </div>

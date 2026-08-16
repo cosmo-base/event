@@ -78,7 +78,7 @@ export default function CbmdMapPage() {
                     <button
                       key={r.name}
                       onClick={() => setSelectedRegion(selectedRegion === r.name ? null : r.name)}
-                      className={`px-2 py-1 rounded text-xs transition-all ${selectedRegion === r.name ? "bg-primary/20 text-primary" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                      className={`px-2 py-1 rounded text-xs transition-all ${selectedRegion === r.name ? "bg-blue-500/20 text-blue-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                     >
                       {r.name}
                     </button>
@@ -93,7 +93,7 @@ export default function CbmdMapPage() {
                   <button
                     key={t}
                     onClick={() => setSelectedCategory(selectedCategory === t ? null : t)}
-                    className={`px-2 py-1 rounded text-xs transition-all ${selectedCategory === t ? "bg-accent/20 text-accent" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                    className={`px-2 py-1 rounded text-xs transition-all ${selectedCategory === t ? "bg-violet-500/20 text-violet-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
                   >
                     {t}
                   </button>
@@ -104,7 +104,7 @@ export default function CbmdMapPage() {
               <p className="text-xs font-medium text-foreground mb-2">その他</p>
               <button
                 onClick={() => setOnlyPlanetarium(!onlyPlanetarium)}
-                className={`px-3 py-1.5 rounded text-xs transition-all ${onlyPlanetarium ? "bg-primary/20 text-primary" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
+                className={`px-3 py-1.5 rounded text-xs transition-all ${onlyPlanetarium ? "bg-blue-500/20 text-blue-400" : "bg-secondary/50 text-muted-foreground hover:bg-secondary/70"}`}
               >
                 ★ プラネタリウムのみ
               </button>
@@ -117,7 +117,7 @@ export default function CbmdMapPage() {
         <div className="relative rounded-2xl overflow-hidden" style={{ height: "60vh" }}>
           {isLoading ? (
             <div className="absolute inset-0 flex items-center justify-center bg-secondary/20 rounded-2xl">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
             </div>
           ) : (
             <FacilityMap facilities={filtered} onSelect={setSelected} selected={selected} />
@@ -126,7 +126,7 @@ export default function CbmdMapPage() {
 
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
           {selected ? (
-            <GlassCard className="border-primary/30">
+            <GlassCard className="border-blue-500/30">
               <TagBadge variant="primary" className="mb-2">{selected.category}</TagBadge>
               <h3 className="font-bold text-foreground mb-1">{selected.name}</h3>
               <p className="text-xs text-muted-foreground flex items-center gap-1 mb-3">
@@ -134,7 +134,7 @@ export default function CbmdMapPage() {
               </p>
               <p className="text-xs text-muted-foreground line-clamp-3 mb-4">{selected.description}</p>
               <Link href={`${basePath}/facility/${selected.id}`}>
-                <Button size="sm" className="w-full bg-primary/20 text-primary hover:bg-primary/30">詳細を見る</Button>
+                <Button size="sm" className="w-full bg-blue-500/20 text-blue-400 hover:bg-blue-500/30">詳細を見る</Button>
               </Link>
             </GlassCard>
           ) : (
@@ -146,7 +146,7 @@ export default function CbmdMapPage() {
               <button
                 key={f.id}
                 onClick={() => setSelected(f)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all ${selected?.id === f.id ? "bg-primary/20 border border-primary/30" : "bg-secondary/20 hover:bg-secondary/40"}`}
+                className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all ${selected?.id === f.id ? "bg-blue-500/20 border border-blue-500/30" : "bg-secondary/20 hover:bg-secondary/40"}`}
               >
                 <span className="font-medium text-foreground">{f.name}</span>
                 <span className="text-muted-foreground text-xs block">{f.prefecture}</span>
