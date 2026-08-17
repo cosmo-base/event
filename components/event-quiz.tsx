@@ -1,28 +1,36 @@
 "use client"
 
 import { useState } from "react"
-import { CheckCircle2, XCircle } from "lucide-react"
+import { CheckCircle2, XCircle, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const QUESTION = "人工衛星やロケットの部品で、アルミニウム合金やチタン合金が多く使われる主な理由はどれでしょう？"
-
-const OPTIONS = [
-  "電気を通さないため",
-  "磁石に付きにくいため",
-  "軽量で高い比強度（強度÷重量）を持つため",
-]
-
-const CORRECT_INDEX = 2
-
-const EXPLANATION =
-  "宇宙機では、重量をできるだけ抑えながら十分な強度を確保することが重要です。そのため、比強度の高いアルミニウム合金やチタン合金、さらに用途によってはCFRP（炭素繊維強化プラスチック）なども広く使用されています。"
-
 import { sendToGas } from "@/lib/gas-queue"
 
-export function EventQuiz({ eventId }: { eventId: string }) {
+export interface QuizData {
+  intro?: string
+  question: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+  link?: { label: string; href: string }
+}
+
+export const KURAWAKU_QUIZ: QuizData = {
+  question: "人工衛星やロケットの部品で、アルミニウム合金やチタン合金が多く使われる主な理由はどれでしょう？",
+  options: [
+    "電気を通さないため",
+    "磁石に付きにくいため",
+    "軽量で高い比強度（強度÷重量）を持つため",
+  ],
+  correctIndex: 2,
+  explanation:
+    "宇宙機では、重量をできるだけ抑えながら十分な強度を確保することが重要です。そのため、比強度の高いアルミニウム合金やチタン合金、さらに用途によってはCFRP（炭素繊維強化プラスチック）なども広く使用されています。",
+}
+
+export function EventQuiz({ eventId, quiz }: { eventId: string; quiz?: QuizData }) {
+  if (!quiz) return null
   const [selected, setSelected] = useState<number | null>(null)
   const answered = selected !== null
-  const correct = selected === CORRECT_INDEX
+  const correct = selected === quiz.correctIndex
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
@@ -35,12 +43,16 @@ export function EventQuiz({ eventId }: { eventId: string }) {
         </span>
       </div>
 
-      <p className="text-sm font-semibold leading-relaxed mb-4">{QUESTION}</p>
+      {quiz.intro && (
+        <p className="text-sm leading-relaxed text-muted-foreground mb-3 whitespace-pre-wrap">{quiz.intro}</p>
+      )}
+
+      <p className="text-sm font-semibold leading-relaxed mb-4">{quiz.question}</p>
 
       <ol className="flex flex-col gap-2">
-        {OPTIONS.map((option, i) => {
+        {quiz.options.map((option, i) => {
           const isSelected = selected === i
-          const isCorrect = i === CORRECT_INDEX
+          const isCorrect = i === quiz.correctIndex
           let stateClass = "border-border bg-muted/30 hover:border-primary/50 hover:bg-muted/60"
           if (answered) {
             if (isCorrect) stateClass = "border-green-500 bg-green-50 dark:bg-green-950/30"
@@ -58,9 +70,9 @@ export function EventQuiz({ eventId }: { eventId: string }) {
                   sendToGas({
                     type: "quiz",
                     eventId,
-                    question: QUESTION,
-                    selected: OPTIONS[i],
-                    correctOption: OPTIONS[CORRECT_INDEX],
+                    question: quiz.question,
+                    selected: quiz.options[i],
+                    correctOption: quiz.options[quiz.correctIndex],
                   }).catch(() => {})
                 }}
                 className={cn(
@@ -93,9 +105,20 @@ export function EventQuiz({ eventId }: { eventId: string }) {
             : "border-amber-400/30 bg-amber-50 text-amber-900 dark:bg-amber-950/30 dark:text-amber-100",
         )}>
           <p className="font-bold mb-1">
-            {correct ? "🎉 正解！" : "残念、不正解…"} 正解は {CORRECT_INDEX + 1}「{OPTIONS[CORRECT_INDEX]}」です。
+            {correct ? "🎉 正解！" : "残念、不正解…"} 正解は {quiz.correctIndex + 1}「{quiz.options[quiz.correctIndex]}」です。
           </p>
-          <p className="leading-relaxed text-xs mt-1 opacity-90">{EXPLANATION}</p>
+          <p className="leading-relaxed text-xs mt-1 opacity-90 whitespace-pre-wrap">{quiz.explanation}</p>
+          {quiz.link && (
+            <a
+              href={quiz.link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium underline underline-offset-2 opacity-80 hover:opacity-100"
+            >
+              {quiz.link.label}
+              <ExternalLink className="size-3" />
+            </a>
+          )}
         </div>
       )}
     </div>

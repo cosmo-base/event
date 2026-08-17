@@ -4,14 +4,16 @@ import { SectionHeading } from "@/components/section-heading"
 import { StatusBadge } from "@/components/status-badge"
 import { ExternalLinkButton } from "@/components/external-link-button"
 import { Reveal } from "@/components/reveal"
-import { EventQuiz } from "@/components/event-quiz"
+import { EventQuiz, type QuizData } from "@/components/event-quiz"
 
 export function LimitedContentSection({
   items,
   eventId,
+  quiz,
 }: {
   items: LimitedContentItem[]
   eventId: string
+  quiz?: QuizData
 }) {
   return (
     <section
@@ -28,7 +30,7 @@ export function LimitedContentSection({
 
         <div className="mt-8 mb-4">
           <Reveal>
-            <EventQuiz eventId={eventId} />
+            <EventQuiz eventId={eventId} quiz={quiz} />
           </Reveal>
         </div>
 

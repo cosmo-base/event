@@ -7,6 +7,7 @@ import { PitchMaterialSection } from "@/components/pitch-material-section"
 import { ContentExperienceSection } from "@/components/content-experience-section"
 import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
 import { LimitedContentSection } from "@/components/limited-content-section"
+import { KURAWAKU_QUIZ } from "@/components/event-quiz"
 import { CosmoBaseIntroduction } from "@/components/cosmo-base-introduction"
 import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
@@ -55,7 +56,7 @@ export default function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         {/* 限定コンテンツ */}
-        <LimitedContentSection items={data.limitedContents} eventId="kurawaku2" />
+        <LimitedContentSection items={data.limitedContents} eventId="kurawaku2" quiz={KURAWAKU_QUIZ} />
 
         {/* Cosmo Base 紹介 */}
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
