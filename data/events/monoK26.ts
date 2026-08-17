@@ -195,7 +195,7 @@ export const monoK26Data: EventSpecificData = {
     questionCount: "5問",
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
-    href: "https://fsifofficial.github.io/CosmoBase/type",
+    href: "/event/monoK26/type",
     imageUrl: "/event/type/CB_type.png",
   } as SpaceTypeFeature,
 
