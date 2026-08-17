@@ -16,9 +16,18 @@ export default function MonoS26CbmdLayout({ children }: { children: React.ReactN
       <div className="min-h-dvh bg-[#000033] dark">
         <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/10 bg-black/60 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4">
-            <Link href="/monoS26/cbmd" className="text-white font-bold text-sm shrink-0">
-              📚 CBMD <span className="text-xs font-normal text-white/50">北信越</span>
-            </Link>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/monoS26"
+                className="text-xs text-white/50 hover:text-white/80 transition-colors"
+                aria-label="ものづくりExpo信州 イベントページに戻る"
+              >
+                ← ものづくりExpo信州
+              </Link>
+              <Link href="/monoS26/cbmd" className="text-white font-bold text-sm">
+                📚 CBMD <span className="text-xs font-normal text-white/50">北信越</span>
+              </Link>
+            </div>
             <nav className="flex gap-1 flex-wrap">
               {navLinks.map((l) => (
                 <Link
