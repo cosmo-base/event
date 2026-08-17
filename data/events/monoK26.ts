@@ -15,7 +15,7 @@ import type {
 
 export const monoK26Data: EventSpecificData = {
   site: {
-    pageTitle: "Cosmo Base イベント特設ページ｜monoK26",
+    pageTitle: "Cosmo Base イベント特設ページ｜全日本学生ものづくりExpo@関東",
     pageDescription:
       "Cosmo Base のイベント特設ページ。発表スライド、宇宙タイプ診断などのコンテンツを、その場で体験できます。",
     siteName: "Cosmo Base",

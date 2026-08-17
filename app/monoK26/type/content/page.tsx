@@ -13,7 +13,7 @@ export default function MonoK26SpaceTypeContentPage() {
         <SpaceType
           eventId="monoK26"
           backHref="/monoK26"
-          backLabel="monoK26 イベントページに戻る"
+          backLabel="ものづくりExpo関東 イベントページに戻る"
         />
       </div>
       <SocialFooter

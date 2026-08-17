@@ -31,7 +31,7 @@ export default function MonoK26CbmdLayout({ children }: { children: React.ReactN
                 className="text-xs text-white/50 hover:text-white/80 transition-colors"
                 aria-label="ものづくりExpo関東 イベントページに戻る"
               >
-                ← monoK26
+                ← ものづくりExpo関東
               </Link>
               <Link href="/monoK26/cbmd" className="text-white font-bold text-sm">
                 📚 CBMD <span className="text-xs font-normal text-white/50">関東</span>
