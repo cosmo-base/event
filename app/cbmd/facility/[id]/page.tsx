@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { fetchFacilitiesData } from "@/data/CBMD"
 import { FacilityImage } from "@/components/facility-image"
 import { CbmdBackLink, CbmdTagLinks } from "@/components/cbmd-facility-links"
+import { CbmdViewTracker } from "@/components/cbmd-view-tracker"
 
 export const dynamic = "force-static"
 export const dynamicParams = false
@@ -34,6 +35,7 @@ export default async function FacilityPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="min-h-screen">
+      <CbmdViewTracker facilityId={id} facilityName={facility.name} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
         <CbmdBackLink />
       </div>

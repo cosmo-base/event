@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { Calendar, Clock, MapPin, Users, ExternalLink, User, Building, CalendarPlus } from "lucide-react"
 import Link from "next/link"
 import { CbedBackButton } from "@/components/cbed-back-button"
+import { CbedViewTracker } from "@/components/cbed-view-tracker"
 
 export const dynamicParams = false
 
@@ -74,6 +75,7 @@ export default async function CbedDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <>
+      <CbedViewTracker cbedId={String(event.id)} eventTitle={event.title ?? ""} />
       <div className="mb-6">
         <CbedBackButton />
       </div>
