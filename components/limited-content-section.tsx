@@ -15,15 +15,15 @@ export function LimitedContentSection({
 }) {
   return (
     <section
-      id="limited"
+      id="quiz"
       className="scroll-mt-16 border-t border-border py-14"
       style={{ background: "linear-gradient(180deg,color-mix(in srgb,var(--event-accent) 8%,transparent),transparent 220px)" }}
     >
       <div className="mx-auto max-w-6xl px-4">
         <SectionHeading
-          eyebrow="Limited"
-          title="このイベント限定コンテンツ"
-          description="イベント参加者だけが体験できる特別なコンテンツを公開しています。"
+          eyebrow="Quiz"
+          title="イベント限定クイズ"
+          description="イベント参加者だけが体験できる特別なクイズを公開しています。"
         />
 
         <div className="mt-8 mb-4">

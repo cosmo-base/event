@@ -1,9 +1,8 @@
 import Image from "next/image"
-import { Clock3, Users } from "lucide-react"
+import { Clock3, Users, ArrowRight, ExternalLink } from "lucide-react"
 import type { ContentItem, ContentStatus } from "@/data/event-page-data"
 import { QuickIcon } from "@/components/icons"
 import { StatusBadge } from "@/components/status-badge"
-import { ExternalLinkButton } from "@/components/external-link-button"
 
 const gradients = [
   "linear-gradient(135deg,#1e3a8a,#2563eb 65%,#0ea5e9)",
@@ -31,17 +30,27 @@ function buttonForStatus(status: ContentStatus): {
 export function ContentCard({
   content,
   index = 0,
-  event,
 }: {
   content: ContentItem
   index?: number
-  event?: string
 }) {
   const btn = buttonForStatus(content.status)
   const gradient = gradients[index % gradients.length]
+  const isExternal = content.external && !btn.disabled
+  const isDisabled = btn.disabled
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <a
+      href={isDisabled ? undefined : content.href}
+      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      aria-disabled={isDisabled || undefined}
+      className={[
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all",
+        isDisabled
+          ? "cursor-not-allowed opacity-70"
+          : "hover:-translate-y-0.5 hover:shadow-md cursor-pointer",
+      ].join(" ")}
+    >
       {/* サムネイル */}
       <div className="relative aspect-[16/10] overflow-hidden">
         {content.imageUrl ? (
@@ -99,18 +108,17 @@ export function ContentCard({
 
         <div className="mt-4 flex-1" />
 
-        <ExternalLinkButton
-          href={content.href}
-          external={content.external && !btn.disabled}
-          disabled={btn.disabled}
-          variant={content.status === "limited" ? "secondary" : "primary"}
-          size="sm"
-          block
-          event={event}
-        >
-          {btn.label}
-        </ExternalLinkButton>
+        <div className="mt-3 flex items-center justify-between">
+          <span className={`text-sm font-semibold ${isDisabled ? "text-muted-foreground" : "text-primary"}`}>
+            {btn.label}
+          </span>
+          {!isDisabled && (
+            isExternal
+              ? <ExternalLink className="size-4 text-primary opacity-70" aria-hidden="true" />
+              : <ArrowRight className="size-4 text-primary opacity-70" aria-hidden="true" />
+          )}
+        </div>
       </div>
-    </article>
+    </a>
   )
 }

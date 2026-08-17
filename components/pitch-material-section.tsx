@@ -101,31 +101,39 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
             </div>
           </div>
         </Reveal>
+      </div>
+    </section>
+  )
+}
 
-        {pitch.posters && pitch.posters.length > 0 && (
-          <div className="mt-10">
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-6">ブース掲示ポスター</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {pitch.posters.map((poster, i) => (
-              <Reveal key={i}>
-                <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
-                  <div className="px-6 pt-6 pb-3">
-                    <p className="text-sm font-semibold text-primary">{poster.title}</p>
-                  </div>
-                  <div className="relative aspect-video">
-                    <PdfSlideViewer
-                      url={poster.embedUrl}
-                      title={poster.title}
-                      downloadUrl={poster.pdfUrl}
-                      downloadName={poster.downloadName ?? poster.title}
-                    />
-                  </div>
+export function PosterSection({ pitch }: { pitch: PitchData }) {
+  if (!pitch.posters || pitch.posters.length === 0) return null
+  return (
+    <section id="posters" className="scroll-mt-16 border-t border-border py-14">
+      <div className="mx-auto max-w-6xl px-4">
+        <SectionHeading
+          eyebrow="Poster"
+          title="ブース掲示ポスター"
+        />
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {pitch.posters.map((poster, i) => (
+            <Reveal key={i}>
+              <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+                <div className="px-6 pt-6 pb-3">
+                  <p className="text-sm font-semibold text-primary">{poster.title}</p>
                 </div>
-              </Reveal>
-            ))}
-            </div>
-          </div>
-        )}
+                <div className="relative aspect-[3/4]">
+                  <PdfSlideViewer
+                    url={poster.embedUrl}
+                    title={poster.title}
+                    downloadUrl={poster.pdfUrl}
+                    downloadName={poster.downloadName ?? poster.title}
+                  />
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   )
