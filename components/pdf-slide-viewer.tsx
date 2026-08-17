@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2, ZoomIn, ZoomOut } from "lucide-react"
+import { ChevronLeft, ChevronRight, Download, Maximize2, X, ZoomIn, ZoomOut } from "lucide-react"
 
 interface PdfSlideViewerProps {
   url: string
@@ -25,9 +25,22 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
+
+  // Refs for event listeners (avoid stale closures)
+  const zoomRef = useRef(1)
+  const panRef = useRef({ x: 0, y: 0 })
+  useEffect(() => { zoomRef.current = zoom }, [zoom])
+  useEffect(() => { panRef.current = pan }, [pan])
+
+  // Drag state
   const isDragging = useRef(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const panAtDragStart = useRef({ x: 0, y: 0 })
+
+  // Pinch state
+  const pinchStartDist = useRef<number | null>(null)
+  const pinchStartZoom = useRef(1)
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pdfRef = useRef<any>(null)
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null)
@@ -54,7 +67,6 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     return () => { cancelled = true }
   }, [url])
 
-  // Render the page at zoom resolution so CSS scale(zoom) stays 1:1 pixels → crisp text
   const renderPage = useCallback(async (pageNum: number, zoomLevel: number) => {
     if (!pdfRef.current || !canvasRef.current) return
     if (renderTaskRef.current) {
@@ -65,41 +77,28 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     const canvas = canvasRef.current
     const container = contentAreaRef.current
     if (!container) return
-    const containerWidth = container.clientWidth
-    const containerHeight = container.clientHeight
-    const viewport = page.getViewport({ scale: 1 })
-    const scaleW = containerWidth / viewport.width
-    const scaleH = containerHeight / viewport.height
-    const baseScale = Math.min(scaleW, scaleH)
-    // Pixel dimensions at zoom resolution
+    const vp = page.getViewport({ scale: 1 })
+    const baseScale = Math.min(container.clientWidth / vp.width, container.clientHeight / vp.height)
     const scaled = page.getViewport({ scale: baseScale * zoomLevel })
     const ctx = canvas.getContext("2d")!
     canvas.width = scaled.width
     canvas.height = scaled.height
-    // CSS display size stays at 1× — CSS transform scale(zoomLevel) expands it 1:1 pixel
-    canvas.style.width = `${baseScale * viewport.width}px`
-    canvas.style.height = `${baseScale * viewport.height}px`
+    canvas.style.width = `${baseScale * vp.width}px`
+    canvas.style.height = `${baseScale * vp.height}px`
     const task = page.render({ canvasContext: ctx, viewport: scaled })
     renderTaskRef.current = task
-    try {
-      await task.promise
-    } catch {
-      // cancelled — ignore
-    }
+    try { await task.promise } catch { /* cancelled */ }
   }, [])
 
-  // Re-render whenever page or zoom changes (zoom triggers high-res re-render)
   useEffect(() => {
     if (!loading && !error) renderPage(currentPage, zoom)
   }, [currentPage, zoom, loading, error, renderPage])
 
-  // Reset zoom and pan on page change
   useEffect(() => {
     setZoom(1)
     setPan({ x: 0, y: 0 })
   }, [currentPage])
 
-  // Re-render on fullscreen transition (container size changes)
   useEffect(() => {
     if (loading || error) return
     const handler = () => {
@@ -112,7 +111,6 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     return () => document.removeEventListener("fullscreenchange", handler)
   }, [currentPage, loading, error, renderPage])
 
-  // Keyboard navigation in fullscreen
   useEffect(() => {
     if (!isFullscreen) return
     const onKey = (e: KeyboardEvent) => {
@@ -123,42 +121,108 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     return () => window.removeEventListener("keydown", onKey)
   }, [isFullscreen, totalPages])
 
+  // Touch: pinch-to-zoom + drag (registered passive:false to allow preventDefault)
+  useEffect(() => {
+    const el = contentAreaRef.current
+    if (!el) return
+
+    const getDist = (a: Touch, b: Touch) =>
+      Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY)
+
+    const onTouchStart = (e: TouchEvent) => {
+      e.preventDefault()
+      if (e.touches.length === 2) {
+        isDragging.current = false
+        pinchStartDist.current = getDist(e.touches[0], e.touches[1])
+        pinchStartZoom.current = zoomRef.current
+      } else if (e.touches.length === 1) {
+        pinchStartDist.current = null
+        isDragging.current = true
+        dragStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        panAtDragStart.current = { ...panRef.current }
+      }
+    }
+
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault()
+      if (e.touches.length === 2 && pinchStartDist.current != null) {
+        const d = getDist(e.touches[0], e.touches[1])
+        const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM,
+          pinchStartZoom.current * (d / pinchStartDist.current)))
+        zoomRef.current = next
+        setZoom(parseFloat(next.toFixed(2)))
+        if (next <= 1) { panRef.current = { x: 0, y: 0 }; setPan({ x: 0, y: 0 }) }
+      } else if (e.touches.length === 1 && isDragging.current) {
+        const newPan = {
+          x: panAtDragStart.current.x + (e.touches[0].clientX - dragStart.current.x),
+          y: panAtDragStart.current.y + (e.touches[0].clientY - dragStart.current.y),
+        }
+        panRef.current = newPan
+        setPan(newPan)
+      }
+    }
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) pinchStartDist.current = null
+      if (e.touches.length === 0) {
+        isDragging.current = false
+      } else if (e.touches.length === 1) {
+        // Pinch released to single finger — resume drag
+        isDragging.current = true
+        dragStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        panAtDragStart.current = { ...panRef.current }
+      }
+    }
+
+    el.addEventListener("touchstart", onTouchStart, { passive: false })
+    el.addEventListener("touchmove", onTouchMove, { passive: false })
+    el.addEventListener("touchend", onTouchEnd, { passive: false })
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
+      el.removeEventListener("touchend", onTouchEnd)
+    }
+  }, []) // refs only — no deps needed
+
+  // Mouse/stylus drag via pointer events
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (zoom <= 1) return
+    if (e.pointerType === "touch") return
+    if (zoomRef.current <= 1) return
     isDragging.current = true
     dragStart.current = { x: e.clientX, y: e.clientY }
-    panAtDragStart.current = pan
+    panAtDragStart.current = { ...panRef.current }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
 
   const onPointerMove = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return
     if (!isDragging.current) return
-    setPan({
+    const newPan = {
       x: panAtDragStart.current.x + (e.clientX - dragStart.current.x),
       y: panAtDragStart.current.y + (e.clientY - dragStart.current.y),
-    })
+    }
+    panRef.current = newPan
+    setPan(newPan)
   }
 
-  const stopDrag = () => { isDragging.current = false }
+  const stopDrag = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return
+    isDragging.current = false
+  }
 
   const zoomIn = () => setZoom((z) => Math.min(MAX_ZOOM, parseFloat((z + ZOOM_STEP).toFixed(2))))
-  const zoomOut = () => {
-    setZoom((z) => {
-      const next = Math.max(MIN_ZOOM, parseFloat((z - ZOOM_STEP).toFixed(2)))
-      if (next <= 1) setPan({ x: 0, y: 0 })
-      return next
-    })
-  }
+  const zoomOut = () => setZoom((z) => {
+    const next = Math.max(MIN_ZOOM, parseFloat((z - ZOOM_STEP).toFixed(2)))
+    if (next <= 1) setPan({ x: 0, y: 0 })
+    return next
+  })
 
   const prev = () => setCurrentPage((p) => Math.max(1, p - 1))
   const next = () => setCurrentPage((p) => Math.min(totalPages, p + 1))
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      viewerRef.current?.requestFullscreen()
-    } else {
-      document.exitFullscreen()
-    }
+    if (!document.fullscreenElement) viewerRef.current?.requestFullscreen()
+    else document.exitFullscreen()
   }
 
   if (error) return (
@@ -167,24 +231,36 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     </div>
   )
 
-  const btnSz = isFullscreen ? "p-2" : "p-1.5"
-  const iconSz = isFullscreen ? "w-6 h-6" : "w-4 h-4"
-  const btn = `${btnSz} rounded-md text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors`
+  // Button size: larger on mobile-friendly targets (min 44px touch target)
+  const ib = "flex items-center justify-center rounded-lg text-white/70 hover:text-white hover:bg-white/15 active:bg-white/25 transition-colors touch-manipulation disabled:opacity-30 disabled:pointer-events-none"
+  const btn = `${ib} ${isFullscreen ? "p-3" : "p-2.5"}`
+  const iconSz = isFullscreen ? "w-7 h-7" : "w-5 h-5"
+  const navSz = isFullscreen ? "w-8 h-8" : "w-6 h-6"
 
   return (
     <div ref={viewerRef} className="absolute inset-0 flex flex-col bg-black">
+      {/* Fullscreen close — top-right overlay */}
+      {isFullscreen && (
+        <button
+          onClick={toggleFullscreen}
+          className="absolute top-4 right-4 z-20 p-3 rounded-full bg-black/70 text-white/80 hover:text-white hover:bg-black/90 transition-colors touch-manipulation"
+          aria-label="全画面を閉じる"
+        >
+          <X className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Content area */}
       <div
         ref={contentAreaRef}
         className="flex-1 flex items-center justify-center overflow-hidden min-h-0 select-none"
-        style={{ cursor: zoom > 1 ? "grab" : "default" }}
+        style={{ cursor: zoom > 1 ? "grab" : "default", touchAction: "none" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDrag}
         onPointerLeave={stopDrag}
       >
-        {loading && (
-          <span className="text-xs text-white/40 animate-pulse">読み込み中…</span>
-        )}
+        {loading && <span className="text-xs text-white/40 animate-pulse">読み込み中…</span>}
         <div
           style={{
             transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
@@ -196,46 +272,37 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
         </div>
       </div>
 
+      {/* Bottom toolbar */}
       {!loading && (
-        <div className={`flex items-center justify-between ${isFullscreen ? "px-6 py-3" : "px-4 py-2"} bg-black/80 shrink-0`}>
+        <div className={`flex items-center gap-0.5 ${isFullscreen ? "px-6 py-4" : "px-3 py-2"} bg-black/80 shrink-0`}>
           <button onClick={prev} disabled={currentPage === 1} className={btn} aria-label="前のページ">
-            <ChevronLeft className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
+            <ChevronLeft className={navSz} />
+          </button>
+          <span className={`${isFullscreen ? "text-sm" : "text-xs"} text-white/60 tabular-nums select-none px-2 min-w-[5ch] text-center`}>
+            {currentPage}/{totalPages}
+          </span>
+          <button onClick={next} disabled={currentPage === totalPages} className={btn} aria-label="次のページ">
+            <ChevronRight className={navSz} />
           </button>
 
-          <span className={`${isFullscreen ? "text-sm" : "text-xs"} text-white/60 tabular-nums select-none`}>
-            {currentPage} / {totalPages}
-          </span>
+          <div className="flex-1" />
 
-          <div className="flex items-center gap-1">
-            <button onClick={next} disabled={currentPage === totalPages} className={btn} aria-label="次のページ">
-              <ChevronRight className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
+          <button onClick={zoomOut} disabled={zoom <= MIN_ZOOM} className={btn} aria-label="縮小">
+            <ZoomOut className={iconSz} />
+          </button>
+          <button onClick={zoomIn} disabled={zoom >= MAX_ZOOM} className={btn} aria-label="拡大">
+            <ZoomIn className={iconSz} />
+          </button>
+          {downloadUrl && (
+            <a href={downloadUrl} download={downloadName} className={btn} aria-label="ダウンロード">
+              <Download className={iconSz} />
+            </a>
+          )}
+          {!isFullscreen && (
+            <button onClick={toggleFullscreen} className={btn} aria-label="全画面表示">
+              <Maximize2 className={iconSz} />
             </button>
-            <button onClick={zoomOut} disabled={zoom <= MIN_ZOOM} className={btn} aria-label="縮小" title="縮小">
-              <ZoomOut className={iconSz} />
-            </button>
-            <button onClick={zoomIn} disabled={zoom >= MAX_ZOOM} className={btn} aria-label="拡大" title="拡大">
-              <ZoomIn className={iconSz} />
-            </button>
-            {isFullscreen && downloadUrl && (
-              <a
-                href={downloadUrl}
-                download={downloadName}
-                className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors ml-1"
-                aria-label="ダウンロード"
-                title="PDFをダウンロード"
-              >
-                <Download className="w-5 h-5" />
-              </a>
-            )}
-            <button
-              onClick={toggleFullscreen}
-              className={`${isFullscreen ? "p-2" : "p-1.5"} rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors ml-1`}
-              aria-label={isFullscreen ? "全画面を閉じる" : "全画面表示"}
-              title={isFullscreen ? "全画面を閉じる" : "全画面表示"}
-            >
-              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-4 h-4" />}
-            </button>
-          </div>
+          )}
         </div>
       )}
     </div>
