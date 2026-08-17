@@ -10,9 +10,18 @@ const navLinks = [
   { href: "/monoS26/cbmd/database", label: "データベース" },
 ]
 
+// ホテルメトロポリタン長野（長野市MetioPLAZA）付近
+const VENUE_CENTER: [number, number] = [36.644, 138.189]
+const VENUE_ZOOM = 10
+
 export default function MonoS26CbmdLayout({ children }: { children: React.ReactNode }) {
   return (
-    <CbmdContextProvider lockedRegion="北信越" basePath="/monoS26/cbmd">
+    <CbmdContextProvider
+      lockedRegion="北信越"
+      mapCenter={VENUE_CENTER}
+      mapZoom={VENUE_ZOOM}
+      basePath="/monoS26/cbmd"
+    >
       <div className="min-h-dvh bg-[#000033] dark">
         <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/10 bg-black/60 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4">
