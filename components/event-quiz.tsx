@@ -14,7 +14,7 @@ export interface QuizData {
   link?: { label: string; href: string }
 }
 
-const DEFAULT_QUIZ: QuizData = {
+export const KURAWAKU_QUIZ: QuizData = {
   question: "人工衛星やロケットの部品で、アルミニウム合金やチタン合金が多く使われる主な理由はどれでしょう？",
   options: [
     "電気を通さないため",
@@ -26,7 +26,8 @@ const DEFAULT_QUIZ: QuizData = {
     "宇宙機では、重量をできるだけ抑えながら十分な強度を確保することが重要です。そのため、比強度の高いアルミニウム合金やチタン合金、さらに用途によってはCFRP（炭素繊維強化プラスチック）なども広く使用されています。",
 }
 
-export function EventQuiz({ eventId, quiz = DEFAULT_QUIZ }: { eventId: string; quiz?: QuizData }) {
+export function EventQuiz({ eventId, quiz }: { eventId: string; quiz?: QuizData }) {
+  if (!quiz) return null
   const [selected, setSelected] = useState<number | null>(null)
   const answered = selected !== null
   const correct = selected === quiz.correctIndex
