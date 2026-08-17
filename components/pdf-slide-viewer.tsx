@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Download, Maximize2, Minimize2, ZoomIn, ZoomOut } from "lucide-react"
 
 interface PdfSlideViewerProps {
   url: string
@@ -10,14 +10,24 @@ interface PdfSlideViewerProps {
   downloadName?: string
 }
 
+const MIN_ZOOM = 1
+const MAX_ZOOM = 4
+const ZOOM_STEP = 0.5
+
 export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSlideViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const viewerRef = useRef<HTMLDivElement>(null)
+  const contentAreaRef = useRef<HTMLDivElement>(null)
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [zoom, setZoom] = useState(1)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const isDragging = useRef(false)
+  const dragStart = useRef({ x: 0, y: 0 })
+  const panAtDragStart = useRef({ x: 0, y: 0 })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pdfRef = useRef<any>(null)
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null)
@@ -52,7 +62,7 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     }
     const page = await pdfRef.current.getPage(pageNum)
     const canvas = canvasRef.current
-    const container = canvas.parentElement
+    const container = contentAreaRef.current
     if (!container) return
     const containerWidth = container.clientWidth
     const containerHeight = container.clientHeight
@@ -74,16 +84,22 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
   }, [])
 
   useEffect(() => {
-    if (!loading && !error) {
-      renderPage(currentPage)
-    }
+    if (!loading && !error) renderPage(currentPage)
   }, [currentPage, loading, error, renderPage])
 
-  // Re-render when entering/exiting fullscreen (container size changes)
+  // Reset zoom and pan on page change
+  useEffect(() => {
+    setZoom(1)
+    setPan({ x: 0, y: 0 })
+  }, [currentPage])
+
+  // Re-render and reset state when entering/exiting fullscreen
   useEffect(() => {
     if (loading || error) return
     const handler = () => {
       setIsFullscreen(!!document.fullscreenElement)
+      setZoom(1)
+      setPan({ x: 0, y: 0 })
       requestAnimationFrame(() => renderPage(currentPage))
     }
     document.addEventListener("fullscreenchange", handler)
@@ -100,6 +116,34 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [isFullscreen, totalPages])
+
+  // Drag-to-pan handlers (only active when zoomed in)
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (zoom <= 1) return
+    isDragging.current = true
+    dragStart.current = { x: e.clientX, y: e.clientY }
+    panAtDragStart.current = pan
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return
+    setPan({
+      x: panAtDragStart.current.x + (e.clientX - dragStart.current.x),
+      y: panAtDragStart.current.y + (e.clientY - dragStart.current.y),
+    })
+  }
+
+  const stopDrag = () => { isDragging.current = false }
+
+  const zoomIn = () => setZoom((z) => Math.min(MAX_ZOOM, parseFloat((z + ZOOM_STEP).toFixed(2))))
+  const zoomOut = () => {
+    setZoom((z) => {
+      const next = Math.max(MIN_ZOOM, parseFloat((z - ZOOM_STEP).toFixed(2)))
+      if (next <= 1) setPan({ x: 0, y: 0 })
+      return next
+    })
+  }
 
   const prev = () => setCurrentPage((p) => Math.max(1, p - 1))
   const next = () => setCurrentPage((p) => Math.min(totalPages, p + 1))
@@ -118,43 +162,65 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     </div>
   )
 
+  const btnSz = isFullscreen ? "p-2" : "p-1.5"
+  const iconSz = isFullscreen ? "w-6 h-6" : "w-4 h-4"
+  const btn = `${btnSz} rounded-md text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors`
+
   return (
     <div ref={viewerRef} className="absolute inset-0 flex flex-col bg-black">
-      <div className="flex-1 flex items-center justify-center overflow-hidden min-h-0">
+      {/* Canvas area with drag-to-pan */}
+      <div
+        ref={contentAreaRef}
+        className="flex-1 flex items-center justify-center overflow-hidden min-h-0 select-none"
+        style={{ cursor: zoom > 1 ? "grab" : "default" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={stopDrag}
+        onPointerLeave={stopDrag}
+      >
         {loading && (
           <span className="text-xs text-white/40 animate-pulse">読み込み中…</span>
         )}
-        <canvas
-          ref={canvasRef}
-          className={`max-w-full max-h-full object-contain ${loading ? "hidden" : ""}`}
-          aria-label={title}
-        />
+        <div
+          style={{
+            transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
+            transformOrigin: "center center",
+            display: loading ? "none" : undefined,
+          }}
+        >
+          <canvas ref={canvasRef} className="max-w-full max-h-full object-contain" aria-label={title} />
+        </div>
       </div>
 
+      {/* Toolbar */}
       {!loading && (
         <div className={`flex items-center justify-between ${isFullscreen ? "px-6 py-3" : "px-4 py-2"} bg-black/80 shrink-0`}>
-          <button
-            onClick={prev}
-            disabled={currentPage === 1}
-            className={`${isFullscreen ? "p-2" : "p-1.5"} rounded-md text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors`}
-            aria-label="前のページ"
-          >
+          {/* Prev */}
+          <button onClick={prev} disabled={currentPage === 1} className={btn} aria-label="前のページ">
             <ChevronLeft className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
           </button>
 
+          {/* Page counter */}
           <span className={`${isFullscreen ? "text-sm" : "text-xs"} text-white/60 tabular-nums select-none`}>
             {currentPage} / {totalPages}
           </span>
 
           <div className="flex items-center gap-1">
-            <button
-              onClick={next}
-              disabled={currentPage === totalPages}
-              className={`${isFullscreen ? "p-2" : "p-1.5"} rounded-md text-white/70 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors`}
-              aria-label="次のページ"
-            >
+            {/* Next */}
+            <button onClick={next} disabled={currentPage === totalPages} className={btn} aria-label="次のページ">
               <ChevronRight className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
             </button>
+
+            {/* Zoom out */}
+            <button onClick={zoomOut} disabled={zoom <= MIN_ZOOM} className={btn} aria-label="縮小" title="縮小">
+              <ZoomOut className={iconSz} />
+            </button>
+
+            {/* Zoom in */}
+            <button onClick={zoomIn} disabled={zoom >= MAX_ZOOM} className={btn} aria-label="拡大" title="拡大">
+              <ZoomIn className={iconSz} />
+            </button>
+
             {isFullscreen && downloadUrl && (
               <a
                 href={downloadUrl}
@@ -172,10 +238,7 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
               aria-label={isFullscreen ? "全画面を閉じる" : "全画面表示"}
               title={isFullscreen ? "全画面を閉じる" : "全画面表示"}
             >
-              {isFullscreen
-                ? <Minimize2 className="w-5 h-5" />
-                : <Maximize2 className="w-4 h-4" />
-              }
+              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-4 h-4" />}
             </button>
           </div>
         </div>

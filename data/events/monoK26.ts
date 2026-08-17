@@ -225,18 +225,6 @@ export const monoK26Data: EventSpecificData = {
       icon: "database",
       imageUrl: "/event/CBMD_logo.png",
     },
-    {
-      id: "c-event-db",
-      title: "Cosmo Base Event Database",
-      description: "全国の宇宙イベント情報を検索できるデータベース。",
-      href: "/event/monoK26/cbed",
-      audience: "だれでも",
-      labels: ["データベース"],
-      status: "available",
-      external: true,
-      icon: "rocket",
-      imageUrl: "/event/CBED_logo.png",
-    },
   ] as ContentItem[],
 
   limitedContents: [] as LimitedContentItem[],
