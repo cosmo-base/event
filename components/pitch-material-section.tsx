@@ -112,7 +112,7 @@ export function PosterSection({ pitch }: { pitch: PitchData }) {
     <section id="booth" className="scroll-mt-16 border-t border-border py-14">
       <div className="mx-auto max-w-6xl px-4">
         <SectionHeading
-          eyebrow="Poster"
+          eyebrow="Booth"
           title="ブース掲示ポスター"
         />
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
