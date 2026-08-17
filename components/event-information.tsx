@@ -62,7 +62,7 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
               </span>
               <div className="min-w-0">
                 <dt className="text-xs text-muted-foreground">{item.label}</dt>
-                <dd className="truncate text-sm font-semibold text-foreground">{item.value}</dd>
+                <dd className="text-sm font-semibold text-foreground">{item.value}</dd>
               </div>
             </div>
           ))}
