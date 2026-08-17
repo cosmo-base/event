@@ -34,7 +34,7 @@ export const monoS26Data: EventSpecificData = {
     venue: "ホテルメトロポリタン長野",
     boothNumber: "",
     pitchTime: "13:30〜19:00（受付13:00〜）",
-    participationType: "ブース出展",
+    participationType: "ブース出展およびピッチ登壇",
     exhibitorName: "Cosmo Base",
     message: "",
     reportUrl: "",

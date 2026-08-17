@@ -4,7 +4,7 @@ import { EventHeader } from "@/components/event-header"
 import { EventInformation } from "@/components/event-information"
 import { HeroCarousel } from "@/components/hero-carousel"
 import { QuickAccessGrid } from "@/components/quick-access-grid"
-import { PitchMaterialSection } from "@/components/pitch-material-section"
+import { PitchMaterialSection, PosterSection } from "@/components/pitch-material-section"
 import { ContentExperienceSection } from "@/components/content-experience-section"
 import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
 import { LimitedContentSection } from "@/components/limited-content-section"
@@ -53,6 +53,7 @@ export default function Page() {
         </section>
 
         <PitchMaterialSection pitch={data.pitch} />
+        <PosterSection pitch={data.pitch} />
 
         <SpaceTypeDiagnosisFeature feature={data.spaceType} />
 

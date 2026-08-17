@@ -34,7 +34,7 @@ export const monoK26Data: EventSpecificData = {
     venue: "東京都立産業貿易センター台東館",
     boothNumber: "",
     pitchTime: "13:30〜19:00",
-    participationType: "ブース出展",
+    participationType: "ブース出展およびピッチ登壇",
     exhibitorName: "Cosmo Base",
     message: "",
     reportUrl: "",
