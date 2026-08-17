@@ -103,8 +103,9 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
         </Reveal>
 
         {pitch.posters && pitch.posters.length > 0 && (
-          <div className="mt-10 space-y-6">
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">ブース掲示ポスター</p>
+          <div className="mt-10">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-6">ブース掲示ポスター</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {pitch.posters.map((poster, i) => (
               <Reveal key={i}>
                 <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
@@ -122,6 +123,7 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
                 </div>
               </Reveal>
             ))}
+            </div>
           </div>
         )}
       </div>
