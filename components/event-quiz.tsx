@@ -11,7 +11,7 @@ export interface QuizData {
   options: string[]
   correctIndex: number
   explanation: string
-  link?: { label: string; href: string }
+  link?: { label: string; href: string; description?: string }
 }
 
 export const KURAWAKU_QUIZ: QuizData = {
@@ -109,15 +109,20 @@ export function EventQuiz({ eventId, quiz }: { eventId: string; quiz?: QuizData 
           </p>
           <p className="leading-relaxed text-xs mt-1 opacity-90 whitespace-pre-wrap">{quiz.explanation}</p>
           {quiz.link && (
-            <a
-              href={quiz.link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1 text-xs font-medium underline underline-offset-2 opacity-80 hover:opacity-100"
-            >
-              {quiz.link.label}
-              <ExternalLink className="size-3" />
-            </a>
+            <div className="mt-3">
+              <a
+                href={quiz.link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium underline underline-offset-2 opacity-80 hover:opacity-100"
+              >
+                {quiz.link.label}
+                <ExternalLink className="size-3" />
+              </a>
+              {quiz.link.description && (
+                <p className="mt-1 text-xs opacity-70 leading-relaxed">{quiz.link.description}</p>
+              )}
+            </div>
           )}
         </div>
       )}

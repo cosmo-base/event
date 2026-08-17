@@ -43,93 +43,95 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
   };
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b transition-colors",
-        scrolled
-          ? "border-border bg-background/85 backdrop-blur-md shadow-sm"
-          : "border-transparent bg-background/60 backdrop-blur",
-      )}
-    >
-      <div className="mx-auto flex h-14 max-w-6xl items-center px-4">
-        {/* 左: ロゴ */}
-        {resolvedHome ? (
-          <Link
-            href={resolvedHome}
-            onClick={() => setOpen(false)}
-            className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-            aria-label="イベントトップへ戻る"
-          >
-            <span className="flex flex-col items-start leading-none">
-              <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
-              <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
-            </span>
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={scrollTop}
-            className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-            aria-label="ページ最上部へ戻る"
-          >
-            <span className="flex flex-col items-start leading-none">
-              <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
-              <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
-            </span>
-          </button>
+    <>
+      <header
+        className={cn(
+          "fixed inset-x-0 top-0 z-40 border-b transition-colors",
+          scrolled
+            ? "border-border bg-background/85 backdrop-blur-md shadow-sm"
+            : "border-transparent bg-background/60 backdrop-blur",
         )}
-
-        {/* 中央: イベント名 */}
-        {eventName && (
-          resolvedHome ? (
+      >
+        <div className="mx-auto flex h-14 max-w-6xl items-center px-4">
+          {/* 左: ロゴ */}
+          {resolvedHome ? (
             <Link
               href={resolvedHome}
               onClick={() => setOpen(false)}
-              className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+              className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              aria-label="イベントトップへ戻る"
             >
-              {eventName}
+              <span className="flex flex-col items-start leading-none">
+                <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+                <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
+              </span>
             </Link>
           ) : (
             <button
               type="button"
               onClick={scrollTop}
-              className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+              className="flex shrink-0 items-center gap-2 rounded-lg py-1 pr-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              aria-label="ページ最上部へ戻る"
             >
-              {eventName}
+              <span className="flex flex-col items-start leading-none">
+                <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+                <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
+              </span>
             </button>
-          )
-        )}
+          )}
 
-        {/* 右: ナビ / ハンバーガー */}
-        <div className="ml-auto flex items-center">
-          <nav
-            className="hidden md:flex md:items-center md:gap-1"
-            aria-label="メインナビゲーション"
-          >
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          {/* 中央: イベント名 */}
+          {eventName && (
+            resolvedHome ? (
+              <Link
+                href={resolvedHome}
+                onClick={() => setOpen(false)}
+                className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
               >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:hidden"
-            aria-label="メニューを開く"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-          >
-            <Menu className="size-6" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+                {eventName}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={scrollTop}
+                className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+              >
+                {eventName}
+              </button>
+            )
+          )}
 
-      {/* モバイルメニュー（Drawer） */}
+          {/* 右: ナビ / ハンバーガー */}
+          <div className="ml-auto flex items-center">
+            <nav
+              className="hidden md:flex md:items-center md:gap-1"
+              aria-label="メインナビゲーション"
+            >
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:hidden"
+              aria-label="メニューを開く"
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+            >
+              <Menu className="size-6" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* モバイルメニュー（Drawer） — header の外に置くことで stacking context から脱出 */}
       <div
         className={cn(
           "fixed inset-0 z-50 md:hidden",
@@ -182,6 +184,6 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
           </nav>
         </div>
       </div>
-    </header>
+    </>
   );
 }
