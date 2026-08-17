@@ -12,7 +12,7 @@ const navLinks = [
 
 // ホテルメトロポリタン長野（長野市MetioPLAZA）付近
 const VENUE_CENTER: [number, number] = [36.644, 138.189]
-const VENUE_ZOOM = 10
+const VENUE_ZOOM = 9
 
 export default function MonoS26CbmdLayout({ children }: { children: React.ReactNode }) {
   return (

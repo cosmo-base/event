@@ -29,6 +29,7 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
   // Refs for event listeners (avoid stale closures)
   const zoomRef = useRef(1)
   const panRef = useRef({ x: 0, y: 0 })
+  const baseDisplaySizeRef = useRef({ w: 0, h: 0 })
   useEffect(() => { zoomRef.current = zoom }, [zoom])
   useEffect(() => { panRef.current = pan }, [pan])
 
@@ -85,6 +86,7 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     canvas.height = scaled.height
     canvas.style.width = `${baseScale * vp.width}px`
     canvas.style.height = `${baseScale * vp.height}px`
+    baseDisplaySizeRef.current = { w: baseScale * vp.width, h: baseScale * vp.height }
     const task = page.render({ canvasContext: ctx, viewport: scaled })
     renderTaskRef.current = task
     try { await task.promise } catch { /* cancelled */ }
@@ -153,10 +155,11 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
         setZoom(parseFloat(next.toFixed(2)))
         if (next <= 1) { panRef.current = { x: 0, y: 0 }; setPan({ x: 0, y: 0 }) }
       } else if (e.touches.length === 1 && isDragging.current) {
-        const newPan = {
+        const raw = {
           x: panAtDragStart.current.x + (e.touches[0].clientX - dragStart.current.x),
           y: panAtDragStart.current.y + (e.touches[0].clientY - dragStart.current.y),
         }
+        const newPan = clampPan(raw, zoomRef.current)
         panRef.current = newPan
         setPan(newPan)
       }
@@ -197,10 +200,11 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
   const onPointerMove = (e: React.PointerEvent) => {
     if (e.pointerType === "touch") return
     if (!isDragging.current) return
-    const newPan = {
+    const raw = {
       x: panAtDragStart.current.x + (e.clientX - dragStart.current.x),
       y: panAtDragStart.current.y + (e.clientY - dragStart.current.y),
     }
+    const newPan = clampPan(raw, zoomRef.current)
     panRef.current = newPan
     setPan(newPan)
   }
@@ -208,6 +212,16 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
   const stopDrag = (e: React.PointerEvent) => {
     if (e.pointerType === "touch") return
     isDragging.current = false
+  }
+
+  const clampPan = (p: { x: number; y: number }, z: number) => {
+    const { w, h } = baseDisplaySizeRef.current
+    const mx = w * z / 2
+    const my = h * z / 2
+    return {
+      x: Math.max(-mx, Math.min(mx, p.x)),
+      y: Math.max(-my, Math.min(my, p.y)),
+    }
   }
 
   const zoomIn = () => setZoom((z) => Math.min(MAX_ZOOM, parseFloat((z + ZOOM_STEP).toFixed(2))))
