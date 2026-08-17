@@ -17,11 +17,11 @@ const notoSans = Noto_Sans_JP({
 })
 
 export const metadata: Metadata = {
-  title: 'monoK26',
+  title: '全日本学生ものづくりExpo@関東',
   description:
     '宇宙好きが集まるコミュニティ「Cosmo Base」のイベント特設ページ。',
   openGraph: {
-    title: 'monoK26',
+    title: '全日本学生ものづくりExpo@関東 | Cosmo Base',
     description:
       '宇宙好きが集まるコミュニティ「Cosmo Base」のイベント特設ページ。',
     type: 'website',

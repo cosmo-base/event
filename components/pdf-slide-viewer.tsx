@@ -54,7 +54,8 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     return () => { cancelled = true }
   }, [url])
 
-  const renderPage = useCallback(async (pageNum: number) => {
+  // Render the page at zoom resolution so CSS scale(zoom) stays 1:1 pixels → crisp text
+  const renderPage = useCallback(async (pageNum: number, zoomLevel: number) => {
     if (!pdfRef.current || !canvasRef.current) return
     if (renderTaskRef.current) {
       renderTaskRef.current.cancel()
@@ -69,11 +70,15 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     const viewport = page.getViewport({ scale: 1 })
     const scaleW = containerWidth / viewport.width
     const scaleH = containerHeight / viewport.height
-    const scale = Math.min(scaleW, scaleH)
-    const scaled = page.getViewport({ scale })
+    const baseScale = Math.min(scaleW, scaleH)
+    // Pixel dimensions at zoom resolution
+    const scaled = page.getViewport({ scale: baseScale * zoomLevel })
     const ctx = canvas.getContext("2d")!
     canvas.width = scaled.width
     canvas.height = scaled.height
+    // CSS display size stays at 1× — CSS transform scale(zoomLevel) expands it 1:1 pixel
+    canvas.style.width = `${baseScale * viewport.width}px`
+    canvas.style.height = `${baseScale * viewport.height}px`
     const task = page.render({ canvasContext: ctx, viewport: scaled })
     renderTaskRef.current = task
     try {
@@ -83,9 +88,10 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     }
   }, [])
 
+  // Re-render whenever page or zoom changes (zoom triggers high-res re-render)
   useEffect(() => {
-    if (!loading && !error) renderPage(currentPage)
-  }, [currentPage, loading, error, renderPage])
+    if (!loading && !error) renderPage(currentPage, zoom)
+  }, [currentPage, zoom, loading, error, renderPage])
 
   // Reset zoom and pan on page change
   useEffect(() => {
@@ -93,14 +99,14 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     setPan({ x: 0, y: 0 })
   }, [currentPage])
 
-  // Re-render and reset state when entering/exiting fullscreen
+  // Re-render on fullscreen transition (container size changes)
   useEffect(() => {
     if (loading || error) return
     const handler = () => {
       setIsFullscreen(!!document.fullscreenElement)
       setZoom(1)
       setPan({ x: 0, y: 0 })
-      requestAnimationFrame(() => renderPage(currentPage))
+      requestAnimationFrame(() => renderPage(currentPage, 1))
     }
     document.addEventListener("fullscreenchange", handler)
     return () => document.removeEventListener("fullscreenchange", handler)
@@ -117,7 +123,6 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     return () => window.removeEventListener("keydown", onKey)
   }, [isFullscreen, totalPages])
 
-  // Drag-to-pan handlers (only active when zoomed in)
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (zoom <= 1) return
     isDragging.current = true
@@ -168,7 +173,6 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
 
   return (
     <div ref={viewerRef} className="absolute inset-0 flex flex-col bg-black">
-      {/* Canvas area with drag-to-pan */}
       <div
         ref={contentAreaRef}
         className="flex-1 flex items-center justify-center overflow-hidden min-h-0 select-none"
@@ -188,39 +192,30 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
             display: loading ? "none" : undefined,
           }}
         >
-          <canvas ref={canvasRef} className="max-w-full max-h-full object-contain" aria-label={title} />
+          <canvas ref={canvasRef} aria-label={title} />
         </div>
       </div>
 
-      {/* Toolbar */}
       {!loading && (
         <div className={`flex items-center justify-between ${isFullscreen ? "px-6 py-3" : "px-4 py-2"} bg-black/80 shrink-0`}>
-          {/* Prev */}
           <button onClick={prev} disabled={currentPage === 1} className={btn} aria-label="前のページ">
             <ChevronLeft className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
           </button>
 
-          {/* Page counter */}
           <span className={`${isFullscreen ? "text-sm" : "text-xs"} text-white/60 tabular-nums select-none`}>
             {currentPage} / {totalPages}
           </span>
 
           <div className="flex items-center gap-1">
-            {/* Next */}
             <button onClick={next} disabled={currentPage === totalPages} className={btn} aria-label="次のページ">
               <ChevronRight className={isFullscreen ? "w-7 h-7" : "w-5 h-5"} />
             </button>
-
-            {/* Zoom out */}
             <button onClick={zoomOut} disabled={zoom <= MIN_ZOOM} className={btn} aria-label="縮小" title="縮小">
               <ZoomOut className={iconSz} />
             </button>
-
-            {/* Zoom in */}
             <button onClick={zoomIn} disabled={zoom >= MAX_ZOOM} className={btn} aria-label="拡大" title="拡大">
               <ZoomIn className={iconSz} />
             </button>
-
             {isFullscreen && downloadUrl && (
               <a
                 href={downloadUrl}
