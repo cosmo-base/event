@@ -15,7 +15,7 @@ import type {
 
 export const monoS26Data: EventSpecificData = {
   site: {
-    pageTitle: "Cosmo Base イベント特設ページ｜monoS26",
+    pageTitle: "Cosmo Base イベント特設ページ｜全日本学生ものづくりExpo@信州",
     pageDescription:
       "Cosmo Base のイベント特設ページ。発表スライド、宇宙タイプ診断などのコンテンツを、その場で体験できます。",
     siteName: "Cosmo Base",
@@ -29,7 +29,7 @@ export const monoS26Data: EventSpecificData = {
 
   event: {
     name: "全日本学生ものづくりExpo@信州",
-    shortName: "monoS26",
+    shortName: "ものづくりExpo信州",
     date: "2026年8月20日（木）",
     venue: "ホテルメトロポリタン長野",
     boothNumber: "",

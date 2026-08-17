@@ -9,7 +9,7 @@ export default function SpaceTypeContentPage() {
     <div className="min-h-dvh bg-[#0B0F19]">
       <EventHeader logoUrl={monoS26Data.site.logoUrl} eventName={monoS26Data.event.shortName} />
       <div className="pt-14">
-        <SpaceType eventId="monoS26" backHref="/monoS26" backLabel="monoS26 イベントページに戻る" />
+        <SpaceType eventId="monoS26" backHref="/monoS26" backLabel="ものづくりExpo信州 イベントページに戻る" />
       </div>
       <SocialFooter
         cosmoBase={orgData.cosmoBase}
