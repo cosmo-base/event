@@ -14,7 +14,7 @@ import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
-import { EventSurvey } from "@/components/event-survey"
+import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 
 const SURVEY_QUESTIONS = [
@@ -65,12 +65,7 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <section id="survey" aria-labelledby="survey-heading" className="py-12">
-          <div className="mx-auto max-w-2xl px-4">
-            <h2 id="survey-heading" className="text-xl font-bold mb-6">アンケート</h2>
-            <EventSurvey eventId="monoK26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
-          </div>
-        </section>
+        <SurveySection eventId="monoK26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 
