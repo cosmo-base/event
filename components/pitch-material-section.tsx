@@ -109,7 +109,7 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
 export function PosterSection({ pitch }: { pitch: PitchData }) {
   if (!pitch.posters || pitch.posters.length === 0) return null
   return (
-    <section id="posters" className="scroll-mt-16 border-t border-border py-14">
+    <section id="booth" className="scroll-mt-16 border-t border-border py-14">
       <div className="mx-auto max-w-6xl px-4">
         <SectionHeading
           eyebrow="Poster"
