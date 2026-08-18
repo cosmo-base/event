@@ -152,7 +152,7 @@ export const monoS26Data: EventSpecificData = {
     pitchLockFrom: "13:30",
     pitchLockUntil: "15:55",
     presentationTitle: "2人半年で10万行。デジタルコンテンツを生み出し続ける開発プロセス",
-    description: "発表の説明",
+    description: "",
     speakerName: "未来宇宙産業フォーラム 眞鍋 和士",
     presentationDate: "2026年8月20日",
     presentationTime: "15:00",
