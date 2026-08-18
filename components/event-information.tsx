@@ -1,6 +1,45 @@
+"use client"
+
+import { useEffect, useRef } from "react"
 import { CalendarDays, MapPin, Store, Clock3, Mic2 } from "lucide-react"
 import type { EventPageData } from "@/data/event-page-data"
 import { StatusBadge } from "@/components/status-badge"
+
+function FitValue({ children }: { children: string }) {
+  const ref = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const adjust = () => {
+      el.style.fontSize = ""
+      el.style.whiteSpace = "nowrap"
+      if (el.scrollWidth <= el.clientWidth) return
+      // 少し縮小して再試行
+      el.style.fontSize = "0.75rem"
+      if (el.scrollWidth <= el.clientWidth) return
+      // それでも収まらなければ折り返し
+      el.style.fontSize = ""
+      el.style.whiteSpace = "normal"
+    }
+
+    adjust()
+    const ro = new ResizeObserver(adjust)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [children])
+
+  return (
+    <dd
+      ref={ref}
+      className="overflow-hidden text-sm font-semibold text-foreground"
+      style={{ whiteSpace: "nowrap" }}
+    >
+      {children}
+    </dd>
+  )
+}
 
 export function EventInformation({ event }: { event: EventPageData["event"] }) {
   const infoItems = [
@@ -62,7 +101,7 @@ export function EventInformation({ event }: { event: EventPageData["event"] }) {
               </span>
               <div className="min-w-0">
                 <dt className="text-xs text-muted-foreground">{item.label}</dt>
-                <dd className="truncate text-sm font-semibold text-foreground">{item.value}</dd>
+                <FitValue>{item.value}</FitValue>
               </div>
             </div>
           ))}

@@ -167,8 +167,8 @@ export const monoK26Data: EventSpecificData = {
     presentationTime: "15:00~",
     thumbnailUrl: "",
     slideUrl: "",
-    embedUrl: "",
-    pdfUrl: "",
+    embedUrl: "/event/documents/monoK26.pdf",
+    pdfUrl: "/event/documents/monoK26.pdf",
     supplementaryUrl: "",
     posters: [
       {
