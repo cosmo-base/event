@@ -25,6 +25,12 @@ function isLocked(from: string | undefined, until: string): boolean {
 
 export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
   const [locked, setLocked] = useState<boolean | null>(null)
+  const [dismissed, setDismissed] = useState(false)
+  const [isOperator, setIsOperator] = useState(false)
+
+  useEffect(() => {
+    try { setIsOperator(sessionStorage.getItem("operator_mode") === "1") } catch { /* ignore */ }
+  }, [])
 
   useEffect(() => {
     const { pitchLockFrom, pitchLockUntil } = pitch
@@ -43,10 +49,18 @@ export function PitchLockGate({ pitch, children }: PitchLockGateProps) {
   }, [pitch])
 
   if (locked === null) return null
-  if (!locked) return <>{children}</>
+  if (!locked || dismissed) return <>{children}</>
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black">
+      {isOperator && (
+        <button
+          onClick={() => setDismissed(true)}
+          className="absolute top-4 left-4 z-10 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-xs font-medium transition-colors"
+        >
+          運営：ロック解除
+        </button>
+      )}
       {pitch.embedUrl ? (
         <div className="relative flex-1 min-h-0">
           <PdfSlideViewer
