@@ -41,8 +41,8 @@ function isOperatorMode(): boolean {
 }
 
 /** Enqueue payload, attempt to send immediately. Falls back to queue on network error. */
-export async function sendToGas(payload: Record<string, unknown>): Promise<void> {
-  if (isOperatorMode()) return
+export async function sendToGas(payload: Record<string, unknown>, { force = false } = {}): Promise<void> {
+  if (!force && isOperatorMode()) return
   const item: QueuedItem = {
     id: typeof crypto !== "undefined" ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
     ts: Date.now(),
