@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Gift, RotateCcw, Sparkles } from "lucide-react"
+import { Gift, Sparkles } from "lucide-react"
 import { sendToGas } from "@/lib/gas-queue"
 
 export interface GachaPrize {
@@ -40,8 +40,6 @@ export function EventGacha({ eventId, prizes }: Props) {
     setSpinning(false)
     sendToGas({ type: "gacha", eventId, result: prize.name }).catch(() => {})
   }
-
-  const reset = () => setResult(null)
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
@@ -83,25 +81,19 @@ export function EventGacha({ eventId, prizes }: Props) {
         )}
       </div>
 
-      {/* Buttons */}
-      <div className="flex gap-3">
-        <button
-          onClick={spin}
-          disabled={spinning}
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
-        >
-          <Gift className="w-4 h-4" />
-          {spinning ? "抽選中..." : result ? "もう一度引く" : "ガチャを引く"}
-        </button>
-        {result && (
+      {/* Button */}
+      {!result && (
+        <div className="flex justify-center">
           <button
-            onClick={reset}
-            className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted/40 text-sm transition-colors"
+            onClick={spin}
+            disabled={spinning}
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
-            <RotateCcw className="w-4 h-4" />
+            <Gift className="w-4 h-4" />
+            {spinning ? "抽選中..." : "ガチャを引く"}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
