@@ -17,9 +17,6 @@ export default function GachaPage() {
         <div className="rounded-3xl border border-border bg-card shadow-sm">
           <EventGacha eventId="monoS26" prizes={PRIZES} />
         </div>
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          結果をスタッフにお見せください
-        </p>
       </div>
     </div>
   )
