@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
-import { MapPin, Loader2, Filter } from "lucide-react"
+import { MapPin, Loader2, Filter, Navigation } from "lucide-react"
 import { GlassCard } from "@/components/glass-card"
 import { TagBadge } from "@/components/tag-badge"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,8 @@ export default function CbmdMapPage() {
   const [onlyPlanetarium, setOnlyPlanetarium] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   const [selected, setSelected] = useState<Facility | null>(null)
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
+  const [isLocating, setIsLocating] = useState(false)
 
   useEffect(() => {
     fetchFacilitiesData().then((data) => {
@@ -30,14 +32,44 @@ export default function CbmdMapPage() {
     })
   }, [])
 
+  function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371000
+    const φ1 = (lat1 * Math.PI) / 180
+    const φ2 = (lat2 * Math.PI) / 180
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180
+    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  }
+
+  function handleGetLocation() {
+    if (!navigator.geolocation) return
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation([pos.coords.latitude, pos.coords.longitude])
+        setIsLocating(false)
+      },
+      () => setIsLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
   useEffect(() => {
     let result = facilities.filter((f) => f.lat && f.lng)
     if (lockedPrefectures) result = result.filter((f) => lockedPrefectures.includes(f.prefecture))
     else if (selectedRegion) result = result.filter((f) => f.region === selectedRegion)
     if (selectedCategory) result = result.filter((f) => f.category === selectedCategory)
     if (onlyPlanetarium) result = result.filter((f) => f.hasPlanetarium)
+    if (userLocation) {
+      result = [...result].sort((a, b) => {
+        const da = calculateDistance(userLocation[0], userLocation[1], a.lat!, a.lng!)
+        const db = calculateDistance(userLocation[0], userLocation[1], b.lat!, b.lng!)
+        return da - db
+      })
+    }
     setFiltered(result)
-  }, [facilities, lockedPrefectures, selectedRegion, selectedCategory, onlyPlanetarium])
+  }, [facilities, lockedPrefectures, selectedRegion, selectedCategory, onlyPlanetarium, userLocation])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -47,6 +79,16 @@ export default function CbmdMapPage() {
       </div>
 
       <div className="flex gap-2 mb-4 flex-wrap">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleGetLocation}
+          disabled={isLocating}
+          className="glass border-white/20 text-white/70 hover:text-white"
+        >
+          {isLocating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Navigation className="w-4 h-4 mr-2" />}
+          現在地から探す
+        </Button>
         <Button
           variant="outline"
           size="sm"
@@ -127,6 +169,7 @@ export default function CbmdMapPage() {
               selected={selected}
               initialCenter={mapCenter ?? undefined}
               initialZoom={mapZoom ?? undefined}
+              userLocation={userLocation}
             />
           )}
         </div>
@@ -149,16 +192,26 @@ export default function CbmdMapPage() {
           )}
 
           <div className="space-y-2">
-            {filtered.slice(0, 20).map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setSelected(f)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all ${selected?.id === f.id ? "bg-blue-500/20 border border-blue-500/30" : "bg-secondary/20 hover:bg-secondary/40"}`}
-              >
-                <span className="font-medium text-foreground">{f.name}</span>
-                <span className="text-muted-foreground text-xs block">{f.prefecture}</span>
-              </button>
-            ))}
+            {filtered.slice(0, 20).map((f) => {
+              const dist = userLocation && f.lat && f.lng
+                ? calculateDistance(userLocation[0], userLocation[1], f.lat, f.lng)
+                : null
+              const distLabel = dist != null
+                ? dist < 1000 ? `${Math.round(dist)}m` : `${(dist / 1000).toFixed(1)}km`
+                : null
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setSelected(f)}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all ${selected?.id === f.id ? "bg-blue-500/20 border border-blue-500/30" : "bg-secondary/20 hover:bg-secondary/40"}`}
+                >
+                  <span className="font-medium text-foreground">{f.name}</span>
+                  <span className="text-muted-foreground text-xs block">
+                    {f.prefecture}{distLabel && <span className="ml-2 text-blue-400">{distLabel}</span>}
+                  </span>
+                </button>
+              )
+            })}
             {filtered.length > 20 && (
               <p className="text-xs text-muted-foreground text-center py-2">他 {filtered.length - 20} 件...</p>
             )}
