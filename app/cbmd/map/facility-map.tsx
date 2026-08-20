@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
 import { Facility } from "@/data/CBMD"
@@ -32,12 +32,14 @@ export default function FacilityMap({
   selected,
   initialCenter,
   initialZoom,
+  userLocation,
 }: {
   facilities: Facility[]
   onSelect: (f: Facility) => void
   selected: Facility | null
   initialCenter?: [number, number]
   initialZoom?: number
+  userLocation?: [number, number] | null
 }) {
   return (
     <div className="absolute inset-0">
@@ -67,6 +69,15 @@ export default function FacilityMap({
               </Popup>
             </Marker>
           ) : null
+        )}
+        {userLocation && (
+          <CircleMarker
+            center={userLocation}
+            radius={10}
+            pathOptions={{ color: "#3b82f6", fillColor: "#3b82f6", fillOpacity: 0.9, weight: 2 }}
+          >
+            <Popup>現在地</Popup>
+          </CircleMarker>
         )}
       </MapContainer>
     </div>
