@@ -17,8 +17,6 @@ import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
-import { EventGacha } from "@/components/event-gacha"
-import type { GachaPrize } from "@/components/event-gacha"
 
 const VOYAGER_QUIZ: QuizData = {
   intro: "今日、8月20日は宇宙開発の歴史にとって特別な日。\n1977年のこの日、NASAの惑星探査機「ボイジャー2号」が宇宙へ旅立ちました🚀\n\nでは、ボイジャー2号の打ち上げについて正しいものはどれでしょう？",
@@ -37,11 +35,6 @@ const VOYAGER_QUIZ: QuizData = {
     description: "NASAの「Voyager 2」公式ページでは、これまでの探査実績や現在のミッションについて詳しく紹介されています。",
   },
 }
-
-const GACHA_PRIZES: GachaPrize[] = [
-  { name: "クリアファイル", weight: 10, emoji: "📄" },
-  { name: "ステッカー",     weight: 90, emoji: "⭐" },
-]
 
 const SURVEY_QUESTIONS = [
   "本日のブースはいかがでしたか？",
@@ -68,12 +61,15 @@ export default function Page() {
       <main id="main">
         <EventInformation event={data.event} />
 
-        <section aria-labelledby="gacha-heading" className="mx-auto max-w-6xl px-4 pt-6 pb-2">
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-            <p className="text-center text-xs tracking-widest text-muted-foreground mb-1">コミュニティ参加で</p>
-            <h2 id="gacha-heading" className="text-center text-2xl font-bold text-foreground mb-4">抽選券ゲット</h2>
-            <EventGacha eventId="monoS26" prizes={GACHA_PRIZES} />
-          </div>
+        <section aria-label="ガチャ" className="mx-auto max-w-6xl px-4 pt-6 pb-2">
+          <a href="/event/gacha" className="block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/gacha.png"
+              alt="コミュニティ参加で抽選券ゲット"
+              className="w-full rounded-3xl object-cover"
+            />
+          </a>
         </section>
 
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
