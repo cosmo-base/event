@@ -235,11 +235,23 @@ export default function EventListPage() {
         {/* Gacha */}
         <section className="mb-12">
           <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
-            ガチャ（モック）
+            ガチャ
           </h2>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 max-w-sm">
-            <p className="text-xs text-zinc-500 mb-4">景品抽選に使用。結果はスプシの「ガチャ」シートに記録されます。</p>
-            <EventGacha eventId="list" prizes={GACHA_PRIZES} />
+          <div className="flex flex-col gap-4 max-w-sm">
+            <Link
+              href="/gacha"
+              className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group"
+            >
+              <div>
+                <p className="text-sm font-bold text-white">ガチャページ（参加者向け）</p>
+                <p className="text-xs text-zinc-500 mt-0.5">クリアファイル 10% / ステッカー 90%</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+            </Link>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+              <p className="text-xs text-zinc-500 mb-4">テスト用。結果はスプシの「ガチャ」シートに記録されます。</p>
+              <EventGacha eventId="list" prizes={GACHA_PRIZES} />
+            </div>
           </div>
         </section>
 
