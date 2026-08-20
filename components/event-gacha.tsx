@@ -47,16 +47,12 @@ export function EventGacha({ eventId, prizes }: Props) {
       <div className="w-full max-w-xs">
         <p className="text-xs text-muted-foreground text-center mb-2">景品一覧</p>
         <div className="space-y-1">
-          {prizes.map((p) => {
-            const total = prizes.reduce((s, x) => s + x.weight, 0)
-            const pct = ((p.weight / total) * 100).toFixed(1)
-            return (
-              <div key={p.name} className="flex items-center justify-between text-sm px-3 py-1.5 rounded-lg bg-muted/40">
-                <span>{p.emoji && <span className="mr-2">{p.emoji}</span>}{p.name}</span>
-                <span className="text-muted-foreground text-xs">{pct}%</span>
-              </div>
-            )
-          })}
+          {prizes.map((p) => (
+            <div key={p.name} className="flex items-center text-sm px-3 py-1.5 rounded-lg bg-muted/40">
+              {p.emoji && <span className="mr-2">{p.emoji}</span>}
+              <span>{p.name}</span>
+            </div>
+          ))}
         </div>
       </div>
 
