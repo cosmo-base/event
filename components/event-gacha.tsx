@@ -14,6 +14,7 @@ export interface GachaPrize {
 interface Props {
   eventId: string
   prizes: GachaPrize[]
+  alwaysRecord?: boolean
 }
 
 function draw(prizes: GachaPrize[]): GachaPrize {
@@ -26,7 +27,7 @@ function draw(prizes: GachaPrize[]): GachaPrize {
   return prizes[prizes.length - 1]
 }
 
-export function EventGacha({ eventId, prizes }: Props) {
+export function EventGacha({ eventId, prizes, alwaysRecord }: Props) {
   const [result, setResult] = useState<GachaPrize | null>(null)
   const [spinning, setSpinning] = useState(false)
 
@@ -38,7 +39,7 @@ export function EventGacha({ eventId, prizes }: Props) {
     const prize = draw(prizes)
     setResult(prize)
     setSpinning(false)
-    sendToGas({ type: "gacha", eventId, result: prize.name }).catch(() => {})
+    sendToGas({ type: "gacha", eventId, result: prize.name }, { force: alwaysRecord }).catch(() => {})
   }
 
   return (
