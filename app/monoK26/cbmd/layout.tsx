@@ -2,6 +2,7 @@ import Link from "next/link"
 import { SocialFooter } from "@/components/social-footer"
 import { orgData } from "@/data/org-data"
 import { CbmdContextProvider } from "@/components/cbmd-region-context"
+import { ContentExpiryGate } from "@/components/content-expiry-gate"
 
 const navLinks = [
   { href: "/monoK26/cbmd", label: "TOP" },
@@ -16,6 +17,7 @@ const VENUE_ZOOM = 10
 
 export default function MonoK26CbmdLayout({ children }: { children: React.ReactNode }) {
   return (
+    <ContentExpiryGate expiryDate="2026-09-04" discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
       lockedPrefectures={["東京都", "神奈川県", "埼玉県", "千葉県"]}
       mapCenter={VENUE_CENTER}
@@ -59,5 +61,6 @@ export default function MonoK26CbmdLayout({ children }: { children: React.ReactN
         />
       </div>
     </CbmdContextProvider>
+    </ContentExpiryGate>
   )
 }
