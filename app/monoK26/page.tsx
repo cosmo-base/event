@@ -46,7 +46,7 @@ export default function Page() {
           <a href="https://discord.gg/X78w86XE3v" target="_blank" rel="noopener noreferrer" className="block w-full sm:w-1/2 mx-auto">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/event/gacha.png"
+              src="/event/images/gacha.png"
               alt="コミュニティ参加で抽選券ゲット"
               className="w-full rounded-3xl"
             />
