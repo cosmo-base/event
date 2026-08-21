@@ -17,6 +17,7 @@ import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
+import { ExpiryHide } from "@/components/expiry-hide"
 
 const VOYAGER_QUIZ: QuizData = {
   intro: "今日、8月20日は宇宙開発の歴史にとって特別な日。\n1977年のこの日、NASAの惑星探査機「ボイジャー2号」が宇宙へ旅立ちました🚀\n\nでは、ボイジャー2号の打ち上げについて正しいものはどれでしょう？",
@@ -89,7 +90,9 @@ export default function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <LimitedContentSection items={data.limitedContents} eventId="monoS26" quiz={VOYAGER_QUIZ} />
+        <ExpiryHide expiryDate="2026-08-27">
+          <LimitedContentSection items={data.limitedContents} eventId="monoS26" quiz={VOYAGER_QUIZ} />
+        </ExpiryHide>
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 
