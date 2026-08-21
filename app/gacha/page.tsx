@@ -15,7 +15,7 @@ export default function GachaPage() {
           <h1 className="text-2xl font-bold text-foreground mt-1">抽選券ゲット</h1>
         </div>
         <div className="rounded-3xl border border-border bg-card shadow-sm">
-          <EventGacha eventId="monoS26" prizes={PRIZES} alwaysRecord />
+          <EventGacha eventId="monoK26" prizes={PRIZES} alwaysRecord />
         </div>
       </div>
     </div>
