@@ -62,7 +62,7 @@ export default function Page() {
       <main id="main">
         <EventInformation event={data.event} />
 
-        <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
+<section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
           <HeroCarousel slides={data.carousel} />
         </section>
 

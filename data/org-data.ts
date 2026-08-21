@@ -54,10 +54,10 @@ export const orgData: OrgData = {
       "週刊宇宙ニュース・交流企画",
     ],
     stats: [
-      { label: "毎日宇宙クイズ参加者数", value: "1000人以上" },
+      { label: "毎日宇宙クイズ参加者数", value: "1300人以上" },
       { label: "コンテンツ", value: "10種類以上" },
       { label: "コミュニティ参加者", value: "170人以上" },
-      { label: "パートナー数", value: "2社・4団体" },
+      { label: "パートナー数", value: "2社・5団体" },
     ],
     websiteUrl: "https://fsifofficial.github.io/CosmoBase/",
     communityUrl: "https://discord.gg/X78w86XE3v",
