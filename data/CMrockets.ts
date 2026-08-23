@@ -70,8 +70,7 @@ export interface Question {
   choices: Choice[];
 }
 
-const CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQENBPEZ3ep1J54G09l7I-vPMaMC6wNxr55bXBsdAdj_xp6gy5ksoM27EyITCuGObi0Kzxbzu2HpLM1/pub?gid=0&single=true&output=csv";
+const CSV_URL = process.env.NEXT_PUBLIC_CMROCKETS_CSV_URL ?? "";
 
 function parseStatus(val: string): "active" | "retired" | "development" {
   if (!val) return "retired";

@@ -110,7 +110,7 @@ const TOOLS = [
   },
 ]
 
-const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1X1K1dPUDsWSp8Z61wuniinQIg5L166QDH6eQJ5KAhxY/edit?gid=1933865187#gid=1933865187"
+const SPREADSHEET_URL = process.env.NEXT_PUBLIC_LIST_SPREADSHEET_URL ?? ""
 
 const GACHA_PRIZES: GachaPrize[] = [
   { name: "シール", weight: 40, emoji: "🌟" },

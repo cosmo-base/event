@@ -142,7 +142,7 @@ export const QUESTIONS = [
 ];
 
 export async function getConstellations(): Promise<Constellation[]> {
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQTbfWKxGFEmOkuaszkGJNUcX4FySkqmdxKJtaXG0esrjJoHSo5zmEoOGLTmzH09YJd9BZY1DyqNc7P/pub?gid=0&single=true&output=csv";
+  const CSV_URL = process.env.NEXT_PUBLIC_CMCONSTELLATION_CSV_URL ?? "";
 
   try {
     const res = await fetch(CSV_URL, { cache: 'no-store' });

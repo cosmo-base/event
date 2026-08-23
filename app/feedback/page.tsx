@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, ClipboardList, Loader2, Send } from "lucide-react"
 
-const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSftfcnBxZVaMgmitAxRAWFTlYkFcT6AaRubrhNuGAUAuS_2ZA/formResponse"
+const GOOGLE_FORM_ACTION = process.env.NEXT_PUBLIC_FEEDBACK_FORM_URL ?? ""
 
 export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)

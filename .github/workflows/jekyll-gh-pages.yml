@@ -35,6 +35,15 @@ jobs:
 
       - name: Build with Next.js
         run: npm run build
+        env:
+          NEXT_PUBLIC_CBED_CSV_URL: ${{ secrets.NEXT_PUBLIC_CBED_CSV_URL }}
+          NEXT_PUBLIC_LAUNCHES_CSV_URL: ${{ secrets.NEXT_PUBLIC_LAUNCHES_CSV_URL }}
+          NEXT_PUBLIC_CBMD_CSV_URL: ${{ secrets.NEXT_PUBLIC_CBMD_CSV_URL }}
+          NEXT_PUBLIC_CMCONSTELLATION_CSV_URL: ${{ secrets.NEXT_PUBLIC_CMCONSTELLATION_CSV_URL }}
+          NEXT_PUBLIC_CMROCKETS_CSV_URL: ${{ secrets.NEXT_PUBLIC_CMROCKETS_CSV_URL }}
+          NEXT_PUBLIC_EVENT_GAS_URL: ${{ secrets.NEXT_PUBLIC_EVENT_GAS_URL }}
+          NEXT_PUBLIC_LIST_SPREADSHEET_URL: ${{ secrets.NEXT_PUBLIC_LIST_SPREADSHEET_URL }}
+          NEXT_PUBLIC_FEEDBACK_FORM_URL: ${{ secrets.NEXT_PUBLIC_FEEDBACK_FORM_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

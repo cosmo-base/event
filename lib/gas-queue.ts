@@ -2,7 +2,7 @@
 // Saves data before sending; retries on next page load if network fails.
 // Works with no-cors — assumes success unless fetch() throws (network error).
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxdFwi6ip7Rf8Dr9q6BvoeXWVjAKRZtSy5oy7F7rZ1OvybDKfpNMAjzfHsJCtB3KUoqaQ/exec"
+const GAS_URL = process.env.NEXT_PUBLIC_EVENT_GAS_URL ?? ""
 const QUEUE_KEY = "gas_pending"
 const MAX_ATTEMPTS = 5
 
