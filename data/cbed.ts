@@ -18,8 +18,7 @@ export interface SpaceEvent {
   isRecommend?: boolean
 }
 
-const CBED_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJU_Qq6TICMIAhDidiH2BYlBcZBvS_Uwy4wth9tT-02RYWkVP_AufdGo0PMAbAyrHKeZrE1x0laETY/pub?gid=0&single=true&output=csv"
+const CBED_CSV_URL = process.env.NEXT_PUBLIC_CBED_CSV_URL ?? ""
 
 function parseCSV(csvText: string): SpaceEvent[] {
   const arr: string[][] = []

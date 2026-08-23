@@ -10,8 +10,7 @@ export interface LaunchEvent {
   isLaunch: boolean
 }
 
-const LAUNCHES_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJU_Qq6TICMIAhDidiH2BYlBcZBvS_Uwy4wth9tT-02RYWkVP_AufdGo0PMAbAyrHKeZrE1x0laETY/pub?gid=541859876&single=true&output=csv"
+const LAUNCHES_CSV_URL = process.env.NEXT_PUBLIC_LAUNCHES_CSV_URL ?? ""
 
 function parseSimpleCSV(text: string): Record<string, string>[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim())
