@@ -16,6 +16,21 @@ import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
+import type { QuizData } from "@/components/event-quiz"
+import { ExpiryHide } from "@/components/expiry-hide"
+
+const KANTO_QUIZ: QuizData = {
+  intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
+  question: "浅草がある東京都台東区には、宇宙に関係する展示も行う施設があります。それはどれでしょう？",
+  options: [
+    "国立科学博物館",
+    "日本科学未来館",
+    "多摩六都科学館",
+  ],
+  correctIndex: 0,
+  explanation:
+    "正解は「① 国立科学博物館」です！\n\n台東区上野にある国立科学博物館では、宇宙や天文学に関する資料も展示されています。地球館には隕石などの展示もあり、宇宙から地球まで幅広い科学を学ぶことができます。",
+}
 
 const SURVEY_QUESTIONS = [
   "本日のブースはいかがでしたか？",
@@ -70,7 +85,9 @@ export default function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <LimitedContentSection items={data.limitedContents} eventId="monoK26" />
+        <ExpiryHide expiryDate="2026-09-04">
+          <LimitedContentSection items={data.limitedContents} eventId="monoK26" quiz={KANTO_QUIZ} />
+        </ExpiryHide>
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 
