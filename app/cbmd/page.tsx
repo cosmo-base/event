@@ -32,7 +32,7 @@ export default function CbmdPage() {
       )
     }
     loadData()
-  }, [lockedRegion])
+  }, [lockedRegion, lockedPrefectures])
 
   return (
     <div className="min-h-screen">
