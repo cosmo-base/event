@@ -79,9 +79,13 @@ function parseStatus(val: string): "active" | "retired" | "development" {
   return "retired";
 }
 
+let _rocketsCache: Rocket[] | null = null
+
 export async function getRockets(): Promise<Rocket[]> {
+  if (_rocketsCache) return _rocketsCache
+  if (!CSV_URL) return []
   try {
-    const res = await fetch(CSV_URL, { cache: 'no-store' });
+    const res = await fetch(CSV_URL, { signal: AbortSignal.timeout(20000) });
     const csvText = await res.text();
 
     return new Promise((resolve) => {
@@ -192,6 +196,7 @@ export async function getRockets(): Promise<Rocket[]> {
             r.relatedRockets = related;
           });
 
+          _rocketsCache = rockets;
           resolve(rockets);
         },
       });
