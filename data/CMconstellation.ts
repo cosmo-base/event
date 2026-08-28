@@ -141,11 +141,15 @@ export const QUESTIONS = [
   }
 ];
 
+let _constellationsCache: Constellation[] | null = null
+
 export async function getConstellations(): Promise<Constellation[]> {
+  if (_constellationsCache) return _constellationsCache
   const CSV_URL = process.env.NEXT_PUBLIC_CMCONSTELLATION_CSV_URL ?? "";
+  if (!CSV_URL) return [];
 
   try {
-    const res = await fetch(CSV_URL, { cache: 'no-store' });
+    const res = await fetch(CSV_URL, { signal: AbortSignal.timeout(20000) });
     const csvText = await res.text();
 
     return new Promise((resolve) => {
@@ -183,6 +187,7 @@ export async function getConstellations(): Promise<Constellation[]> {
               articleLinks: []
             } as Constellation;
           });
+          _constellationsCache = data;
           resolve(data);
         }
       });
