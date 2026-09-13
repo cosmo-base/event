@@ -52,7 +52,7 @@ export function ContentCard({
       ].join(" ")}
     >
       {/* サムネイル */}
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900">
         {content.imageUrl ? (
           <Image
             src={content.imageUrl || "/placeholder.svg"}
