@@ -11,6 +11,7 @@ import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
+import { PosterSection } from "@/components/pitch-material-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 
@@ -38,6 +39,17 @@ export default function Page() {
       <main id="main">
         <EventInformation event={data.event} />
 
+        <section aria-label="ガチャ" className="mx-auto max-w-6xl px-4 pt-6 pb-2">
+          <a href="https://discord.gg/X78w86XE3v" target="_blank" rel="noopener noreferrer" className="block w-full sm:w-1/2 mx-auto">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/event/images/gacha.png"
+              alt="コミュニティ参加で抽選券ゲット"
+              className="w-full rounded-3xl"
+            />
+          </a>
+        </section>
+
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
           <HeroCarousel slides={data.carousel} />
         </section>
@@ -51,6 +63,8 @@ export default function Page() {
         <SpaceTypeDiagnosisFeature feature={data.spaceType} />
 
         <ContentExperienceSection contents={data.contents} />
+
+        <PosterSection pitch={data.pitch} />
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 

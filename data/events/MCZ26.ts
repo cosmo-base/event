@@ -32,10 +32,10 @@ export const MCZ26Data: EventSpecificData = {
     date: "2026年9月14日（月）",
     venue: "ベルサール半蔵門",
     boothNumber: "14",
-    pitchTime: "",
+    pitchTime: "13:00〜19:30",
     participationType: "ブース出展",
     exhibitorName: "Cosmo Base",
-    message: "",
+    message: "主催：一般社団法人日本若者キャリア支援協会（JYC）",
     reportUrl: "",
   },
 
@@ -170,7 +170,14 @@ export const MCZ26Data: EventSpecificData = {
     pdfUrl: "",
     pdfDownloadName: "",
     supplementaryUrl: "",
-    posters: [],
+    posters: [
+      {
+        title: "未来宇宙産業フォーラム（FSIF）の活動紹介",
+        embedUrl: "/event/documents/mono26_poster_fsif.pdf",
+        pdfUrl: "/event/documents/mono26_poster_fsif.pdf",
+        downloadName: "mono26_poster_fsif.pdf",
+      },
+    ],
   } as PitchData,
 
   spaceType: {
