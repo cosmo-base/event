@@ -62,7 +62,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
               aria-label="イベントトップへ戻る"
             >
               <span className="flex flex-col items-start leading-none">
-                <img className="h-6 w-max dark:invert-0 invert" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+                <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
                 <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
               </span>
             </Link>
@@ -74,7 +74,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
               aria-label="ページ最上部へ戻る"
             >
               <span className="flex flex-col items-start leading-none">
-                <img className="h-6 w-max dark:invert-0 invert" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
+                <img className="h-6 w-max" src="/event/CB_logo.png" alt="CB" aria-hidden="true" />
                 <span className="text-[10px] font-medium text-muted-foreground">イベント特設ページ</span>
               </span>
             </button>

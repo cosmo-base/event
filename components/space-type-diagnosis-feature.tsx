@@ -71,7 +71,7 @@ export function SpaceTypeDiagnosisFeature({ feature }: { feature: SpaceTypeFeatu
               {/* 診断結果カードが重なったモックアップ */}
               <div className="relative mx-auto hidden h-64 w-full max-w-sm md:block">
                 {feature.imageUrl ? (
-                  <div className="absolute inset-4 overflow-hidden rounded-3xl border border-border bg-zinc-900 shadow-lg">
+                  <div className="absolute inset-4 overflow-hidden rounded-3xl border border-border bg-card shadow-lg">
                     <Image
                       src={feature.imageUrl || "/placeholder.svg"}
                       alt=""
