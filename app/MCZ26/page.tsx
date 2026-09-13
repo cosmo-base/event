@@ -12,8 +12,22 @@ import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PosterSection } from "@/components/pitch-material-section"
+import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
+import type { QuizData } from "@/components/event-quiz"
+
+const MCZ26_QUIZ: QuizData = {
+  question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
+  options: [
+    "汗や尿",
+    "氷河の氷",
+    "隕石の水分",
+  ],
+  correctIndex: 0,
+  explanation:
+    "ISSでは「水再生システム」により、宇宙飛行士の汗や尿、さらには呼気に含まれる水分までも蒸留・ろ過して飲料水として再利用しています。地球からの補給には限りがあるため、限られた資源を無駄なく循環させる仕組みが宇宙生活を支えています。",
+}
 
 const SURVEY_QUESTIONS = [
   "本日のブースはいかがでしたか？",
@@ -63,6 +77,8 @@ export default function Page() {
         <SpaceTypeDiagnosisFeature feature={data.spaceType} />
 
         <ContentExperienceSection contents={data.contents} />
+
+        <LimitedContentSection items={data.limitedContents} eventId="MCZ26" quiz={MCZ26_QUIZ} />
 
         <PosterSection pitch={data.pitch} />
 
