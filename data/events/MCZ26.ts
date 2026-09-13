@@ -170,7 +170,14 @@ export const MCZ26Data: EventSpecificData = {
     pdfUrl: "",
     pdfDownloadName: "",
     supplementaryUrl: "",
-    posters: [],
+    posters: [
+      {
+        title: "未来宇宙産業フォーラム（FSIF）の活動紹介",
+        embedUrl: "/event/documents/mono26_poster_fsif.pdf",
+        pdfUrl: "/event/documents/mono26_poster_fsif.pdf",
+        downloadName: "mono26_poster_fsif.pdf",
+      },
+    ],
   } as PitchData,
 
   spaceType: {

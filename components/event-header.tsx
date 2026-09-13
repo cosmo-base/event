@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { label: "発表資料", href: "#pitch" },
+  { label: "資料", href: "#pitch" },
   { label: "コンテンツ体験", href: "#contents" },
   { label: "Cosmo Base", href: "#cosmo-base" },
   { label: "運営団体", href: "#organization" },
@@ -35,7 +35,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
 
   // Resolve the home destination: explicit prop wins, then auto-detect from pathname
   const resolvedHome = homeHref
-    ?? (pathname?.match(/^\/(kurawaku2|monoS26|monoK26|SDF26)\/.+/) ? `/${pathname.split("/")[1]}` : null)
+    ?? (pathname?.match(/^\/(kurawaku2|monoS26|monoK26|SDF26|MCZ26|StEX26)\/.+/) ? `/${pathname.split("/")[1]}` : null)
 
   const scrollTop = () => {
     setOpen(false);

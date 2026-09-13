@@ -11,6 +11,7 @@ import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
+import { PosterSection } from "@/components/pitch-material-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 
@@ -51,6 +52,8 @@ export default function Page() {
         <SpaceTypeDiagnosisFeature feature={data.spaceType} />
 
         <ContentExperienceSection contents={data.contents} />
+
+        <PosterSection pitch={data.pitch} />
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 
