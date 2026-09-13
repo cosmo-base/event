@@ -1,0 +1,74 @@
+import { orgData } from "@/data/org-data"
+import { MCZ26Data } from "@/data/events/MCZ26"
+import { EventHeader } from "@/components/event-header"
+import { EventInformation } from "@/components/event-information"
+import { HeroCarousel } from "@/components/hero-carousel"
+import { QuickAccessGrid } from "@/components/quick-access-grid"
+import { ContentExperienceSection } from "@/components/content-experience-section"
+import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
+import { CosmoBaseIntroduction } from "@/components/cosmo-base-introduction"
+import { FsifIntroduction } from "@/components/fsif-introduction"
+import { CommunityCta } from "@/components/community-cta"
+import { SocialLinksSection } from "@/components/social-links-section"
+import { SocialFooter } from "@/components/social-footer"
+import { PageViewTracker } from "@/components/page-view-tracker"
+import { SurveySection } from "@/components/event-survey"
+
+const SURVEY_QUESTIONS = [
+  "本日のブースはいかがでしたか？",
+  "Cosmo Baseを知ったきっかけを教えてください。",
+  "今後、どんなコンテンツや活動に期待しますか？",
+]
+
+export default function Page() {
+  const data = { ...orgData, ...MCZ26Data }
+
+  return (
+    <div className="min-h-dvh bg-background">
+      <PageViewTracker eventId="MCZ26" />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+      >
+        本文へスキップ
+      </a>
+
+      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
+
+      <main id="main">
+        <EventInformation event={data.event} />
+
+        <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
+          <HeroCarousel slides={data.carousel} />
+        </section>
+
+        <section aria-labelledby="quick-access-heading" className="py-10">
+          <div className="mx-auto max-w-6xl px-4">
+            <QuickAccessGrid links={data.quickLinks} />
+          </div>
+        </section>
+
+        <SpaceTypeDiagnosisFeature feature={data.spaceType} />
+
+        <ContentExperienceSection contents={data.contents} />
+
+        <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
+
+        <FsifIntroduction fsif={data.fsif} />
+
+        <SurveySection eventId="MCZ26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+
+        <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
+
+        <SocialLinksSection socialLinks={data.socialLinks} />
+      </main>
+
+      <SocialFooter
+        cosmoBase={data.cosmoBase}
+        fsif={data.fsif}
+        socialLinks={data.socialLinks}
+        legalLinks={data.legalLinks}
+      />
+    </div>
+  )
+}
