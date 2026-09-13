@@ -35,7 +35,7 @@ export const StEX26Data: EventSpecificData = {
     pitchTime: "16:00〜20:00",
     participationType: "ブース出展",
     exhibitorName: "未来宇宙産業フォーラム（FSIF）",
-    message: "",
+    message: "宇宙をさらに身近にするコミュニティ「Cosmo Base」の出展ブースです。「宇宙を、楽しむ。」をテーマに、活動紹介ポスターの展示や、宇宙の魅力を見て触れて学べる体験コンテンツをご用意しています。",
     reportUrl: "",
   },
 

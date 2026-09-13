@@ -45,6 +45,24 @@ const EVENTS = [
     type: "ポスターセッション",
     status: "active" as const,
   },
+  {
+    id: "MCZ26",
+    path: "/MCZ26",
+    fullName: "MIRAI CREATOR'Z FES 2026",
+    date: "2026年9月14日（日）",
+    venue: "ベルサール半蔵門",
+    type: "ブース出展",
+    status: "active" as const,
+  },
+  {
+    id: "StEX26",
+    path: "/StEX26",
+    fullName: "学生宇宙探査カンファレンスStEX 2026",
+    date: "2026年9月15日（月）",
+    venue: "Tokyo Innovation Base（TIB）",
+    type: "ブース出展",
+    status: "active" as const,
+  },
 ]
 
 const STATUS = {
