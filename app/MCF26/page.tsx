@@ -1,5 +1,5 @@
 import { orgData } from "@/data/org-data"
-import { MCZ26Data } from "@/data/events/MCZ26"
+import { MCF26Data } from "@/data/events/MCF26"
 import { EventHeader } from "@/components/event-header"
 import { EventInformation } from "@/components/event-information"
 import { HeroCarousel } from "@/components/hero-carousel"
@@ -17,7 +17,7 @@ import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
 
-const MCZ26_QUIZ: QuizData = {
+const MCF26_QUIZ: QuizData = {
   question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
   options: [
     "汗や尿",
@@ -36,11 +36,11 @@ const SURVEY_QUESTIONS = [
 ]
 
 export default function Page() {
-  const data = { ...orgData, ...MCZ26Data }
+  const data = { ...orgData, ...MCF26Data }
 
   return (
     <div className="min-h-dvh bg-background">
-      <PageViewTracker eventId="MCZ26" />
+      <PageViewTracker eventId="MCF26" />
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -78,7 +78,7 @@ export default function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <LimitedContentSection items={data.limitedContents} eventId="MCZ26" quiz={MCZ26_QUIZ} />
+        <LimitedContentSection items={data.limitedContents} eventId="MCF26" quiz={MCF26_QUIZ} />
 
         <PosterSection pitch={data.pitch} />
 
@@ -86,7 +86,7 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <SurveySection eventId="MCZ26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+        <SurveySection eventId="MCF26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 
