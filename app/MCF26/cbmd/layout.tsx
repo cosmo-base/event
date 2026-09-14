@@ -5,37 +5,37 @@ import { CbmdContextProvider } from "@/components/cbmd-region-context"
 import { ContentExpiryGate } from "@/components/content-expiry-gate"
 
 const navLinks = [
-  { href: "/MCZ26/cbmd", label: "TOP" },
-  { href: "/MCZ26/cbmd/map", label: "マップ" },
-  { href: "/MCZ26/cbmd/search", label: "検索" },
-  { href: "/MCZ26/cbmd/database", label: "データベース" },
+  { href: "/MCF26/cbmd", label: "TOP" },
+  { href: "/MCF26/cbmd/map", label: "マップ" },
+  { href: "/MCF26/cbmd/search", label: "検索" },
+  { href: "/MCF26/cbmd/database", label: "データベース" },
 ]
 
 // ベルサール半蔵門（千代田区麹町6-2-1）付近
 const VENUE_CENTER: [number, number] = [35.689, 139.741]
 const VENUE_ZOOM = 10
 
-export default function MCZ26CbmdLayout({ children }: { children: React.ReactNode }) {
+export default function MCF26CbmdLayout({ children }: { children: React.ReactNode }) {
   return (
     <ContentExpiryGate expiryDate="2026-09-21" discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
       lockedPrefectures={["東京都", "神奈川県", "埼玉県", "千葉県"]}
       mapCenter={VENUE_CENTER}
       mapZoom={VENUE_ZOOM}
-      basePath="/MCZ26/cbmd"
+      basePath="/MCF26/cbmd"
     >
       <div className="min-h-dvh bg-[#000033] dark">
         <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/10 bg-black/60 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 shrink-0">
               <Link
-                href="/MCZ26"
+                href="/MCF26"
                 className="text-xs text-white/50 hover:text-white/80 transition-colors"
                 aria-label="MIRAI CREATOR'Z FES イベントページに戻る"
               >
                 ← MIRAI CREATOR'Z FES
               </Link>
-              <Link href="/MCZ26/cbmd" className="text-white font-bold text-sm">
+              <Link href="/MCF26/cbmd" className="text-white font-bold text-sm">
                 📚 CBMD <span className="text-xs font-normal text-white/50">関東</span>
               </Link>
             </div>

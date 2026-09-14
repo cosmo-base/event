@@ -35,7 +35,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
 
   // Resolve the home destination: explicit prop wins, then auto-detect from pathname
   const resolvedHome = homeHref
-    ?? (pathname?.match(/^\/(kurawaku2|monoS26|monoK26|SDF26|MCZ26|StEX26)\/.+/) ? `/${pathname.split("/")[1]}` : null)
+    ?? (pathname?.match(/^\/(kurawaku2|monoS26|monoK26|SDF26|MCF26|StEX26)\/.+/) ? `/${pathname.split("/")[1]}` : null)
 
   const scrollTop = () => {
     setOpen(false);

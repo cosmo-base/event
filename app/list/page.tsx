@@ -46,8 +46,8 @@ const EVENTS = [
     status: "active" as const,
   },
   {
-    id: "MCZ26",
-    path: "/MCZ26",
+    id: "MCF26",
+    path: "/MCF26",
     fullName: "MIRAI CREATOR'Z FES 2026",
     date: "2026年9月14日（日）",
     venue: "ベルサール半蔵門",

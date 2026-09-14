@@ -1,5 +1,5 @@
 // ============================================================================
-// MCZ26 イベント固有データ
+// MCF26 イベント固有データ
 // ============================================================================
 
 import type {
@@ -12,7 +12,7 @@ import type {
   EventSpecificData,
 } from "@/data/event-page-data"
 
-export const MCZ26Data: EventSpecificData = {
+export const MCF26Data: EventSpecificData = {
   site: {
     pageTitle: "Cosmo Base イベント特設ページ｜MIRAI CREATOR'Z FES 2026",
     pageDescription:
@@ -56,7 +56,7 @@ export const MCZ26Data: EventSpecificData = {
       title: "あなたはどんな宇宙タイプ？",
       description: "5つの質問に答えるだけ。宇宙の知識がなくても楽しめます。",
       buttonLabel: "宇宙タイプ診断を始める",
-      href: "/event/MCZ26/type",
+      href: "/event/MCF26/type",
       external: true,
       gradient: "linear-gradient(135deg,#2563eb 0%,#6d5ee6 55%,#7c3aed 100%)",
     },
@@ -113,7 +113,7 @@ export const MCZ26Data: EventSpecificData = {
       id: "ql-diagnosis",
       title: "宇宙タイプ診断",
       description: "約2分・知識不要",
-      href: "/event/MCZ26/type",
+      href: "/event/MCF26/type",
       icon: "sparkles",
       external: true,
       event: "click_space_type_diagnosis",
@@ -189,7 +189,7 @@ export const MCZ26Data: EventSpecificData = {
     questionCount: "5問",
     requirement: "宇宙の知識：不要",
     buttonLabel: "宇宙タイプ診断を始める",
-    href: "/event/MCZ26/type",
+    href: "/event/MCF26/type",
     imageUrl: "/event/type/CB_type.png",
   } as SpaceTypeFeature,
 
@@ -198,7 +198,7 @@ export const MCZ26Data: EventSpecificData = {
       id: "c-space-type",
       title: "宇宙タイプ診断",
       description: "5つの質問であなたの宇宙タイプが分かる、人気の診断コンテンツ。",
-      href: "/event/MCZ26/type/",
+      href: "/event/MCF26/type/",
       duration: "約2分",
       audience: "初心者向け",
       labels: ["人気コンテンツ", "知識不要"],
@@ -211,7 +211,7 @@ export const MCZ26Data: EventSpecificData = {
       id: "c-cbmd",
       title: "Cosmo Base Museum Database",
       description: "東京・神奈川・埼玉・千葉の宇宙関連施設をまとめたデータベース。地図から探せます。",
-      href: "/event/MCZ26/cbmd",
+      href: "/event/MCF26/cbmd",
       audience: "だれでも",
       labels: ["データベース", "関東エリア"],
       status: "available",
@@ -231,7 +231,7 @@ export const MCZ26Data: EventSpecificData = {
     primaryHref: "https://discord.gg/X78w86XE3v",
     secondaryLinks: [
       { label: "公式サイトを見る", href: "https://fsifofficial.github.io/CosmoBase/", event: "click_cosmo_base_website" },
-      { label: "宇宙タイプ診断を試す", href: "/event/MCZ26/type", event: "click_space_type_diagnosis" },
+      { label: "宇宙タイプ診断を試す", href: "/event/MCF26/type", event: "click_space_type_diagnosis" },
       { label: "SNSを見る", href: "#social", anchor: true },
     ],
   },
