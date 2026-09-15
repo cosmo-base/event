@@ -55,12 +55,12 @@ export default function Page() {
         <EventInformation event={data.event} />
 
         <section aria-label="ガチャ" className="mx-auto max-w-6xl px-4 pt-6 pb-2">
-          <a href="https://discord.gg/X78w86XE3v" target="_blank" rel="noopener noreferrer" className="block w-full sm:w-1/2 mx-auto">
+          <a href="https://discord.gg/X78w86XE3v" target="_blank" rel="noopener noreferrer" className="block w-full max-w-sm mx-auto">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/event/images/gacha.png"
               alt="コミュニティ参加で抽選券ゲット"
-              className="w-full rounded-3xl"
+              className="w-full h-auto rounded-3xl"
             />
           </a>
         </section>
