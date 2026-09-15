@@ -36,7 +36,7 @@ export function SocialFooter({
         <div className="flex flex-col gap-8 md:flex-row md:justify-between">
           <div className="max-w-sm">
             <div className="flex items-center gap-2">
-              <img src="/event/CB_logo.png" alt="Cosmo Base" className="w-max h-10" />
+              <img src="/event/CB_logo.png" alt="Cosmo Base" className="h-10 w-auto max-w-full" />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">{fsif.name}</p>
             <p className="text-xs text-white/50">{fsif.englishName}</p>
