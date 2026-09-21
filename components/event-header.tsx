@@ -86,7 +86,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
               <Link
                 href={resolvedHome}
                 onClick={() => setOpen(false)}
-                className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+                className="absolute left-1/2 -translate-x-1/2 max-w-[calc(100vw-9rem)] truncate text-sm font-bold text-foreground hover:opacity-80 transition-opacity"
               >
                 {eventName}
               </Link>
@@ -94,7 +94,7 @@ export function EventHeader({ logoUrl, eventName, homeHref }: { logoUrl?: string
               <button
                 type="button"
                 onClick={scrollTop}
-                className="absolute left-1/2 -translate-x-1/2 text-sm font-bold text-foreground whitespace-nowrap hover:opacity-80 transition-opacity"
+                className="absolute left-1/2 -translate-x-1/2 max-w-[calc(100vw-9rem)] truncate text-sm font-bold text-foreground hover:opacity-80 transition-opacity"
               >
                 {eventName}
               </button>
