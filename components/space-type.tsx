@@ -95,7 +95,7 @@ function ResultScreen({ answers, backHref, backLabel }: { answers: number[]; bac
   const data = RESULT_DATA[resultType];
 
   const handleXShare = () => {
-    const shareUrl = `https://fsifofficial.github.io/CosmoBase/space-type/result/${resultType}`;
+    const shareUrl = `https://cosmobase.fsif.jp/space-type/result/${resultType}`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.shareText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterUrl, '_blank');
   };
