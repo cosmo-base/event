@@ -13,7 +13,7 @@ export default function CbedLayout({ children }: { children: React.ReactNode }) 
       <div className="fixed inset-x-0 top-0 z-50 bg-[#000033]/90 backdrop-blur border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/event/CBED_logo.png" alt="CBED" className="h-7 w-auto object-contain" />
+          <img src="/CBED_logo.png" alt="CBED" className="h-7 w-auto object-contain" />
           <nav className="flex gap-1 flex-wrap">
             {NAV.map((l) => (
               <Link

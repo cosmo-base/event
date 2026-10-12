@@ -75,7 +75,7 @@ const TOOLS = [
   {
     name: "CBMD",
     description: "Cosmo Base Museum Database\n宇宙系展示施設データベース",
-    logo: "/event/CBMD_logo.png",
+    logo: "/CBMD_logo.png",
     links: [
       { label: "TOP", href: "/cbmd" },
       { label: "マップ", href: "/cbmd/map" },
@@ -86,7 +86,7 @@ const TOOLS = [
   {
     name: "CBED",
     description: "Cosmo Base Event Database\n宇宙系イベントデータベース",
-    logo: "/event/CBED_logo.png",
+    logo: "/CBED_logo.png",
     previewUrl: "/kurawaku2/cbed?preview=locked",
     links: [
       { label: "TOP", href: "/cbed" },
@@ -98,7 +98,7 @@ const TOOLS = [
   {
     name: "CosmoMatch",
     description: "推し診断ツール\nロケット編・88星座編",
-    logo: "/event/CosmoMatch_logo.png",
+    logo: "/CosmoMatch_logo.png",
     links: [
       { label: "TOP", href: "/cosmomatch" },
       { label: "ロケット診断", href: "/cosmomatch/rocket" },
@@ -111,7 +111,7 @@ const TOOLS = [
   {
     name: "宇宙タイプ診断",
     description: "あなたの宇宙タイプを診断\nRI / RO / DI / DO の4タイプ",
-    logo: "/event/CBtype_logo.png",
+    logo: "/CBtype_logo.png",
     previewUrl: "/kurawaku2/type?preview=locked",
     links: [
       { label: "診断", href: "/type" },
@@ -146,7 +146,7 @@ export default function EventListPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/event/CB_icon.png" alt="Cosmo Base" width={48} height={48} className="rounded-xl" />
+          <img src="/CB_icon.png" alt="Cosmo Base" width={48} height={48} className="rounded-xl" />
           <div>
             <h1 className="text-2xl font-bold text-white">Cosmo Base 運営ポータル</h1>
             <p className="text-sm text-zinc-400">イベントページ・コンテンツ一覧</p>
@@ -164,7 +164,7 @@ export default function EventListPage() {
               return (
                 <Link key={ev.id} href={`${ev.path}?ref=list`} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/event/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
+                  <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-white text-sm">{ev.fullName}</span>
