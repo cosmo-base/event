@@ -59,7 +59,7 @@ export const orgData: OrgData = {
       { label: "コミュニティ参加者", value: "180人以上" },
       { label: "パートナー数", value: "2社・6団体" },
     ],
-    websiteUrl: "https://fsifofficial.github.io/CosmoBase/",
+    websiteUrl: "https://cosmobase.fsif.jp/",
     communityUrl: "https://discord.gg/X78w86XE3v",
     contentsAnchor: "#contents",
   },
@@ -88,6 +88,6 @@ export const orgData: OrgData = {
   },
 
   legalLinks: {
-    contact: "https://fsifofficial.github.io/CosmoBase/contact",
+    contact: "https://cosmobase.fsif.jp/contact",
   },
 }

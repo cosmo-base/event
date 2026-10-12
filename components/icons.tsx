@@ -78,7 +78,7 @@ const TiktokIcon: SvgIcon = (props) => (
 )
 
 const NoteIcon: SvgIcon = ({ className }) => (
-  <img src="/event/note.png" alt="" aria-hidden="true" className={className} />
+  <img src="/note.png" alt="" aria-hidden="true" className={className} />
 )
 
 const DiscordIcon: SvgIcon = (props) => (

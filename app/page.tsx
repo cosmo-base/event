@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-const REDIRECT_URL = "https://fsifofficial.github.io/CosmoBase/"
+const REDIRECT_URL = "https://cosmobase.fsif.jp/"
 
 export default function Home() {
   useEffect(() => {
