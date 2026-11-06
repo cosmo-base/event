@@ -289,7 +289,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     script.onload = () => {
       window.google?.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
-        callback: "handleGoogleCredential",
+        callback: handleCredential,
       })
       if (signInRef.current) {
         window.google?.accounts.id.renderButton(signInRef.current, {
