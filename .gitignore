@@ -29,6 +29,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# GAS (manage separately via clasp or copy-paste)
+/gas/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
