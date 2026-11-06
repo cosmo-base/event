@@ -505,10 +505,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Event Modal */}
-      {modalEvent !== undefined && (
+      {modalEvent !== null && (
         <EventModal
           event={modalEvent === "new" ? null : modalEvent}
-          onClose={() => setModalEvent(undefined)}
+          onClose={() => setModalEvent(null)}
           onSave={handleSave}
         />
       )}
