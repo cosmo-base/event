@@ -254,7 +254,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false)
   const [events, setEvents] = useState<AdminEvent[] | null>(null)
   const [gasError, setGasError] = useState("")
-  const [modalEvent, setModalEvent] = useState<Partial<EventFormData> | null | "new">(undefined)
+  const [modalEvent, setModalEvent] = useState<Partial<EventFormData> | null | "new">(null)
   const [buildState, setBuildState] = useState<"idle" | "loading" | "done" | "error">("idle")
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const signInRef = useRef<HTMLDivElement>(null)
