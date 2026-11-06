@@ -44,6 +44,8 @@ jobs:
           NEXT_PUBLIC_EVENT_GAS_URL: ${{ secrets.NEXT_PUBLIC_EVENT_GAS_URL }}
           NEXT_PUBLIC_LIST_SPREADSHEET_URL: ${{ secrets.NEXT_PUBLIC_LIST_SPREADSHEET_URL }}
           NEXT_PUBLIC_FEEDBACK_FORM_URL: ${{ secrets.NEXT_PUBLIC_FEEDBACK_FORM_URL }}
+          NEXT_PUBLIC_GAS_URL: ${{ secrets.NEXT_PUBLIC_GAS_URL }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
