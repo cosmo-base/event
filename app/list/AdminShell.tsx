@@ -114,6 +114,14 @@ const EMPTY_FORM: EventFormData = {
   noindex: true, published: false,
 }
 
+function normalizeFormEvent(event: Partial<EventFormData>): Partial<EventFormData> {
+  return {
+    ...event,
+    published: event.published === true || (event.published as unknown) === "TRUE",
+    noindex: event.noindex === true || (event.noindex as unknown) === "TRUE",
+  }
+}
+
 function EventModal({
   event,
   onClose,
@@ -123,7 +131,9 @@ function EventModal({
   onClose: () => void
   onSave: (data: EventFormData) => Promise<void>
 }) {
-  const [form, setForm] = useState<EventFormData>(event ? { ...EMPTY_FORM, ...event } as EventFormData : EMPTY_FORM)
+  const [form, setForm] = useState<EventFormData>(
+    event ? { ...EMPTY_FORM, ...normalizeFormEvent(event) } as EventFormData : EMPTY_FORM
+  )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
 
@@ -209,9 +219,14 @@ function EventModal({
               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 resize-none" />
           </Field>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input type="checkbox" checked={form.noindex} onChange={e => set("noindex", e.target.checked)}
+              <input type="checkbox" checked={!!form.published} onChange={e => set("published", e.target.checked)}
+                className="w-4 h-4 accent-emerald-500" />
+              <span className="text-sm text-zinc-300">公開する</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" checked={!!form.noindex} onChange={e => set("noindex", e.target.checked)}
                 className="w-4 h-4 accent-blue-500" />
               <span className="text-sm text-zinc-300">検索エンジンにインデックスしない</span>
             </label>
@@ -335,7 +350,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   async function handleSave(data: EventFormData) {
     if (!idToken) return
     const isEdit = events?.some(e => e.eventId === data.eventId)
-    await gasPost(idToken, isEdit ? "updateEvent" : "createEvent", data)
+    const normalized: EventFormData = {
+      ...data,
+      published: data.published === true || (data.published as unknown) === "TRUE",
+      noindex: data.noindex === true || (data.noindex as unknown) === "TRUE",
+    }
+    await gasPost(idToken, isEdit ? "updateEvent" : "createEvent", normalized)
     const result = await gasPost(idToken, "getEvents")
     setEvents(result || [])
   }
