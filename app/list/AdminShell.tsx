@@ -63,7 +63,7 @@ async function gasPost(idToken: string, action: string, data?: object) {
   if (!GAS_URL) throw new Error("NEXT_PUBLIC_GAS_URL not set")
   const res = await fetch(GAS_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({ idToken, action, data }),
   })
   const json = await res.json()
@@ -290,6 +290,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       window.google?.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleCredential,
+        use_fedcm_for_prompt: true,
       })
       if (signInRef.current) {
         window.google?.accounts.id.renderButton(signInRef.current, {
