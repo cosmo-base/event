@@ -3,6 +3,7 @@ import { ExternalLink, MapPin, Calendar, Lock, TableProperties } from "lucide-re
 import { EventGacha } from "@/components/event-gacha"
 import type { GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
+import { AdminShell } from "./AdminShell"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
@@ -139,6 +140,7 @@ const GACHA_PRIZES: GachaPrize[] = [
 
 export default function EventListPage() {
   return (
+    <AdminShell>
     <div className="min-h-screen bg-zinc-950 text-white">
       <OperatorModeSetter />
       <div className="max-w-5xl mx-auto px-4 py-10">
@@ -275,5 +277,6 @@ export default function EventListPage() {
 
       </div>
     </div>
+    </AdminShell>
   )
 }
