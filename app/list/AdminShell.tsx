@@ -75,21 +75,50 @@ interface DriveFile {
 }
 
 interface EventFormData {
+  // ─ 基本情報 ─
   eventId: string
   name: string
   shortName: string
   date: string
   venue: string
+  // ─ 参加情報 ─
   participationType: string
   exhibitorName: string
   boothNumber: string
   pitchTime: string
+  // ─ リンク ─
   websiteUrl: string
   registrationUrl: string
   twitterUrl: string
+  reportUrl: string
+  // ─ メッセージ・告知 ─
   message: string
   announcementText: string
   staffNote: string
+  // ─ ヒーロースライド ─
+  heroTitle: string
+  heroDescription: string
+  heroGradient: string
+  heroButtonLabel: string
+  heroButtonHref: string
+  // ─ 発表・ポスター ─
+  presentationTitle: string
+  presentationDescription: string
+  speakerName: string
+  presentationDate: string
+  slideUrl: string
+  pdfUrl: string
+  embedUrl: string
+  poster1Title: string
+  poster1PdfUrl: string
+  poster1EmbedUrl: string
+  poster2Title: string
+  poster2PdfUrl: string
+  // ─ アンケート ─
+  surveyQ1: string
+  surveyQ2: string
+  surveyQ3: string
+  // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
   accentColor: string
@@ -121,8 +150,14 @@ const DRIVE_FOLDER_ID = process.env.NEXT_PUBLIC_DRIVE_FOLDER_ID ?? ""
 const EMPTY_FORM: EventFormData = {
   eventId: "", name: "", shortName: "", date: "", venue: "",
   participationType: "", exhibitorName: "", boothNumber: "", pitchTime: "",
-  websiteUrl: "", registrationUrl: "", twitterUrl: "",
+  websiteUrl: "", registrationUrl: "", twitterUrl: "", reportUrl: "",
   message: "", announcementText: "", staffNote: "",
+  heroTitle: "", heroDescription: "", heroGradient: "", heroButtonLabel: "", heroButtonHref: "",
+  presentationTitle: "", presentationDescription: "", speakerName: "", presentationDate: "",
+  slideUrl: "", pdfUrl: "", embedUrl: "",
+  poster1Title: "", poster1PdfUrl: "", poster1EmbedUrl: "",
+  poster2Title: "", poster2PdfUrl: "",
+  surveyQ1: "", surveyQ2: "", surveyQ3: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
@@ -444,6 +479,121 @@ function EventModal({
                 className={INPUT} placeholder="https://x.com/..." />
             </Field>
           </div>
+
+          <Field label="レポートURL" note="イベント終了後">
+            <input value={form.reportUrl} onChange={e => set("reportUrl", e.target.value)}
+              className={INPUT} placeholder="https://..." />
+          </Field>
+
+          {/* ヒーロースライド */}
+          <SectionDivider label="ヒーロースライド" />
+
+          <Field label="スライドタイトル">
+            <input value={form.heroTitle} onChange={e => set("heroTitle", e.target.value)}
+              className={INPUT} placeholder="イベント名\nサブタイトル" />
+          </Field>
+
+          <Field label="スライド説明文">
+            <input value={form.heroDescription} onChange={e => set("heroDescription", e.target.value)}
+              className={INPUT} placeholder="Cosmo Base のコンテンツをこの会場で体験できます。" />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="ボタンラベル">
+              <input value={form.heroButtonLabel} onChange={e => set("heroButtonLabel", e.target.value)}
+                className={INPUT} placeholder="コンテンツを見る" />
+            </Field>
+            <Field label="ボタンリンク先">
+              <input value={form.heroButtonHref} onChange={e => set("heroButtonHref", e.target.value)}
+                className={INPUT} placeholder="#contents" />
+            </Field>
+          </div>
+
+          <Field label="グラデーション" note="CSSのlinear-gradient">
+            <input value={form.heroGradient} onChange={e => set("heroGradient", e.target.value)}
+              className={INPUT} placeholder="linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)" />
+          </Field>
+
+          {/* 発表・ポスター */}
+          <SectionDivider label="発表・ポスター" />
+
+          <Field label="発表タイトル">
+            <input value={form.presentationTitle} onChange={e => set("presentationTitle", e.target.value)}
+              className={INPUT} />
+          </Field>
+
+          <Field label="発表説明文">
+            <textarea value={form.presentationDescription} onChange={e => set("presentationDescription", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="発表者名">
+              <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)} className={INPUT} />
+            </Field>
+            <Field label="発表日">
+              <input value={form.presentationDate} onChange={e => set("presentationDate", e.target.value)}
+                className={INPUT} placeholder="2026年8月28日" />
+            </Field>
+          </div>
+
+          <Field label="スライドURL">
+            <input value={form.slideUrl} onChange={e => set("slideUrl", e.target.value)}
+              className={INPUT} placeholder="https://speakerdeck.com/..." />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="PDF URL">
+              <input value={form.pdfUrl} onChange={e => set("pdfUrl", e.target.value)}
+                className={INPUT} placeholder="/documents/..." />
+            </Field>
+            <Field label="埋め込みURL">
+              <input value={form.embedUrl} onChange={e => set("embedUrl", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+          </div>
+
+          <Field label="ポスター1 タイトル">
+            <input value={form.poster1Title} onChange={e => set("poster1Title", e.target.value)} className={INPUT} />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="ポスター1 PDF URL">
+              <input value={form.poster1PdfUrl} onChange={e => set("poster1PdfUrl", e.target.value)}
+                className={INPUT} placeholder="/documents/..." />
+            </Field>
+            <Field label="ポスター1 埋め込みURL">
+              <input value={form.poster1EmbedUrl} onChange={e => set("poster1EmbedUrl", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+          </div>
+
+          <Field label="ポスター2 タイトル">
+            <input value={form.poster2Title} onChange={e => set("poster2Title", e.target.value)} className={INPUT} />
+          </Field>
+
+          <Field label="ポスター2 PDF URL">
+            <input value={form.poster2PdfUrl} onChange={e => set("poster2PdfUrl", e.target.value)}
+              className={INPUT} placeholder="/documents/..." />
+          </Field>
+
+          {/* アンケート */}
+          <SectionDivider label="アンケート設問" />
+
+          <Field label="設問1">
+            <input value={form.surveyQ1} onChange={e => set("surveyQ1", e.target.value)}
+              className={INPUT} placeholder="このイベントをどこで知りましたか？" />
+          </Field>
+
+          <Field label="設問2">
+            <input value={form.surveyQ2} onChange={e => set("surveyQ2", e.target.value)}
+              className={INPUT} placeholder="ご感想をお聞かせください" />
+          </Field>
+
+          <Field label="設問3">
+            <input value={form.surveyQ3} onChange={e => set("surveyQ3", e.target.value)}
+              className={INPUT} placeholder="Cosmo Base への興味はありますか？" />
+          </Field>
 
           {/* ページ設定 */}
           <SectionDivider label="ページ設定" />
