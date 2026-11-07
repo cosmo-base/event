@@ -1,15 +1,11 @@
-import Link from "next/link"
-import { ExternalLink, MapPin, Calendar, Lock, TableProperties } from "lucide-react"
-import { EventGacha } from "@/components/event-gacha"
+import { AdminShell, type StaticEvent, type StaticTool } from "./AdminShell"
 import type { GachaPrize } from "@/components/event-gacha"
-import { OperatorModeSetter } from "@/components/operator-mode-setter"
-import { AdminShell } from "./AdminShell"
 
 export const metadata = {
   title: "イベントリスト | 運営用",
 }
 
-const EVENTS = [
+const EVENTS: StaticEvent[] = [
   {
     id: "kurawaku2",
     path: "/kurawaku2",
@@ -17,7 +13,7 @@ const EVENTS = [
     date: "2026年8月1日",
     venue: "クラフトワーク京島",
     type: "講演会",
-    status: "archived" as const,
+    status: "archived",
   },
   {
     id: "monoS26",
@@ -26,7 +22,7 @@ const EVENTS = [
     date: "2026年8月20日（木）",
     venue: "ホテルメトロポリタン長野",
     type: "ブース出展",
-    status: "active" as const,
+    status: "active",
   },
   {
     id: "monoK26",
@@ -35,7 +31,7 @@ const EVENTS = [
     date: "2026年8月28日（金）",
     venue: "東京都立産業貿易センター台東館",
     type: "ブース出展",
-    status: "active" as const,
+    status: "active",
   },
   {
     id: "SDF26",
@@ -44,7 +40,7 @@ const EVENTS = [
     date: "2026年8月28日（木）",
     venue: "日本科学未来館 7F",
     type: "ポスターセッション",
-    status: "active" as const,
+    status: "active",
   },
   {
     id: "MCF26",
@@ -53,7 +49,7 @@ const EVENTS = [
     date: "2026年9月14日（日）",
     venue: "ベルサール半蔵門",
     type: "ブース出展",
-    status: "active" as const,
+    status: "active",
   },
   {
     id: "StEX26",
@@ -62,17 +58,11 @@ const EVENTS = [
     date: "2026年9月15日（月）",
     venue: "Tokyo Innovation Base（TIB）",
     type: "ブース出展",
-    status: "active" as const,
+    status: "active",
   },
 ]
 
-const STATUS = {
-  active:   { label: "公開中", dot: "bg-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/20" },
-  draft:    { label: "準備中", dot: "bg-yellow-400",  bg: "bg-yellow-400/10",  border: "border-yellow-400/20" },
-  archived: { label: "終了",   dot: "bg-zinc-500",    bg: "bg-zinc-500/10",    border: "border-zinc-500/20" },
-} as const
-
-const TOOLS = [
+const TOOLS: StaticTool[] = [
   {
     name: "CBMD",
     description: "Cosmo Base Museum Database\n宇宙系展示施設データベース",
@@ -129,8 +119,6 @@ const TOOLS = [
   },
 ]
 
-const SPREADSHEET_URL = process.env.NEXT_PUBLIC_LIST_SPREADSHEET_URL ?? ""
-
 const GACHA_PRIZES: GachaPrize[] = [
   { name: "シール", weight: 40, emoji: "🌟" },
   { name: "クリアファイル", weight: 30, emoji: "📂" },
@@ -138,145 +126,15 @@ const GACHA_PRIZES: GachaPrize[] = [
   { name: "特製グッズ", weight: 10, emoji: "🎁" },
 ]
 
+const SPREADSHEET_URL = process.env.NEXT_PUBLIC_LIST_SPREADSHEET_URL ?? ""
+
 export default function EventListPage() {
   return (
-    <AdminShell>
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <OperatorModeSetter />
-      <div className="max-w-5xl mx-auto px-4 py-10">
-
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-10">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/CB_icon.png" alt="Cosmo Base" width={48} height={48} className="rounded-xl" />
-          <div>
-            <h1 className="text-2xl font-bold text-white">Cosmo Base 運営ポータル</h1>
-            <p className="text-sm text-zinc-400">イベントページ・コンテンツ一覧</p>
-          </div>
-        </div>
-
-        {/* Events */}
-        <section className="mb-12">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
-            イベントページ
-          </h2>
-          <div className="space-y-3">
-            {EVENTS.map((ev) => {
-              const s = STATUS[ev.status]
-              return (
-                <Link key={ev.id} href={`${ev.path}?ref=list`} className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-white text-sm">{ev.fullName}</span>
-                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.border} border`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
-                        {s.label}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
-                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>
-                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>
-                      <span className="text-zinc-600">{ev.type}</span>
-                    </div>
-                  </div>
-                  <ExternalLink className="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* Spreadsheet link */}
-        <div className="mb-8">
-          <a
-            href={SPREADSHEET_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-colors"
-          >
-            <TableProperties className="w-4 h-4" />
-            データスプレッドシートを開く
-            <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-          </a>
-        </div>
-
-        {/* Tools */}
-        <section className="mb-12">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
-            共通コンテンツ・ツール
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {TOOLS.map((tool) => (
-              <div key={tool.name} className="relative bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
-                {/* stretched link — covers whole card, goes to first (TOP) link */}
-                <Link href={tool.links[0].href} className="absolute inset-0 rounded-xl" aria-label={tool.name} />
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
-                    {tool.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={tool.logo} alt={tool.name} className="object-contain w-full h-full p-1.5" />
-                    ) : (
-                      <span className="text-2xl">{tool.icon}</span>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-white text-sm mb-0.5">{tool.name}</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed whitespace-pre-line">{tool.description}</p>
-                  </div>
-                </div>
-                <div className="relative z-10 flex flex-wrap gap-2">
-                  {tool.links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="text-xs font-medium text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-2.5 py-1 rounded-md transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  {"previewUrl" in tool && tool.previewUrl && (
-                    <Link
-                      href={tool.previewUrl}
-                      className="text-xs font-medium text-zinc-600 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-2.5 py-1 rounded-md transition-colors inline-flex items-center gap-1"
-                      title="コンテンツロック画面をプレビュー"
-                    >
-                      <Lock className="w-3 h-3" />
-                      ロック確認
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Gacha */}
-        <section className="mb-12">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
-            ガチャ
-          </h2>
-          <div className="flex flex-col gap-4 max-w-sm">
-            <Link
-              href="/gacha"
-              className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group"
-            >
-              <div>
-                <p className="text-sm font-bold text-white">ガチャページ（参加者向け）</p>
-                <p className="text-xs text-zinc-500 mt-0.5">クリアファイル 10% / ステッカー 90%</p>
-              </div>
-              <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
-            </Link>
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <p className="text-xs text-zinc-500 mb-4">テスト用。結果はスプシの「ガチャ」シートに記録されます。</p>
-              <EventGacha eventId="list" prizes={GACHA_PRIZES} />
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </div>
-    </AdminShell>
+    <AdminShell
+      staticEvents={EVENTS}
+      tools={TOOLS}
+      gachaPrizes={GACHA_PRIZES}
+      spreadsheetUrl={SPREADSHEET_URL}
+    />
   )
 }
