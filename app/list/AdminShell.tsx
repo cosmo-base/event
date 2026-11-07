@@ -1,10 +1,35 @@
 "use client"
 
 import { useEffect, useState, useCallback, useRef } from "react"
-import { ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff, RefreshCw, Loader2, Upload, FileText, X, FolderOpen, Calendar, MapPin } from "lucide-react"
 import Link from "next/link"
+import {
+  ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
+  RefreshCw, Loader2, Upload, FileText, X, FolderOpen,
+  Calendar, MapPin, TableProperties, Lock,
+} from "lucide-react"
+import { EventGacha, type GachaPrize } from "@/components/event-gacha"
+import { OperatorModeSetter } from "@/components/operator-mode-setter"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
+
+export interface StaticEvent {
+  id: string
+  path: string
+  fullName: string
+  date: string
+  venue: string
+  type: string
+  status: "active" | "draft" | "archived"
+}
+
+export interface StaticTool {
+  name: string
+  description: string
+  logo: string | null
+  icon?: string
+  links: { label: string; href: string }[]
+  previewUrl?: string
+}
 
 interface AdminEvent {
   eventId: string
@@ -50,21 +75,50 @@ interface DriveFile {
 }
 
 interface EventFormData {
+  // ─ 基本情報 ─
   eventId: string
   name: string
   shortName: string
   date: string
   venue: string
+  // ─ 参加情報 ─
   participationType: string
   exhibitorName: string
   boothNumber: string
   pitchTime: string
+  // ─ リンク ─
   websiteUrl: string
   registrationUrl: string
   twitterUrl: string
+  reportUrl: string
+  // ─ メッセージ・告知 ─
   message: string
   announcementText: string
   staffNote: string
+  // ─ ヒーロースライド ─
+  heroTitle: string
+  heroDescription: string
+  heroGradient: string
+  heroButtonLabel: string
+  heroButtonHref: string
+  // ─ 発表・ポスター ─
+  presentationTitle: string
+  presentationDescription: string
+  speakerName: string
+  presentationDate: string
+  slideUrl: string
+  pdfUrl: string
+  embedUrl: string
+  poster1Title: string
+  poster1PdfUrl: string
+  poster1EmbedUrl: string
+  poster2Title: string
+  poster2PdfUrl: string
+  // ─ アンケート ─
+  surveyQ1: string
+  surveyQ2: string
+  surveyQ3: string
+  // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
   accentColor: string
@@ -96,11 +150,23 @@ const DRIVE_FOLDER_ID = process.env.NEXT_PUBLIC_DRIVE_FOLDER_ID ?? ""
 const EMPTY_FORM: EventFormData = {
   eventId: "", name: "", shortName: "", date: "", venue: "",
   participationType: "", exhibitorName: "", boothNumber: "", pitchTime: "",
-  websiteUrl: "", registrationUrl: "", twitterUrl: "",
+  websiteUrl: "", registrationUrl: "", twitterUrl: "", reportUrl: "",
   message: "", announcementText: "", staffNote: "",
+  heroTitle: "", heroDescription: "", heroGradient: "", heroButtonLabel: "", heroButtonHref: "",
+  presentationTitle: "", presentationDescription: "", speakerName: "", presentationDate: "",
+  slideUrl: "", pdfUrl: "", embedUrl: "",
+  poster1Title: "", poster1PdfUrl: "", poster1EmbedUrl: "",
+  poster2Title: "", poster2PdfUrl: "",
+  surveyQ1: "", surveyQ2: "", surveyQ3: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
+
+const STATUS_CONFIG = {
+  active:   { label: "公開中", dot: "bg-emerald-400", bg: "bg-emerald-400/10", border: "border-emerald-400/20" },
+  draft:    { label: "準備中", dot: "bg-yellow-400",  bg: "bg-yellow-400/10",  border: "border-yellow-400/20" },
+  archived: { label: "終了",   dot: "bg-zinc-500",    bg: "bg-zinc-500/10",    border: "border-zinc-500/20" },
+} as const
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -414,6 +480,121 @@ function EventModal({
             </Field>
           </div>
 
+          <Field label="レポートURL" note="イベント終了後">
+            <input value={form.reportUrl} onChange={e => set("reportUrl", e.target.value)}
+              className={INPUT} placeholder="https://..." />
+          </Field>
+
+          {/* ヒーロースライド */}
+          <SectionDivider label="ヒーロースライド" />
+
+          <Field label="スライドタイトル">
+            <input value={form.heroTitle} onChange={e => set("heroTitle", e.target.value)}
+              className={INPUT} placeholder="イベント名\nサブタイトル" />
+          </Field>
+
+          <Field label="スライド説明文">
+            <input value={form.heroDescription} onChange={e => set("heroDescription", e.target.value)}
+              className={INPUT} placeholder="Cosmo Base のコンテンツをこの会場で体験できます。" />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="ボタンラベル">
+              <input value={form.heroButtonLabel} onChange={e => set("heroButtonLabel", e.target.value)}
+                className={INPUT} placeholder="コンテンツを見る" />
+            </Field>
+            <Field label="ボタンリンク先">
+              <input value={form.heroButtonHref} onChange={e => set("heroButtonHref", e.target.value)}
+                className={INPUT} placeholder="#contents" />
+            </Field>
+          </div>
+
+          <Field label="グラデーション" note="CSSのlinear-gradient">
+            <input value={form.heroGradient} onChange={e => set("heroGradient", e.target.value)}
+              className={INPUT} placeholder="linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)" />
+          </Field>
+
+          {/* 発表・ポスター */}
+          <SectionDivider label="発表・ポスター" />
+
+          <Field label="発表タイトル">
+            <input value={form.presentationTitle} onChange={e => set("presentationTitle", e.target.value)}
+              className={INPUT} />
+          </Field>
+
+          <Field label="発表説明文">
+            <textarea value={form.presentationDescription} onChange={e => set("presentationDescription", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="発表者名">
+              <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)} className={INPUT} />
+            </Field>
+            <Field label="発表日">
+              <input value={form.presentationDate} onChange={e => set("presentationDate", e.target.value)}
+                className={INPUT} placeholder="2026年8月28日" />
+            </Field>
+          </div>
+
+          <Field label="スライドURL">
+            <input value={form.slideUrl} onChange={e => set("slideUrl", e.target.value)}
+              className={INPUT} placeholder="https://speakerdeck.com/..." />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="PDF URL">
+              <input value={form.pdfUrl} onChange={e => set("pdfUrl", e.target.value)}
+                className={INPUT} placeholder="/documents/..." />
+            </Field>
+            <Field label="埋め込みURL">
+              <input value={form.embedUrl} onChange={e => set("embedUrl", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+          </div>
+
+          <Field label="ポスター1 タイトル">
+            <input value={form.poster1Title} onChange={e => set("poster1Title", e.target.value)} className={INPUT} />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="ポスター1 PDF URL">
+              <input value={form.poster1PdfUrl} onChange={e => set("poster1PdfUrl", e.target.value)}
+                className={INPUT} placeholder="/documents/..." />
+            </Field>
+            <Field label="ポスター1 埋め込みURL">
+              <input value={form.poster1EmbedUrl} onChange={e => set("poster1EmbedUrl", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+          </div>
+
+          <Field label="ポスター2 タイトル">
+            <input value={form.poster2Title} onChange={e => set("poster2Title", e.target.value)} className={INPUT} />
+          </Field>
+
+          <Field label="ポスター2 PDF URL">
+            <input value={form.poster2PdfUrl} onChange={e => set("poster2PdfUrl", e.target.value)}
+              className={INPUT} placeholder="/documents/..." />
+          </Field>
+
+          {/* アンケート */}
+          <SectionDivider label="アンケート設問" />
+
+          <Field label="設問1">
+            <input value={form.surveyQ1} onChange={e => set("surveyQ1", e.target.value)}
+              className={INPUT} placeholder="このイベントをどこで知りましたか？" />
+          </Field>
+
+          <Field label="設問2">
+            <input value={form.surveyQ2} onChange={e => set("surveyQ2", e.target.value)}
+              className={INPUT} placeholder="ご感想をお聞かせください" />
+          </Field>
+
+          <Field label="設問3">
+            <input value={form.surveyQ3} onChange={e => set("surveyQ3", e.target.value)}
+              className={INPUT} placeholder="Cosmo Base への興味はありますか？" />
+          </Field>
+
           {/* ページ設定 */}
           <SectionDivider label="ページ設定" />
 
@@ -497,7 +678,17 @@ function EventModal({
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  staticEvents,
+  tools,
+  gachaPrizes,
+  spreadsheetUrl,
+}: {
+  staticEvents: StaticEvent[]
+  tools: StaticTool[]
+  gachaPrizes: GachaPrize[]
+  spreadsheetUrl: string
+}) {
   const [user, setUser] = useState<AdminUser | null>(null)
   const [idToken, setIdToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -622,184 +813,296 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
   }
 
-  if (!isConfigured) {
-    return <>{children}</>
-  }
-
   return (
     <>
       {/* ── Slim admin bar ───────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur border-b border-zinc-800/60">
-        <div className="max-w-5xl mx-auto px-4 py-2 flex items-center gap-3">
-          {user ? (
-            <>
-              <span className="text-[10px] font-bold tracking-widest text-zinc-600 mr-auto uppercase">
-                ● 管理モード
-              </span>
-              {/* Build */}
-              <button
-                onClick={handleTriggerBuild}
-                disabled={buildState === "loading"}
-                title="GitHub Actions でビルドをトリガー"
-                className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors ${
-                  buildState === "done" ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
-                  : buildState === "error" ? "bg-red-500/20 border-red-500/30 text-red-400"
-                  : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"
-                }`}
-              >
-                {buildState === "loading" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-                {buildState === "done" ? "開始済み" : buildState === "error" ? "失敗" : "ビルド"}
-              </button>
-              {/* User + logout */}
-              <div className="flex items-center gap-2">
-                {user.picture && <img src={user.picture} alt="" className="w-5 h-5 rounded-full" />}
-                <span className="text-xs text-zinc-500 hidden sm:inline">{user.name ?? user.email}</span>
-                <button onClick={logout} title="ログアウト"
-                  className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors">
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <span className="text-[10px] font-bold tracking-widest text-zinc-700 mr-auto uppercase">管理</span>
-              <div ref={signInRef} />
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* ── Admin events section (inline, looks like portal section) ─────── */}
-      {user && (
-        <div className="bg-zinc-950">
-          <div className="max-w-5xl mx-auto px-4 pt-8 pb-6">
-            {/* Section header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">
-                  イベント管理
-                </h2>
-                <span className="text-xs text-zinc-700">{user.email}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {DRIVE_FOLDER_ID && (
-                  <a
-                    href={`https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="資料フォルダを開く"
-                    className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-2.5 py-1.5 rounded-lg transition-colors"
-                  >
-                    <FolderOpen className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Drive</span>
-                  </a>
-                )}
+      {isConfigured && (
+        <div className="sticky top-0 z-40 bg-zinc-950/95 backdrop-blur border-b border-zinc-800/60">
+          <div className="max-w-5xl mx-auto px-4 py-2 flex items-center gap-3">
+            {user ? (
+              <>
+                <span className="text-[10px] font-bold tracking-widest text-zinc-600 mr-auto uppercase">
+                  ● 管理モード
+                </span>
                 <button
-                  onClick={() => setModalEvent("new")}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors"
+                  onClick={handleTriggerBuild}
+                  disabled={buildState === "loading"}
+                  title="GitHub Actions でビルドをトリガー"
+                  className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg border transition-colors ${
+                    buildState === "done" ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+                    : buildState === "error" ? "bg-red-500/20 border-red-500/30 text-red-400"
+                    : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                  }`}
                 >
-                  <Plus className="w-3.5 h-3.5" /> 新規作成
+                  {buildState === "loading" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                  {buildState === "done" ? "開始済み" : buildState === "error" ? "失敗" : "ビルド"}
                 </button>
-              </div>
-            </div>
-
-            {/* Error */}
-            {gasError && (
-              <p className="text-red-400 text-xs bg-red-400/10 rounded-lg px-3 py-2 mb-4">{gasError}</p>
+                <div className="flex items-center gap-2">
+                  {user.picture && <img src={user.picture} alt="" className="w-5 h-5 rounded-full" />}
+                  <span className="text-xs text-zinc-500 hidden sm:inline">{user.name ?? user.email}</span>
+                  <button onClick={logout} title="ログアウト"
+                    className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors">
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="text-[10px] font-bold tracking-widest text-zinc-700 mr-auto uppercase">管理</span>
+                <div ref={signInRef} />
+              </>
             )}
-
-            {/* Loading */}
-            {loading && (
-              <div className="flex items-center gap-2 text-zinc-600 text-sm py-4">
-                <Loader2 className="w-4 h-4 animate-spin" /> 読み込み中...
-              </div>
-            )}
-
-            {/* Events list */}
-            {events && (
-              <div className="space-y-2">
-                {events.length === 0 && !loading && (
-                  <p className="text-zinc-600 text-sm py-4">
-                    イベントがありません。「新規作成」から追加してください。
-                  </p>
-                )}
-                {events.map(ev => {
-                  const isLoading = actionLoading?.startsWith(ev.eventId)
-                  const isPublished = ev.published === true || ev.published === "TRUE"
-                  return (
-                    <div key={ev.eventId}
-                      className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors">
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-medium text-white text-sm">{ev.name || ev.eventId}</span>
-                          <StatusBadge published={ev.published} />
-                          <span className="text-xs text-zinc-700">{ev.eventId}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-x-3 mt-0.5 text-xs text-zinc-600">
-                          {ev.date && (
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />{ev.date}
-                            </span>
-                          )}
-                          {ev.venue && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />{ev.venue}
-                            </span>
-                          )}
-                          {ev.staffNote && (
-                            <span className="text-yellow-600/70 truncate max-w-[200px]" title={ev.staffNote}>
-                              📝 {ev.staffNote}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Link href={`/${ev.eventId}`} target="_blank"
-                          className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="開く">
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </Link>
-                        <button
-                          onClick={() => setModalEvent(ev as Partial<EventFormData>)}
-                          disabled={isLoading}
-                          className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="編集">
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handlePublishToggle(ev)}
-                          disabled={isLoading}
-                          className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors"
-                          title={isPublished ? "非公開にする" : "公開する"}>
-                          {isLoading && actionLoading === ev.eventId + ":publish"
-                            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            : isPublished
-                              ? <EyeOff className="w-3.5 h-3.5" />
-                              : <Eye className="w-3.5 h-3.5" />}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(ev)}
-                          disabled={isLoading}
-                          className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors" title="削除">
-                          {isLoading && actionLoading === ev.eventId + ":delete"
-                            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            : <Trash2 className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Divider before portal content */}
-            <div className="mt-8 border-t border-zinc-800/60" />
           </div>
         </div>
       )}
 
-      {/* Event Modal */}
+      {/* ── Full portal ──────────────────────────────────────────────────── */}
+      <div className="min-h-screen bg-zinc-950 text-white">
+        <OperatorModeSetter />
+        <div className="max-w-5xl mx-auto px-4 py-10">
+
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/CB_icon.png" alt="Cosmo Base" width={48} height={48} className="rounded-xl" />
+            <div>
+              <h1 className="text-2xl font-bold text-white">Cosmo Base 運営ポータル</h1>
+              <p className="text-sm text-zinc-400">イベントページ・コンテンツ一覧</p>
+            </div>
+          </div>
+
+          {/* ── Events section ───────────────────────────────────────────── */}
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">
+                イベントページ
+              </h2>
+              {user && (
+                <div className="flex items-center gap-2">
+                  {DRIVE_FOLDER_ID && (
+                    <a
+                      href={`https://drive.google.com/drive/folders/${DRIVE_FOLDER_ID}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="資料フォルダを開く"
+                      className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-2.5 py-1.5 rounded-lg transition-colors"
+                    >
+                      <FolderOpen className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Drive</span>
+                    </a>
+                  )}
+                  <button
+                    onClick={() => setModalEvent("new")}
+                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> 新規作成
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Admin: GAS events with edit controls */}
+            {user && (
+              <>
+                {gasError && (
+                  <p className="text-red-400 text-xs bg-red-400/10 rounded-lg px-3 py-2 mb-3">{gasError}</p>
+                )}
+                {loading && (
+                  <div className="flex items-center gap-2 text-zinc-600 text-sm py-4">
+                    <Loader2 className="w-4 h-4 animate-spin" /> 読み込み中...
+                  </div>
+                )}
+                {events && (
+                  <div className="space-y-3">
+                    {events.length === 0 && !loading && (
+                      <p className="text-zinc-600 text-sm py-4">イベントがありません。「新規作成」から追加してください。</p>
+                    )}
+                    {events.map(ev => {
+                      const isLoading = actionLoading?.startsWith(ev.eventId)
+                      const isPublished = ev.published === true || ev.published === "TRUE"
+                      return (
+                        <div key={ev.eventId}
+                          className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-white text-sm">{ev.name || ev.eventId}</span>
+                              <StatusBadge published={ev.published} />
+                              <span className="text-xs text-zinc-700">{ev.eventId}</span>
+                            </div>
+                            <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
+                              {ev.date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>}
+                              {ev.venue && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>}
+                              {ev.participationType && <span className="text-zinc-600">{ev.participationType}</span>}
+                              {ev.staffNote && (
+                                <span className="text-yellow-600/70 truncate max-w-[200px]" title={ev.staffNote}>
+                                  📝 {ev.staffNote}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Link href={`/${ev.eventId}`} target="_blank"
+                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="開く">
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+                            <button
+                              onClick={() => setModalEvent(ev as Partial<EventFormData>)}
+                              disabled={!!isLoading}
+                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="編集">
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handlePublishToggle(ev)}
+                              disabled={!!isLoading}
+                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors"
+                              title={isPublished ? "非公開にする" : "公開する"}>
+                              {isLoading && actionLoading === ev.eventId + ":publish"
+                                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                : isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(ev)}
+                              disabled={!!isLoading}
+                              className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors" title="削除">
+                              {isLoading && actionLoading === ev.eventId + ":delete"
+                                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Non-admin: static event cards */}
+            {!user && (
+              <div className="space-y-3">
+                {staticEvents.map(ev => {
+                  const s = STATUS_CONFIG[ev.status]
+                  return (
+                    <Link key={ev.id} href={`${ev.path}?ref=list`}
+                      className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-white text-sm">{ev.fullName}</span>
+                          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${s.bg} ${s.border} border`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+                            {s.label}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>
+                          <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>
+                          <span className="text-zinc-600">{ev.type}</span>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* ── Spreadsheet link ─────────────────────────────────────────── */}
+          {spreadsheetUrl && (
+            <div className="mb-8">
+              <a
+                href={spreadsheetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-colors"
+              >
+                <TableProperties className="w-4 h-4" />
+                データスプレッドシートを開く
+                <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+              </a>
+            </div>
+          )}
+
+          {/* ── Tools ────────────────────────────────────────────────────── */}
+          <section className="mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+              共通コンテンツ・ツール
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {tools.map(tool => (
+                <div key={tool.name} className="relative bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group">
+                  <Link href={tool.links[0].href} className="absolute inset-0 rounded-xl" aria-label={tool.name} />
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden">
+                      {tool.logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={tool.logo} alt={tool.name} className="object-contain w-full h-full p-1.5" />
+                      ) : (
+                        <span className="text-2xl">{tool.icon}</span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white text-sm mb-0.5">{tool.name}</h3>
+                      <p className="text-xs text-zinc-500 leading-relaxed whitespace-pre-line">{tool.description}</p>
+                    </div>
+                  </div>
+                  <div className="relative z-10 flex flex-wrap gap-2">
+                    {tool.links.map(link => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="text-xs font-medium text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 px-2.5 py-1 rounded-md transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                    {"previewUrl" in tool && tool.previewUrl && (
+                      <Link
+                        href={tool.previewUrl}
+                        className="text-xs font-medium text-zinc-600 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-2.5 py-1 rounded-md transition-colors inline-flex items-center gap-1"
+                        title="コンテンツロック画面をプレビュー"
+                      >
+                        <Lock className="w-3 h-3" />
+                        ロック確認
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Gacha ────────────────────────────────────────────────────── */}
+          <section className="mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
+              ガチャ
+            </h2>
+            <div className="flex flex-col gap-4 max-w-sm">
+              <Link
+                href="/gacha"
+                className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-600 hover:bg-zinc-800/60 transition-colors group"
+              >
+                <div>
+                  <p className="text-sm font-bold text-white">ガチャページ（参加者向け）</p>
+                  <p className="text-xs text-zinc-500 mt-0.5">クリアファイル 10% / ステッカー 90%</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+              </Link>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <p className="text-xs text-zinc-500 mb-4">テスト用。結果はスプシの「ガチャ」シートに記録されます。</p>
+                <EventGacha eventId="list" prizes={gachaPrizes} />
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      {/* ── Event Modal ──────────────────────────────────────────────────── */}
       {modalEvent !== null && idToken && (
         <EventModal
           event={modalEvent === "new" ? null : modalEvent}
@@ -808,9 +1111,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           idToken={idToken}
         />
       )}
-
-      {/* Portal content */}
-      {children}
     </>
   )
 }
