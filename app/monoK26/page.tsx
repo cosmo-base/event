@@ -18,6 +18,8 @@ import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import type { QuizData } from "@/components/event-quiz"
 import { ExpiryHide } from "@/components/expiry-hide"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
 
 const KANTO_QUIZ: QuizData = {
   intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
@@ -38,8 +40,10 @@ const SURVEY_QUESTIONS = [
   "今後、どんなコンテンツや活動に期待しますか？",
 ]
 
-export default function Page() {
-  const data = { ...orgData, ...monoK26Data }
+export default async function Page() {
+  const gas = await fetchPublicGasEvent("monoK26")
+  const data = mergeGasEvent({ ...orgData, ...monoK26Data }, gas)
+  const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
 
   return (
     <PitchLockGate pitch={data.pitch}>
@@ -82,7 +86,7 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <SurveySection eventId="monoK26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+        <SurveySection eventId="monoK26" eventName={data.event.name} questions={surveyQuestions} />
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 

@@ -16,6 +16,8 @@ import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
 
 const MCF26_QUIZ: QuizData = {
   question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
@@ -35,8 +37,10 @@ const SURVEY_QUESTIONS = [
   "今後、どんなコンテンツや活動に期待しますか？",
 ]
 
-export default function Page() {
-  const data = { ...orgData, ...MCF26Data }
+export default async function Page() {
+  const gas = await fetchPublicGasEvent("MCF26")
+  const data = mergeGasEvent({ ...orgData, ...MCF26Data }, gas)
+  const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
 
   return (
     <div className="min-h-dvh bg-background">
@@ -75,7 +79,7 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <SurveySection eventId="MCF26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+        <SurveySection eventId="MCF26" eventName={data.event.name} questions={surveyQuestions} />
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 

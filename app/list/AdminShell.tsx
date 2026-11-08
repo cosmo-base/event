@@ -5,10 +5,11 @@ import Link from "next/link"
 import {
   ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
   RefreshCw, Loader2, Upload, FileText, X, FolderOpen,
-  Calendar, MapPin, TableProperties, Lock,
+  Calendar, MapPin, TableProperties, Lock, Search, CheckSquare,
 } from "lucide-react"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
+import { AdminStats, type StatsData } from "./AdminStats"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -697,6 +698,10 @@ export function AdminShell({
   const [modalEvent, setModalEvent] = useState<Partial<EventFormData> | null | "new">(null)
   const [buildState, setBuildState] = useState<"idle" | "loading" | "done" | "error">("idle")
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState<"events" | "data">("events")
   const signInRef = useRef<HTMLDivElement>(null)
 
   const isConfigured = !!GAS_URL && !!GOOGLE_CLIENT_ID
@@ -803,6 +808,8 @@ export function AdminShell({
     setUser(null)
     setIdToken(null)
     setEvents(null)
+    setSelectedIds(new Set())
+    setSearchQuery("")
     window.google?.accounts.id.disableAutoSelect()
     if (signInRef.current) {
       window.google?.accounts.id.renderButton(signInRef.current, {
@@ -810,6 +817,56 @@ export function AdminShell({
         size: "medium",
         locale: "ja",
       })
+    }
+  }
+
+  const filteredEvents = events?.filter(ev => {
+    if (!searchQuery.trim()) return true
+    const q = searchQuery.toLowerCase()
+    return (
+      ev.eventId.toLowerCase().includes(q) ||
+      ev.name.toLowerCase().includes(q) ||
+      (ev.venue?.toLowerCase().includes(q) ?? false) ||
+      (ev.date?.toLowerCase().includes(q) ?? false)
+    )
+  }) ?? null
+
+  async function handleBulkPublish(publish: boolean) {
+    if (!idToken || selectedIds.size === 0) return
+    if (!confirm(`選択した ${selectedIds.size} 件を${publish ? "公開" : "非公開に"}しますか？`)) return
+    setBulkLoading(true)
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map(id =>
+          gasPost(idToken, publish ? "publishEvent" : "unpublishEvent", { eventId: id })
+        )
+      )
+      setEvents(prev => prev?.map(e =>
+        selectedIds.has(e.eventId) ? { ...e, published: publish } : e
+      ) ?? null)
+      setSelectedIds(new Set())
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "エラー")
+    } finally {
+      setBulkLoading(false)
+    }
+  }
+
+  function toggleSelect(eventId: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(eventId)) next.delete(eventId)
+      else next.add(eventId)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    if (!filteredEvents) return
+    if (selectedIds.size === filteredEvents.length) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(filteredEvents.map(ev => ev.eventId)))
     }
   }
 
@@ -871,8 +928,37 @@ export function AdminShell({
             </div>
           </div>
 
+          {/* ── Tabs (admin only) ────────────────────────────────────────── */}
+          {user && (
+            <div className="flex gap-1 mb-8 border-b border-zinc-800">
+              {(["events", "data"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? "border-blue-500 text-white"
+                      : "border-transparent text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  {tab === "events" ? "イベント管理" : "データ集計"}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* ── Data tab ─────────────────────────────────────────────────── */}
+          {user && activeTab === "data" && (
+            <section className="mb-12">
+              <AdminStats
+                idToken={idToken!}
+                gasPost={gasPost as (idToken: string, action: string, data?: object) => Promise<StatsData>}
+              />
+            </section>
+          )}
+
           {/* ── Events section ───────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">
                 イベントページ
@@ -913,68 +999,129 @@ export function AdminShell({
                   </div>
                 )}
                 {events && (
-                  <div className="space-y-3">
-                    {events.length === 0 && !loading && (
-                      <p className="text-zinc-600 text-sm py-4">イベントがありません。「新規作成」から追加してください。</p>
-                    )}
-                    {events.map(ev => {
-                      const isLoading = actionLoading?.startsWith(ev.eventId)
-                      const isPublished = ev.published === true || ev.published === "TRUE"
-                      return (
-                        <div key={ev.eventId}
-                          className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-white text-sm">{ev.name || ev.eventId}</span>
-                              <StatusBadge published={ev.published} />
-                              <span className="text-xs text-zinc-700">{ev.eventId}</span>
-                            </div>
-                            <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
-                              {ev.date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>}
-                              {ev.venue && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>}
-                              {ev.participationType && <span className="text-zinc-600">{ev.participationType}</span>}
-                              {ev.staffNote && (
-                                <span className="text-yellow-600/70 truncate max-w-[200px]" title={ev.staffNote}>
-                                  📝 {ev.staffNote}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <Link href={`/${ev.eventId}`} target="_blank"
-                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="開く">
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </Link>
-                            <button
-                              onClick={() => setModalEvent(ev as Partial<EventFormData>)}
-                              disabled={!!isLoading}
-                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="編集">
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handlePublishToggle(ev)}
-                              disabled={!!isLoading}
-                              className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors"
-                              title={isPublished ? "非公開にする" : "公開する"}>
-                              {isLoading && actionLoading === ev.eventId + ":publish"
-                                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                : isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(ev)}
-                              disabled={!!isLoading}
-                              className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors" title="削除">
-                              {isLoading && actionLoading === ev.eventId + ":delete"
-                                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                : <Trash2 className="w-3.5 h-3.5" />}
-                            </button>
-                          </div>
+                  <>
+                    {/* Search + bulk toolbar */}
+                    <div className="flex flex-col sm:flex-row gap-2 mb-3">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600 pointer-events-none" />
+                        <input
+                          type="search"
+                          placeholder="イベント名・ID・会場で絞り込み"
+                          value={searchQuery}
+                          onChange={e => setSearchQuery(e.target.value)}
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600"
+                        />
+                      </div>
+                      {selectedIds.size > 0 && (
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-zinc-500">{selectedIds.size}件選択</span>
+                          <button
+                            onClick={() => handleBulkPublish(true)}
+                            disabled={bulkLoading}
+                            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            {bulkLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                            一括公開
+                          </button>
+                          <button
+                            onClick={() => handleBulkPublish(false)}
+                            disabled={bulkLoading}
+                            className="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            {bulkLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <EyeOff className="w-3 h-3" />}
+                            一括非公開
+                          </button>
+                          <button onClick={() => setSelectedIds(new Set())} className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                      )
-                    })}
-                  </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Select-all row */}
+                      {filteredEvents && filteredEvents.length > 0 && (
+                        <button
+                          onClick={toggleSelectAll}
+                          className="flex items-center gap-1.5 text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors"
+                        >
+                          <CheckSquare className="w-3.5 h-3.5" />
+                          {selectedIds.size === filteredEvents.length ? "すべて解除" : "すべて選択"}
+                        </button>
+                      )}
+
+                      {events.length === 0 && !loading && (
+                        <p className="text-zinc-600 text-sm py-4">イベントがありません。「新規作成」から追加してください。</p>
+                      )}
+                      {filteredEvents?.length === 0 && events.length > 0 && (
+                        <p className="text-zinc-600 text-sm py-4">該当するイベントがありません。</p>
+                      )}
+                      {filteredEvents?.map(ev => {
+                        const isLoading = actionLoading?.startsWith(ev.eventId)
+                        const isPublished = ev.published === true || ev.published === "TRUE"
+                        const isSelected = selectedIds.has(ev.eventId)
+                        return (
+                          <div key={ev.eventId}
+                            className={`flex items-center gap-3 bg-zinc-900 border rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors ${isSelected ? "border-blue-600/50 bg-blue-950/20" : "border-zinc-800"}`}>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleSelect(ev.eventId)}
+                              className="w-3.5 h-3.5 accent-blue-500 shrink-0 cursor-pointer"
+                            />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/CB_icon.png" alt="Cosmo Base" width={36} height={36} className="rounded-lg shrink-0 opacity-80" />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-white text-sm">{ev.name || ev.eventId}</span>
+                                <StatusBadge published={ev.published} />
+                                <span className="text-xs text-zinc-700">{ev.eventId}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-zinc-500">
+                                {ev.date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{ev.date}</span>}
+                                {ev.venue && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{ev.venue}</span>}
+                                {ev.participationType && <span className="text-zinc-600">{ev.participationType}</span>}
+                                {ev.staffNote && (
+                                  <span className="text-yellow-600/70 truncate max-w-[200px]" title={ev.staffNote}>
+                                    📝 {ev.staffNote}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0">
+                              <Link href={`/${ev.eventId}`} target="_blank"
+                                className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="イベントページを開く">
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </Link>
+                              <button
+                                onClick={() => setModalEvent(ev as Partial<EventFormData>)}
+                                disabled={!!isLoading}
+                                className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="編集">
+                                <Pencil className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handlePublishToggle(ev)}
+                                disabled={!!isLoading}
+                                className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors"
+                                title={isPublished ? "非公開にする" : "公開する"}>
+                                {isLoading && actionLoading === ev.eventId + ":publish"
+                                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  : isPublished ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                              </button>
+                              <button
+                                onClick={() => handleDelete(ev)}
+                                disabled={!!isLoading}
+                                className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors" title="削除">
+                                {isLoading && actionLoading === ev.eventId + ":delete"
+                                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  : <Trash2 className="w-3.5 h-3.5" />}
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </>
                 )}
               </>
             )}
@@ -1012,7 +1159,7 @@ export function AdminShell({
           </section>
 
           {/* ── Spreadsheet link ─────────────────────────────────────────── */}
-          {spreadsheetUrl && (
+          {spreadsheetUrl && (!user || activeTab === "events") && (
             <div className="mb-8">
               <a
                 href={spreadsheetUrl}
@@ -1028,7 +1175,7 @@ export function AdminShell({
           )}
 
           {/* ── Tools ────────────────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
               共通コンテンツ・ツール
             </h2>
@@ -1077,7 +1224,7 @@ export function AdminShell({
           </section>
 
           {/* ── Gacha ────────────────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
               ガチャ
             </h2>

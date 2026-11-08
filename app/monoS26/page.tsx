@@ -18,6 +18,8 @@ import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import { ExpiryHide } from "@/components/expiry-hide"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
 
 const VOYAGER_QUIZ: QuizData = {
   intro: "今日、8月20日は宇宙開発の歴史にとって特別な日。\n1977年のこの日、NASAの惑星探査機「ボイジャー2号」が宇宙へ旅立ちました🚀\n\nでは、ボイジャー2号の打ち上げについて正しいものはどれでしょう？",
@@ -43,8 +45,10 @@ const SURVEY_QUESTIONS = [
   "今後、どんなコンテンツや活動に期待しますか？",
 ]
 
-export default function Page() {
-  const data = { ...orgData, ...monoS26Data }
+export default async function Page() {
+  const gas = await fetchPublicGasEvent("monoS26")
+  const data = mergeGasEvent({ ...orgData, ...monoS26Data }, gas)
+  const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
 
   return (
     <PitchLockGate pitch={data.pitch}>
@@ -87,7 +91,7 @@ export default function Page() {
 
         <FsifIntroduction fsif={data.fsif} />
 
-        <SurveySection eventId="monoS26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+        <SurveySection eventId="monoS26" eventName={data.event.name} questions={surveyQuestions} />
 
         <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
 

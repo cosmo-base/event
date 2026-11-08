@@ -1,0 +1,96 @@
+import type { EventSpecificData, CarouselSlide } from "@/data/event-page-data"
+import type { GasEventPublicData } from "./gas-public"
+
+/** Merge GAS-managed fields into the static event data object. Static data acts as fallback. */
+export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEventPublicData | null): T {
+  if (!gas) return base
+
+  const merged = { ...base }
+
+  // ─ event fields ─
+  merged.event = {
+    ...base.event,
+    ...(gas.name           && { name:              gas.name }),
+    ...(gas.shortName      && { shortName:          gas.shortName }),
+    ...(gas.date           && { date:               gas.date }),
+    ...(gas.venue          && { venue:              gas.venue }),
+    ...(gas.participationType && { participationType: gas.participationType }),
+    ...(gas.exhibitorName  && { exhibitorName:      gas.exhibitorName }),
+    ...(gas.boothNumber    !== undefined && { boothNumber: gas.boothNumber }),
+    ...(gas.pitchTime      !== undefined && { pitchTime:   gas.pitchTime }),
+    ...(gas.message        && { message:            gas.message }),
+    ...(gas.reportUrl      !== undefined && { reportUrl:   gas.reportUrl }),
+  }
+
+  // ─ site fields ─
+  merged.site = {
+    ...base.site,
+    ...(gas.accentColor      && { accentColor:   gas.accentColor }),
+    ...(gas.pageTitle        && { pageTitle:      gas.pageTitle }),
+    ...(gas.pageDescription  && { pageDescription: gas.pageDescription }),
+    ...(gas.noindex !== undefined && {
+      noindex: gas.noindex === true || gas.noindex === "TRUE",
+    }),
+  }
+
+  // ─ carousel hero slide (slide 0 only) ─
+  if (gas.heroTitle || gas.heroDescription || gas.heroGradient || gas.heroButtonLabel || gas.heroButtonHref) {
+    const heroSlide: CarouselSlide = { ...base.carousel[0] }
+    if (gas.heroTitle)       heroSlide.title       = gas.heroTitle
+    if (gas.heroDescription) heroSlide.description = gas.heroDescription
+    if (gas.heroGradient)    heroSlide.gradient    = gas.heroGradient
+    if (gas.heroButtonLabel) heroSlide.buttonLabel = gas.heroButtonLabel
+    if (gas.heroButtonHref)  heroSlide.href        = gas.heroButtonHref
+    merged.carousel = base.carousel.length > 0
+      ? [heroSlide, ...base.carousel.slice(1)]
+      : [heroSlide]
+  }
+
+  // ─ pitch / poster data ─
+  if (
+    gas.presentationTitle || gas.presentationDescription || gas.speakerName ||
+    gas.presentationDate  || gas.slideUrl || gas.pdfUrl || gas.embedUrl ||
+    gas.poster1Title      || gas.poster1PdfUrl || gas.poster1EmbedUrl ||
+    gas.poster2Title      || gas.poster2PdfUrl
+  ) {
+    const basePitch  = base.pitch ?? { title: "", presentationTitle: "", description: "", speakerName: "", presentationDate: "", slideUrl: "" }
+    const basePosters = basePitch.posters ?? []
+
+    const poster1 = (gas.poster1Title || gas.poster1PdfUrl || gas.poster1EmbedUrl)
+      ? { ...(basePosters[0] ?? {}), ...(gas.poster1Title && { title: gas.poster1Title }), ...(gas.poster1PdfUrl && { pdfUrl: gas.poster1PdfUrl }), ...(gas.poster1EmbedUrl && { embedUrl: gas.poster1EmbedUrl }) }
+      : basePosters[0]
+
+    const poster2 = (gas.poster2Title || gas.poster2PdfUrl)
+      ? { ...(basePosters[1] ?? {}), ...(gas.poster2Title && { title: gas.poster2Title }), ...(gas.poster2PdfUrl && { pdfUrl: gas.poster2PdfUrl }) }
+      : basePosters[1]
+
+    const newPosters = [poster1, poster2].filter((p): p is NonNullable<typeof p> => !!p)
+
+    merged.pitch = {
+      ...basePitch,
+      ...(gas.presentationTitle       && { presentationTitle: gas.presentationTitle }),
+      ...(gas.presentationDescription && { description:       gas.presentationDescription }),
+      ...(gas.speakerName             && { speakerName:       gas.speakerName }),
+      ...(gas.presentationDate        && { presentationDate:  gas.presentationDate }),
+      ...(gas.slideUrl                && { slideUrl:          gas.slideUrl }),
+      ...(gas.pdfUrl                  && { pdfUrl:            gas.pdfUrl }),
+      ...(gas.embedUrl                && { embedUrl:          gas.embedUrl }),
+      posters: newPosters.length > 0 ? newPosters : basePosters,
+    }
+  }
+
+  return merged
+}
+
+/** Merge GAS survey questions into the static default questions array. */
+export function mergeGasSurveyQuestions(
+  staticQuestions: string[],
+  gas: GasEventPublicData | null,
+): string[] {
+  if (!gas || (!gas.surveyQ1 && !gas.surveyQ2 && !gas.surveyQ3)) return staticQuestions
+  return [
+    gas.surveyQ1 || staticQuestions[0] || "",
+    gas.surveyQ2 || staticQuestions[1] || "",
+    gas.surveyQ3 || staticQuestions[2] || "",
+  ].filter(Boolean)
+}
