@@ -11,6 +11,7 @@ export interface StatsData {
   quiz: { eventId: string; question: string; total: number; correct: number }[]
   gacha: { eventId: string; prizes: { name: string; count: number }[] }[]
   contentViews: { eventId: string; contents: { id: string; name: string; count: number }[] }[]
+  cbedViews: { eventId: string; contents: { id: string; name: string; count: number }[] }[]
   survey: { eventId: string; questions: { text: string; answers: { text: string; count: number }[] }[] }[]
   updatedAt?: string
 }
@@ -263,6 +264,7 @@ export function AdminStats({
         ...stats.quiz.map(r => r.eventId),
         ...stats.gacha.map(r => r.eventId),
         ...stats.contentViews.map(r => r.eventId),
+        ...(stats.cbedViews ?? []).map(r => r.eventId),
         ...stats.survey.map(r => r.eventId),
       ])).sort()
     : []
@@ -336,6 +338,12 @@ export function AdminStats({
           <SectionCard icon={<BookOpen className="w-4 h-4" />} title="コンテンツ閲覧 (CBMD)">
             <ContentViewsSection data={stats.contentViews} filter={filter} />
           </SectionCard>
+
+          {stats.cbedViews?.length > 0 && (
+            <SectionCard icon={<BookOpen className="w-4 h-4" />} title="イベント閲覧 (CBED)">
+              <ContentViewsSection data={stats.cbedViews} filter={filter} />
+            </SectionCard>
+          )}
         </div>
       )}
     </div>
