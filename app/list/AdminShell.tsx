@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
+import { AdminStats, type StatsData } from "./AdminStats"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -700,6 +701,7 @@ export function AdminShell({
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [bulkLoading, setBulkLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState<"events" | "data">("events")
   const signInRef = useRef<HTMLDivElement>(null)
 
   const isConfigured = !!GAS_URL && !!GOOGLE_CLIENT_ID
@@ -926,8 +928,37 @@ export function AdminShell({
             </div>
           </div>
 
+          {/* ── Tabs (admin only) ────────────────────────────────────────── */}
+          {user && (
+            <div className="flex gap-1 mb-8 border-b border-zinc-800">
+              {(["events", "data"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? "border-blue-500 text-white"
+                      : "border-transparent text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  {tab === "events" ? "イベント管理" : "データ集計"}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* ── Data tab ─────────────────────────────────────────────────── */}
+          {user && activeTab === "data" && (
+            <section className="mb-12">
+              <AdminStats
+                idToken={idToken!}
+                gasPost={gasPost as (idToken: string, action: string, data?: object) => Promise<StatsData>}
+              />
+            </section>
+          )}
+
           {/* ── Events section ───────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">
                 イベントページ
@@ -1128,7 +1159,7 @@ export function AdminShell({
           </section>
 
           {/* ── Spreadsheet link ─────────────────────────────────────────── */}
-          {spreadsheetUrl && (
+          {spreadsheetUrl && (!user || activeTab === "events") && (
             <div className="mb-8">
               <a
                 href={spreadsheetUrl}
@@ -1144,7 +1175,7 @@ export function AdminShell({
           )}
 
           {/* ── Tools ────────────────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
               共通コンテンツ・ツール
             </h2>
@@ -1193,7 +1224,7 @@ export function AdminShell({
           </section>
 
           {/* ── Gacha ────────────────────────────────────────────────────── */}
-          <section className="mb-12">
+          <section className={`mb-12 ${user && activeTab === "data" ? "hidden" : ""}`}>
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">
               ガチャ
             </h2>
