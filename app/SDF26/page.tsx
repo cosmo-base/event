@@ -15,6 +15,8 @@ import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { EventSurvey } from "@/components/event-survey"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
 
 const SURVEY_QUESTIONS = [
   "本日のポスター発表はいかがでしたか？",
@@ -22,8 +24,10 @@ const SURVEY_QUESTIONS = [
   "今後、どんなコンテンツや活動に期待しますか？",
 ]
 
-export default function Page() {
-  const data = { ...orgData, ...SDF26Data }
+export default async function Page() {
+  const gas = await fetchPublicGasEvent("SDF26")
+  const data = mergeGasEvent({ ...orgData, ...SDF26Data }, gas)
+  const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
 
   return (
     <div className="min-h-dvh bg-background">
@@ -65,7 +69,7 @@ export default function Page() {
         <section id="survey" aria-labelledby="survey-heading" className="py-12">
           <div className="mx-auto max-w-2xl px-4">
             <h2 id="survey-heading" className="text-xl font-bold mb-6">アンケート</h2>
-            <EventSurvey eventId="SDF26" eventName={data.event.name} questions={SURVEY_QUESTIONS} />
+            <EventSurvey eventId="SDF26" eventName={data.event.name} questions={surveyQuestions} />
           </div>
         </section>
 

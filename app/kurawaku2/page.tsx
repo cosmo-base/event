@@ -1,4 +1,5 @@
-import { eventPageData } from "@/data/event-page-data"
+import { orgData } from "@/data/org-data"
+import { kurawaku2Data } from "@/data/events/kurawaku2"
 import { EventHeader } from "@/components/event-header"
 import { EventInformation } from "@/components/event-information"
 import { HeroCarousel } from "@/components/hero-carousel"
@@ -14,9 +15,12 @@ import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent } from "@/lib/merge-gas-event"
 
-export default function Page() {
-  const data = eventPageData
+export default async function Page() {
+  const gas = await fetchPublicGasEvent("kurawaku2")
+  const data = mergeGasEvent({ ...orgData, ...kurawaku2Data }, gas)
 
   return (
     <div className="min-h-dvh bg-background">
