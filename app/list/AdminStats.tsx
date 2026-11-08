@@ -7,7 +7,13 @@ import { Loader2, RefreshCw, Users, Activity, HelpCircle, Gift, BookOpen, Messag
 
 export interface StatsData {
   access: { eventId: string; count: number }[]
-  spaceType: { eventId: string; counts: Record<string, number>; total: number }[]
+  spaceType: {
+    eventId: string
+    types: Record<string, number>
+    axis: { R: number; D: number; I: number; O: number }
+    pDist: Record<number, number>
+    total: number
+  }[]
   quiz: { eventId: string; question: string; total: number; correct: number }[]
   gacha: { eventId: string; prizes: { name: string; count: number }[] }[]
   contentViews: { eventId: string; contents: { id: string; name: string; count: number }[] }[]
@@ -68,37 +74,93 @@ function AccessSection({ data, filter }: { data: StatsData["access"]; filter: st
 }
 
 const SPACE_TYPE_COLORS: Record<string, string> = {
-  R: "bg-red-500", D: "bg-orange-500", I: "bg-yellow-500",
-  O: "bg-green-500", P: "bg-blue-500",
+  RI: "#cbace4", DI: "#85c68b", RO: "#d4d49a", DO: "#83CBEB",
 }
 const SPACE_TYPE_LABELS: Record<string, string> = {
-  R: "革命家(R)", D: "探求者(D)", I: "革新者(I)",
-  O: "組織者(O)", P: "開拓者(P)",
+  RI: "天文台トラベラー (RI)", DI: "人工衛星 (DI)",
+  RO: "ロケット打ち上げ (RO)", DO: "宇宙ステーション (DO)",
+}
+const P_COLORS = ["#fed7aa", "#fdba74", "#fb923c", "#f97316", "#ea580c"]
+
+function SpaceAxisBar({ labelLeft, labelRight, countLeft, countRight }: {
+  labelLeft: string; labelRight: string; countLeft: number; countRight: number
+}) {
+  const total = countLeft + countRight || 1
+  const leftPct = Math.round((countLeft / total) * 100)
+  return (
+    <div className="mb-2.5">
+      <div className="flex justify-between text-[10px] mb-1">
+        <span className="text-zinc-400">{labelLeft} <span className="text-zinc-600">({countLeft})</span></span>
+        <span className="text-zinc-400"><span className="text-zinc-600">({countRight})</span> {labelRight}</span>
+      </div>
+      <div className="h-2 w-full flex rounded-full overflow-hidden bg-zinc-800">
+        <div style={{ width: `${leftPct}%` }} className="bg-zinc-300 transition-all" />
+        <div style={{ width: `${100 - leftPct}%` }} className="bg-zinc-600 transition-all" />
+      </div>
+    </div>
+  )
 }
 
 function SpaceTypeSection({ data, filter }: { data: StatsData["spaceType"]; filter: string }) {
   const rows = filter ? data.filter(r => r.eventId === filter) : data
   if (!rows.length) return <Empty />
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {rows.map(r => (
         <div key={r.eventId}>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-zinc-400">{r.eventId}</span>
             <span className="text-[10px] text-zinc-600">計 {r.total}件</span>
           </div>
-          <div className="space-y-1.5">
-            {Object.entries(r.counts)
-              .sort((a, b) => b[1] - a[1])
-              .map(([type, count]) => (
+
+          {/* 4タイプ分布 */}
+          <div className="space-y-1.5 mb-4">
+            {(["RI", "DI", "RO", "DO"] as const)
+              .filter(k => r.types[k])
+              .sort((a, b) => (r.types[b] || 0) - (r.types[a] || 0))
+              .map(type => (
                 <div key={type} className="flex items-center gap-2">
-                  <span className="text-[10px] text-zinc-500 w-20 shrink-0">{SPACE_TYPE_LABELS[type] ?? type}</span>
-                  <Bar value={count} max={r.total} color={SPACE_TYPE_COLORS[type] ?? "bg-zinc-500"} />
-                  <span className="text-[10px] font-mono text-zinc-400 w-16 text-right shrink-0">
-                    {count} ({pct(count, r.total)})
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: SPACE_TYPE_COLORS[type] }} />
+                  <span className="text-[10px] text-zinc-500 w-40 shrink-0 truncate">{SPACE_TYPE_LABELS[type]}</span>
+                  <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden flex-1">
+                    <div className="h-full rounded-full transition-all"
+                      style={{ width: `${pct(r.types[type] || 0, r.total)}`, backgroundColor: SPACE_TYPE_COLORS[type] }} />
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-400 w-20 text-right shrink-0">
+                    {r.types[type] || 0} ({pct(r.types[type] || 0, r.total)})
                   </span>
                 </div>
               ))}
+          </div>
+
+          {/* 軸バー */}
+          <SpaceAxisBar labelLeft="R (ロマン)" labelRight="D (実用)" countLeft={r.axis.R} countRight={r.axis.D} />
+          <SpaceAxisBar labelLeft="I (個人)" labelRight="O (社会)" countLeft={r.axis.I} countRight={r.axis.O} />
+
+          {/* P分布（参加意欲 1-5） */}
+          <div className="mt-1">
+            <div className="flex justify-between text-[10px] mb-1">
+              <span className="text-zinc-500">P（参加意欲）</span>
+            </div>
+            <div className="h-2 w-full flex rounded-full overflow-hidden bg-zinc-800 mb-1">
+              {[1, 2, 3, 4, 5].map((v, i) => {
+                const count = r.pDist[v] || 0
+                const total = Object.values(r.pDist).reduce((s, c) => s + c, 0) || 1
+                const w = Math.round((count / total) * 100)
+                return w > 0 ? (
+                  <div key={v} style={{ width: `${w}%`, backgroundColor: P_COLORS[i] }}
+                    title={`P=${v}: ${count}`} className="transition-all" />
+                ) : null
+              })}
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              {[1, 2, 3, 4, 5].map((v, i) => (
+                <span key={v} className="flex items-center gap-1 text-[9px] text-zinc-600">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: P_COLORS[i] }} />
+                  P={v}: {r.pDist[v] || 0}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       ))}
