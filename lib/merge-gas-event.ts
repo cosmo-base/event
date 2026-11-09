@@ -1,5 +1,6 @@
 import type { EventSpecificData, CarouselSlide } from "@/data/event-page-data"
 import type { GasEventPublicData } from "./gas-public"
+import type { QuizData } from "@/components/event-quiz"
 
 /** Merge GAS-managed fields into the static event data object. Static data acts as fallback. */
 export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEventPublicData | null): T {
@@ -80,6 +81,37 @@ export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEven
   }
 
   return merged
+}
+
+/** Merge GAS quiz fields into the static QuizData. Static data acts as fallback. */
+export function mergeGasQuiz(staticQuiz: QuizData, gas: GasEventPublicData | null): QuizData {
+  if (!gas || !gas.quizQuestion) return staticQuiz
+
+  const options = gas.quizOptions
+    ? gas.quizOptions.split("|").map(s => s.trim()).filter(Boolean)
+    : staticQuiz.options
+
+  const correctIndex = gas.quizCorrectIndex !== undefined && gas.quizCorrectIndex !== ""
+    ? Number(gas.quizCorrectIndex)
+    : staticQuiz.correctIndex
+
+  const link = (gas.quizLinkLabel || gas.quizLinkHref)
+    ? {
+        label: gas.quizLinkLabel || "",
+        href: gas.quizLinkHref || "",
+        description: gas.quizLinkDescription || "",
+      }
+    : staticQuiz.link
+
+  return {
+    ...staticQuiz,
+    ...(gas.quizIntro !== undefined && { intro: gas.quizIntro || undefined }),
+    question: gas.quizQuestion,
+    options,
+    correctIndex,
+    ...(gas.quizExplanation && { explanation: gas.quizExplanation }),
+    link,
+  }
 }
 
 /** Merge GAS survey questions into the static default questions array. */

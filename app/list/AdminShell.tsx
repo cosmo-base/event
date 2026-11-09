@@ -119,6 +119,15 @@ interface EventFormData {
   surveyQ1: string
   surveyQ2: string
   surveyQ3: string
+  // ─ クイズ ─
+  quizIntro: string
+  quizQuestion: string
+  quizOptions: string
+  quizCorrectIndex: string
+  quizExplanation: string
+  quizLinkLabel: string
+  quizLinkHref: string
+  quizLinkDescription: string
   // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
@@ -159,6 +168,8 @@ const EMPTY_FORM: EventFormData = {
   poster1Title: "", poster1PdfUrl: "", poster1EmbedUrl: "",
   poster2Title: "", poster2PdfUrl: "",
   surveyQ1: "", surveyQ2: "", surveyQ3: "",
+  quizIntro: "", quizQuestion: "", quizOptions: "", quizCorrectIndex: "0",
+  quizExplanation: "", quizLinkLabel: "", quizLinkHref: "", quizLinkDescription: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
@@ -626,6 +637,51 @@ function EventModal({
             <input value={form.surveyQ3} onChange={e => set("surveyQ3", e.target.value)}
               className={INPUT} placeholder="Cosmo Base への興味はありますか？" />
           </Field>
+
+          {/* クイズ */}
+          <SectionDivider label="限定クイズ" />
+
+          <Field label="前置き文" note="任意">
+            <textarea value={form.quizIntro} onChange={e => set("quizIntro", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} placeholder="クイズの前に表示するテキスト（省略可）" />
+          </Field>
+
+          <Field label="問題文">
+            <textarea value={form.quizQuestion} onChange={e => set("quizQuestion", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} placeholder="どれが正解でしょう？" />
+          </Field>
+
+          <Field label="選択肢" note="| で区切る（例: 選択肢A|選択肢B|選択肢C）">
+            <input value={form.quizOptions} onChange={e => set("quizOptions", e.target.value)}
+              className={INPUT} placeholder="MMRTG|RTG-II|SNAP-27" />
+          </Field>
+
+          <Field label="正解インデックス" note="0始まり（0=1番目）">
+            <input type="number" min="0" max="9" value={form.quizCorrectIndex}
+              onChange={e => set("quizCorrectIndex", e.target.value)}
+              className={`${INPUT} w-24`} />
+          </Field>
+
+          <Field label="解説文">
+            <textarea value={form.quizExplanation} onChange={e => set("quizExplanation", e.target.value)}
+              rows={4} className={`${INPUT} resize-none`} />
+          </Field>
+
+          <Field label="リンクラベル" note="任意">
+            <input value={form.quizLinkLabel} onChange={e => set("quizLinkLabel", e.target.value)}
+              className={INPUT} placeholder="詳しくはこちら👇" />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="リンクURL">
+              <input value={form.quizLinkHref} onChange={e => set("quizLinkHref", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+            <Field label="リンク説明">
+              <input value={form.quizLinkDescription} onChange={e => set("quizLinkDescription", e.target.value)}
+                className={INPUT} placeholder="リンク先の説明" />
+            </Field>
+          </div>
 
           {/* ページ設定 */}
           <SectionDivider label="ページ設定" />

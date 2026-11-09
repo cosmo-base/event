@@ -19,7 +19,7 @@ import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import { ExpiryHide } from "@/components/expiry-hide"
 import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
+import { mergeGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 const VOYAGER_QUIZ: QuizData = {
   intro: "今日、8月20日は宇宙開発の歴史にとって特別な日。\n1977年のこの日、NASAの惑星探査機「ボイジャー2号」が宇宙へ旅立ちました🚀\n\nでは、ボイジャー2号の打ち上げについて正しいものはどれでしょう？",
@@ -49,6 +49,7 @@ export default async function Page() {
   const gas = await fetchPublicGasEvent("monoS26")
   const data = mergeGasEvent({ ...orgData, ...monoS26Data }, gas)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
+  const quiz = mergeGasQuiz(VOYAGER_QUIZ, gas)
 
   return (
     <PitchLockGate pitch={data.pitch}>
@@ -84,7 +85,7 @@ export default async function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         <ExpiryHide expiryDate="2026-08-27">
-          <LimitedContentSection items={data.limitedContents} eventId="monoS26" quiz={VOYAGER_QUIZ} />
+          <LimitedContentSection items={data.limitedContents} eventId="monoS26" quiz={quiz} />
         </ExpiryHide>
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />

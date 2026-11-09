@@ -1,5 +1,5 @@
 // Build-time utility: fetch public event data from GAS (no auth required).
-// GAS must expose a "getPublicEventData" action that returns published event rows.
+// GAS doGet ?action=publicEvent&id=<eventId> returns the flat event row.
 // Returns null on failure so event pages gracefully fall back to static data.
 
 export interface GasEventPublicData {
@@ -43,21 +43,28 @@ export interface GasEventPublicData {
   accentColor?: string
   noindex?: boolean | string
   published?: boolean | string
+  // quiz fields (options are pipe-separated)
+  quizIntro?: string
+  quizQuestion?: string
+  quizOptions?: string
+  quizCorrectIndex?: number | string
+  quizExplanation?: string
+  quizLinkLabel?: string
+  quizLinkHref?: string
+  quizLinkDescription?: string
 }
 
 export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPublicData | null> {
   const url = process.env.NEXT_PUBLIC_GAS_URL
   if (!url) return null
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: "getPublicEventData", data: { eventId } }),
+    const res = await fetch(`${url}?action=publicEvent&id=${encodeURIComponent(eventId)}`, {
       cache: "no-store",
     })
     if (!res.ok) return null
     const json = await res.json()
-    return json.result ?? null
+    if (json?.error) return null
+    return json as GasEventPublicData
   } catch {
     return null
   }
