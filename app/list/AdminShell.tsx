@@ -5,7 +5,7 @@ import Link from "next/link"
 import {
   ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
   RefreshCw, Loader2, Upload, FileText, X, FolderOpen,
-  Calendar, MapPin, TableProperties, Lock, Search, CheckSquare,
+  Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
 } from "lucide-react"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
@@ -380,18 +380,29 @@ function EventModal({
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [savedOk, setSavedOk] = useState(false)
+  const [previewKey, setPreviewKey] = useState(0)
 
   const set = (key: keyof EventFormData, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }))
+
+  const isEdit = !!event?.eventId
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.eventId.trim()) { setError("イベントIDは必須です"); return }
     setSaving(true)
     setError("")
+    setSavedOk(false)
     try {
       await onSave(form)
-      onClose()
+      if (isEdit) {
+        setPreviewKey(k => k + 1)
+        setSavedOk(true)
+        setTimeout(() => setSavedOk(false), 2500)
+      } else {
+        onClose()
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "保存に失敗しました")
     } finally {
@@ -399,18 +410,28 @@ function EventModal({
     }
   }
 
-  const isEdit = !!event?.eventId
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="font-bold text-white">{isEdit ? "イベント編集" : "新規イベント作成"}</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">✕</button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && <p className="text-red-400 text-sm bg-red-400/10 rounded-lg px-3 py-2">{error}</p>}
+    <div className={isEdit
+      ? "fixed inset-0 z-50 flex bg-black/70 backdrop-blur-sm"
+      : "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"}
+      onClick={onClose}>
+      <div className={isEdit
+        ? "flex w-full h-full max-w-[1400px] mx-auto my-3 rounded-2xl overflow-hidden border border-zinc-700 shadow-2xl"
+        : "bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"}
+        onClick={e => e.stopPropagation()}>
+        {/* Left / only panel: Form */}
+        <div className={isEdit ? "w-[440px] shrink-0 bg-zinc-900 flex flex-col" : ""}>
+          <div className={isEdit
+            ? "bg-zinc-900 border-b border-zinc-800 px-5 py-3.5 flex items-center justify-between shrink-0"
+            : "sticky top-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between z-10"}>
+            <h2 className="font-bold text-white text-sm">{isEdit ? "イベント編集" : "新規イベント作成"}</h2>
+            <div className="flex items-center gap-2">
+              {savedOk && <span className="text-xs text-emerald-400">保存しました ✓</span>}
+              <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">✕</button>
+            </div>
+          </div>
+          <form onSubmit={handleSubmit} className={isEdit ? "overflow-y-auto flex-1 p-5 space-y-4" : "p-6 space-y-4"}>
+            {error && <p className="text-red-400 text-sm bg-red-400/10 rounded-lg px-3 py-2">{error}</p>}
 
           {/* 基本情報 */}
           <SectionDivider label="基本情報" />
@@ -659,19 +680,40 @@ function EventModal({
             </>
           )}
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-zinc-800 mt-2">
-            <button type="button" onClick={onClose}
-              className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-sm px-4 py-2.5 rounded-xl transition-colors">
-              キャンセル
-            </button>
-            <button type="submit" disabled={saving}
-              className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
-              {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isEdit ? "保存する" : "作成する"}
-            </button>
+            {/* Actions */}
+            <div className="flex gap-3 pt-4 border-t border-zinc-800 mt-2">
+              <button type="button" onClick={onClose}
+                className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-sm px-4 py-2.5 rounded-xl transition-colors">
+                {isEdit ? "閉じる" : "キャンセル"}
+              </button>
+              <button type="submit" disabled={saving}
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isEdit ? "保存する" : "作成する"}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Right: Preview iframe (edit mode only) */}
+        {isEdit && (
+          <div className="flex-1 bg-zinc-950 flex flex-col">
+            <div className="bg-zinc-950 border-b border-zinc-800 px-4 py-3 flex items-center justify-between shrink-0">
+              <span className="text-xs text-zinc-500">プレビュー — 保存後に更新されます</span>
+              <Link href={`/${form.eventId}?ref=preview`} target="_blank"
+                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+                <ExternalLink className="w-3 h-3" />
+                新タブで開く
+              </Link>
+            </div>
+            <iframe
+              key={previewKey}
+              src={`/${form.eventId}?ref=preview`}
+              className="flex-1 w-full border-0"
+              title="イベントプレビュー"
+            />
           </div>
-        </form>
+        )}
       </div>
     </div>
   )
@@ -1089,10 +1131,15 @@ export function AdminShell({
                               </div>
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
-                              <Link href={`/${ev.eventId}`} target="_blank"
+                              <Link href={`/${ev.eventId}?ref=list`} target="_blank"
                                 className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="イベントページを開く">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </Link>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${ev.eventId}`)}
+                                className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="リンクをコピー">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
                               <button
                                 onClick={() => setModalEvent(ev as Partial<EventFormData>)}
                                 disabled={!!isLoading}
