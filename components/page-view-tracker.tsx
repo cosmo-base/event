@@ -8,7 +8,8 @@ export function PageViewTracker({ eventId }: { eventId: string }) {
     // Retry any previously queued items from other pages/sessions
     flushGasQueue().catch(() => {})
 
-    if (new URLSearchParams(window.location.search).get("ref") === "list") {
+    const ref = new URLSearchParams(window.location.search).get("ref")
+    if (ref === "list" || ref === "preview") {
       try { sessionStorage.setItem("operator_mode", "1") } catch { /* ignore */ }
       return
     }

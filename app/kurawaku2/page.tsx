@@ -9,6 +9,7 @@ import { ContentExperienceSection } from "@/components/content-experience-sectio
 import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
 import { LimitedContentSection } from "@/components/limited-content-section"
 import { KURAWAKU_QUIZ } from "@/components/event-quiz"
+import type { QuizData } from "@/components/event-quiz"
 import { CosmoBaseIntroduction } from "@/components/cosmo-base-introduction"
 import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
@@ -16,11 +17,12 @@ import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent } from "@/lib/merge-gas-event"
+import { mergeGasEvent, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 export default async function Page() {
   const gas = await fetchPublicGasEvent("kurawaku2")
   const data = mergeGasEvent({ ...orgData, ...kurawaku2Data }, gas)
+  const quiz = mergeGasQuiz(KURAWAKU_QUIZ, gas)
 
   return (
     <div className="min-h-dvh bg-background">
@@ -60,7 +62,7 @@ export default async function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         {/* 限定コンテンツ */}
-        <LimitedContentSection items={data.limitedContents} eventId="kurawaku2" quiz={KURAWAKU_QUIZ} />
+        <LimitedContentSection items={data.limitedContents} eventId="kurawaku2" quiz={quiz} />
 
         {/* Cosmo Base 紹介 */}
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />

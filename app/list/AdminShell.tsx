@@ -119,6 +119,23 @@ interface EventFormData {
   surveyQ1: string
   surveyQ2: string
   surveyQ3: string
+  // ─ クイズ ─
+  quizIntro: string
+  quizQuestion: string
+  quizOptions: string
+  quizCorrectIndex: string
+  quizExplanation: string
+  quizLinkLabel: string
+  quizLinkHref: string
+  quizLinkDescription: string
+  // ─ コンテンツ選択 ─
+  selectedContentIds: string
+  // ─ CBMD設定 ─
+  cbmdPrefectures: string
+  cbmdRegion: string
+  cbmdMapLat: string
+  cbmdMapLng: string
+  cbmdMapZoom: string
   // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
@@ -159,6 +176,10 @@ const EMPTY_FORM: EventFormData = {
   poster1Title: "", poster1PdfUrl: "", poster1EmbedUrl: "",
   poster2Title: "", poster2PdfUrl: "",
   surveyQ1: "", surveyQ2: "", surveyQ3: "",
+  quizIntro: "", quizQuestion: "", quizOptions: "", quizCorrectIndex: "0",
+  quizExplanation: "", quizLinkLabel: "", quizLinkHref: "", quizLinkDescription: "",
+  selectedContentIds: "",
+  cbmdPrefectures: "", cbmdRegion: "", cbmdMapLat: "", cbmdMapLng: "", cbmdMapZoom: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
@@ -382,11 +403,21 @@ function EventModal({
   const [error, setError] = useState("")
   const [savedOk, setSavedOk] = useState(false)
   const [previewKey, setPreviewKey] = useState(0)
+  const [pageExists, setPageExists] = useState<boolean | null>(null)
 
   const set = (key: keyof EventFormData, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }))
 
   const isEdit = !!event?.eventId
+
+  useEffect(() => {
+    if (!isEdit) return
+    setPageExists(null)
+    fetch(`/${form.eventId}`, { method: "HEAD" })
+      .then(r => setPageExists(r.ok))
+      .catch(() => setPageExists(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.eventId, previewKey])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -617,6 +648,87 @@ function EventModal({
               className={INPUT} placeholder="Cosmo Base への興味はありますか？" />
           </Field>
 
+          {/* クイズ */}
+          <SectionDivider label="限定クイズ" />
+
+          <Field label="前置き文" note="任意">
+            <textarea value={form.quizIntro} onChange={e => set("quizIntro", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} placeholder="クイズの前に表示するテキスト（省略可）" />
+          </Field>
+
+          <Field label="問題文">
+            <textarea value={form.quizQuestion} onChange={e => set("quizQuestion", e.target.value)}
+              rows={2} className={`${INPUT} resize-none`} placeholder="どれが正解でしょう？" />
+          </Field>
+
+          <Field label="選択肢" note="| で区切る（例: 選択肢A|選択肢B|選択肢C）">
+            <input value={form.quizOptions} onChange={e => set("quizOptions", e.target.value)}
+              className={INPUT} placeholder="MMRTG|RTG-II|SNAP-27" />
+          </Field>
+
+          <Field label="正解インデックス" note="0始まり（0=1番目）">
+            <input type="number" min="0" max="9" value={form.quizCorrectIndex}
+              onChange={e => set("quizCorrectIndex", e.target.value)}
+              className={`${INPUT} w-24`} />
+          </Field>
+
+          <Field label="解説文">
+            <textarea value={form.quizExplanation} onChange={e => set("quizExplanation", e.target.value)}
+              rows={4} className={`${INPUT} resize-none`} />
+          </Field>
+
+          <Field label="リンクラベル" note="任意">
+            <input value={form.quizLinkLabel} onChange={e => set("quizLinkLabel", e.target.value)}
+              className={INPUT} placeholder="詳しくはこちら👇" />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="リンクURL">
+              <input value={form.quizLinkHref} onChange={e => set("quizLinkHref", e.target.value)}
+                className={INPUT} placeholder="https://..." />
+            </Field>
+            <Field label="リンク説明">
+              <input value={form.quizLinkDescription} onChange={e => set("quizLinkDescription", e.target.value)}
+                className={INPUT} placeholder="リンク先の説明" />
+            </Field>
+          </div>
+
+          {/* コンテンツ選択 */}
+          <SectionDivider label="コンテンツ選択" />
+
+          <Field label="表示するコンテンツID" note="| で区切る（空=全表示）">
+            <input value={form.selectedContentIds} onChange={e => set("selectedContentIds", e.target.value)}
+              className={INPUT} placeholder="c-space-type|c-cbmd" />
+          </Field>
+
+          {/* CBMD設定 */}
+          <SectionDivider label="CBMD設定" />
+
+          <Field label="都道府県" note="| で区切る（例: 東京都|神奈川県）">
+            <input value={form.cbmdPrefectures} onChange={e => set("cbmdPrefectures", e.target.value)}
+              className={INPUT} placeholder="東京都|神奈川県|埼玉県|千葉県" />
+          </Field>
+
+          <Field label="地方区分" note="都道府県の代わりに指定（例: 北信越）">
+            <input value={form.cbmdRegion} onChange={e => set("cbmdRegion", e.target.value)}
+              className={INPUT} placeholder="北信越" />
+          </Field>
+
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="地図中心 緯度">
+              <input type="number" step="0.001" value={form.cbmdMapLat} onChange={e => set("cbmdMapLat", e.target.value)}
+                className={INPUT} placeholder="35.681" />
+            </Field>
+            <Field label="地図中心 経度">
+              <input type="number" step="0.001" value={form.cbmdMapLng} onChange={e => set("cbmdMapLng", e.target.value)}
+                className={INPUT} placeholder="139.767" />
+            </Field>
+            <Field label="ズーム">
+              <input type="number" min="1" max="18" value={form.cbmdMapZoom} onChange={e => set("cbmdMapZoom", e.target.value)}
+                className={INPUT} placeholder="10" />
+            </Field>
+          </div>
+
           {/* ページ設定 */}
           <SectionDivider label="ページ設定" />
 
@@ -706,12 +818,20 @@ function EventModal({
                 新タブで開く
               </Link>
             </div>
-            <iframe
-              key={previewKey}
-              src={`/${form.eventId}?ref=preview`}
-              className="flex-1 w-full border-0"
-              title="イベントプレビュー"
-            />
+            {pageExists === false ? (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-8">
+                <span className="text-4xl">🚧</span>
+                <p className="text-zinc-400 text-sm font-medium">ページがまだ生成されていません</p>
+                <p className="text-zinc-600 text-xs">デプロイ後にプレビューが表示されます</p>
+              </div>
+            ) : (
+              <iframe
+                key={previewKey}
+                src={`/${form.eventId}?ref=preview`}
+                className="flex-1 w-full border-0"
+                title="イベントプレビュー"
+              />
+            )}
           </div>
         )}
       </div>

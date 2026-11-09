@@ -19,7 +19,7 @@ import { PitchLockGate } from "@/components/pitch-lock-gate"
 import type { QuizData } from "@/components/event-quiz"
 import { ExpiryHide } from "@/components/expiry-hide"
 import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent, mergeGasSurveyQuestions } from "@/lib/merge-gas-event"
+import { mergeGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 const KANTO_QUIZ: QuizData = {
   intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
@@ -44,6 +44,7 @@ export default async function Page() {
   const gas = await fetchPublicGasEvent("monoK26")
   const data = mergeGasEvent({ ...orgData, ...monoK26Data }, gas)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
+  const quiz = mergeGasQuiz(KANTO_QUIZ, gas)
 
   return (
     <PitchLockGate pitch={data.pitch}>
@@ -79,7 +80,7 @@ export default async function Page() {
         <ContentExperienceSection contents={data.contents} />
 
         <ExpiryHide expiryDate="2026-09-04">
-          <LimitedContentSection items={data.limitedContents} eventId="monoK26" quiz={KANTO_QUIZ} />
+          <LimitedContentSection items={data.limitedContents} eventId="monoK26" quiz={quiz} />
         </ExpiryHide>
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
