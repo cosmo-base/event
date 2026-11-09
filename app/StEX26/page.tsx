@@ -16,8 +16,8 @@ import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
-import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 const STEX26_QUIZ: QuizData = {
   intro: "火星の表面には昼と夜の寒暖差が激しく、砂嵐でソーラーパネルが汚れてしまうこともあります。そのため火星探査車の中には、太陽光に頼らず、放射性物質が崩壊するときに出す熱を利用して発電する仕組みを電源として採用しているものがあります。NASAの火星探査車「Curiosity(キュリオシティ)」もその一つで、この仕組みのおかげで昼夜を問わず安定した電力を確保できています。",
@@ -39,8 +39,8 @@ const SURVEY_QUESTIONS = [
 ]
 
 export default async function Page() {
-  const gas = await fetchPublicGasEvent("StEX26")
-  const data = mergeGasEvent({ ...orgData, ...StEX26Data }, gas)
+  const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("StEX26"), fetchFullGasEvent("StEX26")])
+  const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...StEX26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(STEX26_QUIZ, gas)
 

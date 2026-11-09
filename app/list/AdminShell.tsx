@@ -136,6 +136,7 @@ interface EventFormData {
   cbmdMapLat: string
   cbmdMapLng: string
   cbmdMapZoom: string
+  cbmdExpiryDate: string
   // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
@@ -179,7 +180,7 @@ const EMPTY_FORM: EventFormData = {
   quizIntro: "", quizQuestion: "", quizOptions: "", quizCorrectIndex: "0",
   quizExplanation: "", quizLinkLabel: "", quizLinkHref: "", quizLinkDescription: "",
   selectedContentIds: "",
-  cbmdPrefectures: "", cbmdRegion: "", cbmdMapLat: "", cbmdMapLng: "", cbmdMapZoom: "",
+  cbmdPrefectures: "", cbmdRegion: "", cbmdMapLat: "", cbmdMapLng: "", cbmdMapZoom: "", cbmdExpiryDate: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
@@ -403,21 +404,11 @@ function EventModal({
   const [error, setError] = useState("")
   const [savedOk, setSavedOk] = useState(false)
   const [previewKey, setPreviewKey] = useState(0)
-  const [pageExists, setPageExists] = useState<boolean | null>(null)
 
   const set = (key: keyof EventFormData, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }))
 
   const isEdit = !!event?.eventId
-
-  useEffect(() => {
-    if (!isEdit) return
-    setPageExists(null)
-    fetch(`/${form.eventId}`, { method: "HEAD" })
-      .then(r => setPageExists(r.ok))
-      .catch(() => setPageExists(false))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.eventId, previewKey])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -727,6 +718,10 @@ function EventModal({
               <input type="number" min="1" max="18" value={form.cbmdMapZoom} onChange={e => set("cbmdMapZoom", e.target.value)}
                 className={INPUT} placeholder="10" />
             </Field>
+            <Field label="公開終了日 (YYYY-MM-DD)">
+              <input type="text" value={form.cbmdExpiryDate} onChange={e => set("cbmdExpiryDate", e.target.value)}
+                className={INPUT} placeholder="2026-09-22" />
+            </Field>
           </div>
 
           {/* ページ設定 */}
@@ -811,27 +806,19 @@ function EventModal({
         {isEdit && (
           <div className="flex-1 bg-zinc-950 flex flex-col">
             <div className="bg-zinc-950 border-b border-zinc-800 px-4 py-3 flex items-center justify-between shrink-0">
-              <span className="text-xs text-zinc-500">プレビュー — 保存後に更新されます</span>
+              <span className="text-xs text-zinc-500">プレビュー — ビルド・デプロイ済みのページを表示</span>
               <Link href={`/${form.eventId}?ref=preview`} target="_blank"
                 className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
                 <ExternalLink className="w-3 h-3" />
                 新タブで開く
               </Link>
             </div>
-            {pageExists === false ? (
-              <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-8">
-                <span className="text-4xl">🚧</span>
-                <p className="text-zinc-400 text-sm font-medium">ページがまだ生成されていません</p>
-                <p className="text-zinc-600 text-xs">デプロイ後にプレビューが表示されます</p>
-              </div>
-            ) : (
-              <iframe
-                key={previewKey}
-                src={`/${form.eventId}?ref=preview`}
-                className="flex-1 w-full border-0"
-                title="イベントプレビュー"
-              />
-            )}
+            <iframe
+              key={previewKey}
+              src={`/${form.eventId}?ref=preview`}
+              className="flex-1 w-full border-0"
+              title="イベントプレビュー"
+            />
           </div>
         )}
       </div>

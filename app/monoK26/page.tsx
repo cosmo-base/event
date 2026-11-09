@@ -18,8 +18,8 @@ import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import type { QuizData } from "@/components/event-quiz"
 import { ExpiryHide } from "@/components/expiry-hide"
-import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 const KANTO_QUIZ: QuizData = {
   intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
@@ -41,10 +41,11 @@ const SURVEY_QUESTIONS = [
 ]
 
 export default async function Page() {
-  const gas = await fetchPublicGasEvent("monoK26")
-  const data = mergeGasEvent({ ...orgData, ...monoK26Data }, gas)
+  const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("monoK26"), fetchFullGasEvent("monoK26")])
+  const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...monoK26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(KANTO_QUIZ, gas)
+  const expiryDate = gas?.cbmdExpiryDate ?? "2026-09-04"
 
   return (
     <PitchLockGate pitch={data.pitch}>
@@ -79,7 +80,7 @@ export default async function Page() {
 
         <ContentExperienceSection contents={data.contents} />
 
-        <ExpiryHide expiryDate="2026-09-04">
+        <ExpiryHide expiryDate={expiryDate}>
           <LimitedContentSection items={data.limitedContents} eventId="monoK26" quiz={quiz} />
         </ExpiryHide>
 

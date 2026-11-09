@@ -21,8 +21,9 @@ const DEFAULT_PREFECTURES = ["東京都", "神奈川県", "埼玉県", "千葉�
 export default async function StEX26CbmdLayout({ children }: { children: React.ReactNode }) {
   const gas = await fetchPublicGasEvent("StEX26")
   const cbmd = parseGasCbmdConfig(gas)
+  const expiryDate = cbmd.expiryDate ?? "2026-09-22"
   return (
-    <ContentExpiryGate expiryDate="2026-09-22" discordUrl="https://discord.gg/X78w86XE3v">
+    <ContentExpiryGate expiryDate={expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
       lockedPrefectures={cbmd.lockedPrefectures ?? DEFAULT_PREFECTURES}
       lockedRegion={cbmd.lockedRegion}

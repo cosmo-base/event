@@ -60,6 +60,67 @@ export interface GasEventPublicData {
   cbmdMapLat?: number | string
   cbmdMapLng?: number | string
   cbmdMapZoom?: number | string
+  cbmdExpiryDate?: string   // ISO date string "YYYY-MM-DD", gates CBMD and limited content
+}
+
+// ─── Full structured event data (?action=event&id=) ────────────────────────
+
+export interface GasCarouselSlide {
+  id: string
+  order?: number
+  title: string
+  description: string
+  buttonLabel?: string
+  href?: string
+  external?: boolean
+  gradient?: string
+  centered?: boolean
+  label?: string
+  imageUrl?: string
+  secondaryLabel?: string
+  secondaryHref?: string
+}
+
+export interface GasQuickLink {
+  id: string
+  order?: number
+  title: string
+  description: string
+  href: string
+  icon: string
+  external: boolean
+  featured?: boolean
+  event?: string
+}
+
+export interface GasCommunityCta {
+  title: string
+  description: string
+  primaryLabel: string
+  primaryHref: string
+  secondaryLinks?: Array<{ label: string; href: string; event?: string; anchor?: boolean }>
+}
+
+export interface GasEventFullData {
+  carousel?: GasCarouselSlide[]
+  quickLinks?: GasQuickLink[]
+  communityCta?: GasCommunityCta | null
+}
+
+export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullData | null> {
+  const url = process.env.NEXT_PUBLIC_GAS_URL
+  if (!url) return null
+  try {
+    const res = await fetch(`${url}?action=event&id=${encodeURIComponent(eventId)}`, {
+      cache: "no-store",
+    })
+    if (!res.ok) return null
+    const json = await res.json()
+    if (!json || json.error) return null
+    return json as GasEventFullData
+  } catch {
+    return null
+  }
 }
 
 export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPublicData | null> {
