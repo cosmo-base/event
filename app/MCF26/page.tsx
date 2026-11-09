@@ -16,8 +16,10 @@ import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
+import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const MCF26_QUIZ: QuizData = {
   question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
@@ -39,6 +41,7 @@ const SURVEY_QUESTIONS = [
 
 export default async function Page() {
   const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("MCF26"), fetchFullGasEvent("MCF26")])
+  if (gas?.published === false || gas?.published === "FALSE") notFound()
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...MCF26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(MCF26_QUIZ, gas)
@@ -56,6 +59,7 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">

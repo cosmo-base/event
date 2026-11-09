@@ -18,8 +18,10 @@ import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import type { QuizData } from "@/components/event-quiz"
 import { ExpiryHide } from "@/components/expiry-hide"
+import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const KANTO_QUIZ: QuizData = {
   intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
@@ -42,6 +44,7 @@ const SURVEY_QUESTIONS = [
 
 export default async function Page() {
   const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("monoK26"), fetchFullGasEvent("monoK26")])
+  if (gas?.published === false || gas?.published === "FALSE") notFound()
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...monoK26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(KANTO_QUIZ, gas)
@@ -61,6 +64,7 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
