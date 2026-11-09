@@ -382,11 +382,21 @@ function EventModal({
   const [error, setError] = useState("")
   const [savedOk, setSavedOk] = useState(false)
   const [previewKey, setPreviewKey] = useState(0)
+  const [pageExists, setPageExists] = useState<boolean | null>(null)
 
   const set = (key: keyof EventFormData, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }))
 
   const isEdit = !!event?.eventId
+
+  useEffect(() => {
+    if (!isEdit) return
+    setPageExists(null)
+    fetch(`/${form.eventId}`, { method: "HEAD" })
+      .then(r => setPageExists(r.ok))
+      .catch(() => setPageExists(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.eventId, previewKey])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -706,12 +716,20 @@ function EventModal({
                 新タブで開く
               </Link>
             </div>
-            <iframe
-              key={previewKey}
-              src={`/${form.eventId}?ref=preview`}
-              className="flex-1 w-full border-0"
-              title="イベントプレビュー"
-            />
+            {pageExists === false ? (
+              <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center px-8">
+                <span className="text-4xl">🚧</span>
+                <p className="text-zinc-400 text-sm font-medium">ページがまだ生成されていません</p>
+                <p className="text-zinc-600 text-xs">デプロイ後にプレビューが表示されます</p>
+              </div>
+            ) : (
+              <iframe
+                key={previewKey}
+                src={`/${form.eventId}?ref=preview`}
+                className="flex-1 w-full border-0"
+                title="イベントプレビュー"
+              />
+            )}
           </div>
         )}
       </div>
