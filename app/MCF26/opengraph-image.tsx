@@ -1,5 +1,6 @@
 import { OG_SIZE, generateEventOgImage } from '@/lib/og-event-image'
 
+export const dynamic = 'force-static'
 export const size = OG_SIZE
 export const contentType = 'image/png'
 
