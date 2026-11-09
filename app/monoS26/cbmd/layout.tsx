@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { notFound } from "next/navigation"
 import { SocialFooter } from "@/components/social-footer"
 import { orgData } from "@/data/org-data"
 import { CbmdContextProvider } from "@/components/cbmd-region-context"
@@ -22,6 +23,7 @@ export default async function MonoS26CbmdLayout({ children }: { children: React.
   const gas = await fetchPublicGasEvent("monoS26")
   const cbmd = parseGasCbmdConfig(gas)
   const expiryDate = cbmd.expiryDate ?? "2026-08-27"
+  if (new Date() >= new Date(expiryDate)) notFound()
   return (
     <ContentExpiryGate expiryDate={expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider

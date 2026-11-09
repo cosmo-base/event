@@ -18,6 +18,7 @@ import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import { PitchLockGate } from "@/components/pitch-lock-gate"
 import { ExpiryHide } from "@/components/expiry-hide"
+import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
@@ -47,6 +48,7 @@ const SURVEY_QUESTIONS = [
 
 export default async function Page() {
   const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("monoS26"), fetchFullGasEvent("monoS26")])
+  if (gas?.published === false || gas?.published === "FALSE") notFound()
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...monoS26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(VOYAGER_QUIZ, gas)

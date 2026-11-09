@@ -16,6 +16,7 @@ import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
+import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
@@ -40,6 +41,7 @@ const SURVEY_QUESTIONS = [
 
 export default async function Page() {
   const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("StEX26"), fetchFullGasEvent("StEX26")])
+  if (gas?.published === false || gas?.published === "FALSE") notFound()
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...StEX26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(STEX26_QUIZ, gas)
