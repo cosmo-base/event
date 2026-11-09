@@ -5,7 +5,7 @@ import Link from "next/link"
 import {
   ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
   RefreshCw, Loader2, Upload, FileText, X, FolderOpen,
-  Calendar, MapPin, TableProperties, Lock, Search, CheckSquare,
+  Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
 } from "lucide-react"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
@@ -406,7 +406,16 @@ function EventModal({
       <div className="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between z-10">
           <h2 className="font-bold text-white">{isEdit ? "イベント編集" : "新規イベント作成"}</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">✕</button>
+          <div className="flex items-center gap-2">
+            {isEdit && (
+              <Link href={`/${form.eventId}?ref=preview`} target="_blank"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 rounded-lg transition-colors">
+                <ExternalLink className="w-3 h-3" />
+                プレビュー
+              </Link>
+            )}
+            <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">✕</button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -1089,10 +1098,15 @@ export function AdminShell({
                               </div>
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
-                              <Link href={`/${ev.eventId}`} target="_blank"
+                              <Link href={`/${ev.eventId}?ref=list`} target="_blank"
                                 className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="イベントページを開く">
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </Link>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${ev.eventId}`)}
+                                className="p-1.5 text-zinc-600 hover:text-zinc-300 transition-colors" title="リンクをコピー">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
                               <button
                                 onClick={() => setModalEvent(ev as Partial<EventFormData>)}
                                 disabled={!!isLoading}
