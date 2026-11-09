@@ -6,7 +6,9 @@ import {
   ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
   RefreshCw, Loader2, Upload, FileText, X, FolderOpen,
   Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
+  ChevronUp, ChevronDown,
 } from "lucide-react"
+import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData } from "@/lib/gas-public"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
 import { AdminStats, type StatsData } from "./AdminStats"
@@ -384,6 +386,163 @@ function SectionDivider({ label }: { label: string }) {
   )
 }
 
+// ─── Array Item Wrapper ───────────────────────────────────────────────────────
+
+function ArrayItemWrapper({
+  index, total, onMoveUp, onMoveDown, onDelete, label, children,
+}: {
+  index: number; total: number; onMoveUp: () => void; onMoveDown: () => void
+  onDelete: () => void; label?: string; children: React.ReactNode
+}) {
+  const btn = "p-1 text-zinc-600 hover:text-zinc-300 transition-colors disabled:opacity-30"
+  return (
+    <div className="bg-zinc-800/50 rounded-xl border border-zinc-700/50 p-3 space-y-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-bold text-zinc-600">{label ?? `#${index + 1}`}</span>
+        <div className="flex items-center gap-0.5">
+          <button type="button" onClick={onMoveUp} disabled={index === 0} className={btn} title="上へ"><ChevronUp className="w-3.5 h-3.5" /></button>
+          <button type="button" onClick={onMoveDown} disabled={index === total - 1} className={btn} title="下へ"><ChevronDown className="w-3.5 h-3.5" /></button>
+          <button type="button" onClick={onDelete} className={`${btn} hover:text-red-400`} title="削除"><Trash2 className="w-3.5 h-3.5" /></button>
+        </div>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+// ─── Carousel Editor ──────────────────────────────────────────────────────────
+
+function CarouselEditor({ slides, onChange }: { slides: GasCarouselSlide[]; onChange: (s: GasCarouselSlide[]) => void }) {
+  const upd = (i: number, patch: Partial<GasCarouselSlide>) => {
+    const next = [...slides]; next[i] = { ...next[i], ...patch }; onChange(next)
+  }
+  const move = (i: number, dir: -1 | 1) => {
+    const next = [...slides]; [next[i], next[i + dir]] = [next[i + dir], next[i]]; onChange(next)
+  }
+  return (
+    <div className="space-y-2.5">
+      {slides.map((s, i) => (
+        <ArrayItemWrapper key={s.id || i} index={i} total={slides.length} label={s.title ? `#${i + 1} ${s.title}` : `#${i + 1}`}
+          onMoveUp={() => move(i, -1)} onMoveDown={() => move(i, 1)}
+          onDelete={() => onChange(slides.filter((_, idx) => idx !== i))}>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="タイトル"><input value={s.title} onChange={e => upd(i, { title: e.target.value })} className={INPUT} /></Field>
+            <Field label="バッジラベル"><input value={s.label ?? ""} onChange={e => upd(i, { label: e.target.value })} className={INPUT} placeholder="NEW" /></Field>
+          </div>
+          <Field label="説明文">
+            <textarea value={s.description} onChange={e => upd(i, { description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
+          </Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="ボタンラベル"><input value={s.buttonLabel ?? ""} onChange={e => upd(i, { buttonLabel: e.target.value })} className={INPUT} /></Field>
+            <Field label="ボタンリンク"><input value={s.href ?? ""} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="#contents" /></Field>
+          </div>
+          <Field label="グラデーション"><input value={s.gradient ?? ""} onChange={e => upd(i, { gradient: e.target.value })} className={INPUT} placeholder="linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%)" /></Field>
+          <Field label="画像URL"><input value={s.imageUrl ?? ""} onChange={e => upd(i, { imageUrl: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+        </ArrayItemWrapper>
+      ))}
+      <button type="button"
+        onClick={() => onChange([...slides, { id: `slide-${Date.now()}`, title: "", description: "" }])}
+        className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-colors w-full justify-center">
+        <Plus className="w-3.5 h-3.5" /> スライドを追加
+      </button>
+    </div>
+  )
+}
+
+// ─── QuickLinks Editor ────────────────────────────────────────────────────────
+
+function QuickLinksEditor({ links, onChange }: { links: GasQuickLink[]; onChange: (l: GasQuickLink[]) => void }) {
+  const upd = (i: number, patch: Partial<GasQuickLink>) => {
+    const next = [...links]; next[i] = { ...next[i], ...patch }; onChange(next)
+  }
+  const move = (i: number, dir: -1 | 1) => {
+    const next = [...links]; [next[i], next[i + dir]] = [next[i + dir], next[i]]; onChange(next)
+  }
+  return (
+    <div className="space-y-2.5">
+      {links.map((l, i) => (
+        <ArrayItemWrapper key={l.id || i} index={i} total={links.length} label={l.title ? `#${i + 1} ${l.title}` : `#${i + 1}`}
+          onMoveUp={() => move(i, -1)} onMoveDown={() => move(i, 1)}
+          onDelete={() => onChange(links.filter((_, idx) => idx !== i))}>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="タイトル"><input value={l.title} onChange={e => upd(i, { title: e.target.value })} className={INPUT} /></Field>
+            <Field label="アイコン" note="例: rocket, sparkles, users">
+              <input value={l.icon} onChange={e => upd(i, { icon: e.target.value })} className={INPUT} placeholder="rocket" />
+            </Field>
+          </div>
+          <Field label="説明文">
+            <textarea value={l.description} onChange={e => upd(i, { description: e.target.value })} rows={1} className={`${INPUT} resize-none`} />
+          </Field>
+          <Field label="リンクURL"><input value={l.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+              <input type="checkbox" checked={!!l.external} onChange={e => upd(i, { external: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+              <span className="text-zinc-400">外部リンク</span>
+            </label>
+            <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+              <input type="checkbox" checked={!!l.featured} onChange={e => upd(i, { featured: e.target.checked })} className="w-3.5 h-3.5 accent-amber-500" />
+              <span className="text-zinc-400">おすすめ表示</span>
+            </label>
+          </div>
+        </ArrayItemWrapper>
+      ))}
+      <button type="button"
+        onClick={() => onChange([...links, { id: `link-${Date.now()}`, title: "", description: "", href: "", icon: "external", external: false }])}
+        className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-colors w-full justify-center">
+        <Plus className="w-3.5 h-3.5" /> リンクを追加
+      </button>
+    </div>
+  )
+}
+
+// ─── CommunityCta Editor ──────────────────────────────────────────────────────
+
+function CommunityCтaEditor({ cta, onChange }: { cta: GasCommunityCta | null; onChange: (c: GasCommunityCta) => void }) {
+  const c: GasCommunityCta = cta ?? { title: "", description: "", primaryLabel: "", primaryHref: "", secondaryLinks: [] }
+  const upd = (patch: Partial<GasCommunityCta>) => onChange({ ...c, ...patch })
+  const updSecondary = (i: number, patch: Partial<{ label: string; href: string }>) => {
+    const links = [...(c.secondaryLinks ?? [])]
+    links[i] = { ...links[i], ...patch }
+    upd({ secondaryLinks: links })
+  }
+  return (
+    <div className="space-y-3">
+      <div className="bg-zinc-800/50 rounded-xl border border-zinc-700/50 p-3 space-y-2.5">
+        <Field label="タイトル"><input value={c.title} onChange={e => upd({ title: e.target.value })} className={INPUT} /></Field>
+        <Field label="説明文">
+          <textarea value={c.description} onChange={e => upd({ description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
+        </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="メインボタンラベル"><input value={c.primaryLabel} onChange={e => upd({ primaryLabel: e.target.value })} className={INPUT} /></Field>
+          <Field label="メインボタンURL"><input value={c.primaryHref} onChange={e => upd({ primaryHref: e.target.value })} className={INPUT} placeholder="https://discord.gg/..." /></Field>
+        </div>
+      </div>
+      <div>
+        <span className="text-[10px] font-bold text-zinc-600 block mb-2">サブリンク</span>
+        <div className="space-y-2">
+          {(c.secondaryLinks ?? []).map((link, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <input value={link.label} onChange={e => updSecondary(i, { label: e.target.value })}
+                className={`${INPUT} flex-1`} placeholder="ラベル" />
+              <input value={link.href} onChange={e => updSecondary(i, { href: e.target.value })}
+                className={`${INPUT} flex-1`} placeholder="URL" />
+              <button type="button" onClick={() => upd({ secondaryLinks: (c.secondaryLinks ?? []).filter((_, idx) => idx !== i) })}
+                className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors shrink-0">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+          <button type="button"
+            onClick={() => upd({ secondaryLinks: [...(c.secondaryLinks ?? []), { label: "", href: "" }] })}
+            className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-colors w-full justify-center">
+            <Plus className="w-3.5 h-3.5" /> サブリンクを追加
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Event Modal ─────────────────────────────────────────────────────────────
 
 function EventModal({
@@ -405,6 +564,27 @@ function EventModal({
   const [savedOk, setSavedOk] = useState(false)
   const [previewKey, setPreviewKey] = useState(0)
 
+  // Array data state
+  const [slides, setSlides] = useState<GasCarouselSlide[]>([])
+  const [quickLinks, setQuickLinks] = useState<GasQuickLink[]>([])
+  const [cta, setCta] = useState<GasCommunityCta | null>(null)
+  const [fullDataLoading, setFullDataLoading] = useState(false)
+
+  useEffect(() => {
+    if (!isEdit || !GAS_URL || !event?.eventId) return
+    setFullDataLoading(true)
+    fetch(`${GAS_URL}?action=event&id=${encodeURIComponent(event.eventId as string)}`)
+      .then(r => r.json())
+      .then((data: GasEventFullData) => {
+        setSlides(data.carousel ?? [])
+        setQuickLinks(data.quickLinks ?? [])
+        setCta(data.communityCta ?? null)
+      })
+      .catch(() => {})
+      .finally(() => setFullDataLoading(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const set = (key: keyof EventFormData, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }))
 
@@ -419,6 +599,12 @@ function EventModal({
     try {
       await onSave(form)
       if (isEdit) {
+        await gasPost(idToken, "updateFullEvent", {
+          eventId: form.eventId,
+          carousel: slides,
+          quickLinks,
+          communityCta: cta,
+        })
         setPreviewKey(k => k + 1)
         setSavedOk(true)
         setTimeout(() => setSavedOk(false), 2500)
@@ -557,6 +743,36 @@ function EventModal({
             <input value={form.heroGradient} onChange={e => set("heroGradient", e.target.value)}
               className={INPUT} placeholder="linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)" />
           </Field>
+
+          {/* カルーセル（配列データ） */}
+          {isEdit && (
+            <>
+              <SectionDivider label="カルーセル（配列）" />
+              {fullDataLoading
+                ? <div className="flex items-center gap-2 text-zinc-600 text-xs"><Loader2 className="w-3.5 h-3.5 animate-spin" /> 読み込み中...</div>
+                : <CarouselEditor slides={slides} onChange={setSlides} />}
+            </>
+          )}
+
+          {/* QuickLinks（配列データ） */}
+          {isEdit && (
+            <>
+              <SectionDivider label="クイックリンク（配列）" />
+              {fullDataLoading
+                ? <div className="flex items-center gap-2 text-zinc-600 text-xs"><Loader2 className="w-3.5 h-3.5 animate-spin" /> 読み込み中...</div>
+                : <QuickLinksEditor links={quickLinks} onChange={setQuickLinks} />}
+            </>
+          )}
+
+          {/* CommunityCta（配列データ） */}
+          {isEdit && (
+            <>
+              <SectionDivider label="コミュニティCTA（配列）" />
+              {fullDataLoading
+                ? <div className="flex items-center gap-2 text-zinc-600 text-xs"><Loader2 className="w-3.5 h-3.5 animate-spin" /> 読み込み中...</div>
+                : <CommunityCтaEditor cta={cta} onChange={setCta} />}
+            </>
+          )}
 
           {/* 発表・ポスター */}
           <SectionDivider label="発表・ポスター" />

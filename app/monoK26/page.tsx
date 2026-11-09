@@ -21,6 +21,7 @@ import { ExpiryHide } from "@/components/expiry-hide"
 import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const KANTO_QUIZ: QuizData = {
   intro: "今日のイベント会場・浅草橋から近い上野には、宇宙に関する展示も行う科学施設があります。どこでしょう？",
@@ -63,6 +64,7 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">

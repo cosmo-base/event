@@ -19,6 +19,7 @@ import type { QuizData } from "@/components/event-quiz"
 import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const MCF26_QUIZ: QuizData = {
   question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
@@ -58,6 +59,7 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
         <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">

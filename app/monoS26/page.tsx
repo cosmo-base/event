@@ -21,6 +21,7 @@ import { ExpiryHide } from "@/components/expiry-hide"
 import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const VOYAGER_QUIZ: QuizData = {
   intro: "今日、8月20日は宇宙開発の歴史にとって特別な日。\n1977年のこの日、NASAの惑星探査機「ボイジャー2号」が宇宙へ旅立ちました🚀\n\nでは、ボイジャー2号の打ち上げについて正しいものはどれでしょう？",
@@ -68,9 +69,10 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
-<section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
+        <section aria-label="お知らせ" className="mx-auto max-w-6xl px-4 pb-4">
           <HeroCarousel slides={data.carousel} />
         </section>
 

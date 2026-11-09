@@ -19,6 +19,7 @@ import type { QuizData } from "@/components/event-quiz"
 import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { AnnouncementBanner } from "@/components/announcement-banner"
 
 const STEX26_QUIZ: QuizData = {
   intro: "火星の表面には昼と夜の寒暖差が激しく、砂嵐でソーラーパネルが汚れてしまうこともあります。そのため火星探査車の中には、太陽光に頼らず、放射性物質が崩壊するときに出す熱を利用して発電する仕組みを電源として採用しているものがあります。NASAの火星探査車「Curiosity(キュリオシティ)」もその一つで、この仕組みのおかげで昼夜を問わず安定した電力を確保できています。",
@@ -59,6 +60,7 @@ export default async function Page() {
       <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
 
       <main id="main">
+        <AnnouncementBanner text={gas?.announcementText} />
         <EventInformation event={data.event} />
 
         <section aria-label="ガチャ" className="mx-auto max-w-6xl px-4 pt-6 pb-2">

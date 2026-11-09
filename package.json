@@ -9,6 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@fontsource/noto-sans-jp": "^5.3.1",
     "@radix-ui/react-slot": "1.2.4",
     "@types/leaflet": "^1.9.21",
     "@types/papaparse": "^5.5.2",
