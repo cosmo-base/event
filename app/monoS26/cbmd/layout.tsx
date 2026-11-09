@@ -21,8 +21,9 @@ const DEFAULT_REGION = "北信越"
 export default async function MonoS26CbmdLayout({ children }: { children: React.ReactNode }) {
   const gas = await fetchPublicGasEvent("monoS26")
   const cbmd = parseGasCbmdConfig(gas)
+  const expiryDate = cbmd.expiryDate ?? "2026-08-27"
   return (
-    <ContentExpiryGate expiryDate="2026-08-27" discordUrl="https://discord.gg/X78w86XE3v">
+    <ContentExpiryGate expiryDate={expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
       lockedPrefectures={cbmd.lockedPrefectures}
       lockedRegion={cbmd.lockedRegion ?? DEFAULT_REGION}

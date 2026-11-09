@@ -1,5 +1,5 @@
-import type { EventSpecificData, CarouselSlide } from "@/data/event-page-data"
-import type { GasEventPublicData } from "./gas-public"
+import type { EventSpecificData, CarouselSlide, IconName } from "@/data/event-page-data"
+import type { GasEventPublicData, GasEventFullData } from "./gas-public"
 import type { QuizData } from "@/components/event-quiz"
 import { normalizeDocUrl, isDriveUrl } from "./drive-url"
 
@@ -113,12 +113,14 @@ export function parseGasCbmdConfig(gas: GasEventPublicData | null): {
   lockedRegion: string | null
   mapCenter: [number, number] | null
   mapZoom: number | null
+  expiryDate: string | null
 } {
   const result = {
     lockedPrefectures: null as string[] | null,
     lockedRegion: null as string | null,
     mapCenter: null as [number, number] | null,
     mapZoom: null as number | null,
+    expiryDate: null as string | null,
   }
   if (!gas) return result
 
@@ -137,8 +139,65 @@ export function parseGasCbmdConfig(gas: GasEventPublicData | null): {
     const z = Number(gas.cbmdMapZoom)
     if (!isNaN(z)) result.mapZoom = z
   }
+  if (gas.cbmdExpiryDate) result.expiryDate = gas.cbmdExpiryDate.trim()
 
   return result
+}
+
+/**
+ * Merge full structured GAS data (carousel, quickLinks, communityCta) into the event data.
+ * Call after mergeGasEvent to overlay structured overrides on top of flat-field merges.
+ */
+export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull: GasEventFullData | null): T {
+  if (!gasFull) return base
+  const merged = { ...base }
+
+  // Replace carousel if GAS has slides
+  if (gasFull.carousel && gasFull.carousel.length > 0) {
+    merged.carousel = gasFull.carousel.map(s => ({
+      id: s.id,
+      title: s.title,
+      description: s.description,
+      ...(s.buttonLabel   && { buttonLabel:   s.buttonLabel }),
+      ...(s.href          && { href:           s.href }),
+      ...(s.external      !== undefined && { external: s.external }),
+      ...(s.gradient      && { gradient:       s.gradient }),
+      ...(s.centered      !== undefined && { centered: s.centered }),
+      ...(s.label         && { label:          s.label }),
+      ...(s.imageUrl      && { imageUrl:       s.imageUrl }),
+      ...(s.secondaryLabel && { secondaryLabel: s.secondaryLabel }),
+      ...(s.secondaryHref  && { secondaryHref:  s.secondaryHref }),
+    })) as CarouselSlide[]
+  }
+
+  // Replace quickLinks if GAS has links
+  if (gasFull.quickLinks && gasFull.quickLinks.length > 0) {
+    merged.quickLinks = gasFull.quickLinks.map(l => ({
+      id: l.id,
+      title: l.title,
+      description: l.description,
+      href: l.href,
+      icon: l.icon as IconName,
+      external: l.external,
+      ...(l.featured !== undefined && l.featured && { featured: l.featured }),
+      ...(l.event   && { event: l.event }),
+    }))
+  }
+
+  // Merge communityCta if GAS has it
+  if (gasFull.communityCta) {
+    const cta = gasFull.communityCta
+    merged.communityCta = {
+      ...base.communityCta,
+      ...(cta.title        && { title:        cta.title }),
+      ...(cta.description  && { description:  cta.description }),
+      ...(cta.primaryLabel && { primaryLabel: cta.primaryLabel }),
+      ...(cta.primaryHref  && { primaryHref:  cta.primaryHref }),
+      ...(cta.secondaryLinks && cta.secondaryLinks.length > 0 && { secondaryLinks: cta.secondaryLinks }),
+    }
+  }
+
+  return merged
 }
 
 /** Merge GAS quiz fields into the static QuizData. Static data acts as fallback. */

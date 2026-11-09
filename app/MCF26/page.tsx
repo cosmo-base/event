@@ -16,8 +16,8 @@ import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
 import type { QuizData } from "@/components/event-quiz"
-import { fetchPublicGasEvent } from "@/lib/gas-public"
-import { mergeGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
+import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
+import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz } from "@/lib/merge-gas-event"
 
 const MCF26_QUIZ: QuizData = {
   question: "国際宇宙ステーション(ISS)で宇宙飛行士が飲んでいる水は、主に何をリサイクルして作られているでしょう？",
@@ -38,8 +38,8 @@ const SURVEY_QUESTIONS = [
 ]
 
 export default async function Page() {
-  const gas = await fetchPublicGasEvent("MCF26")
-  const data = mergeGasEvent({ ...orgData, ...MCF26Data }, gas)
+  const [gas, gasFull] = await Promise.all([fetchPublicGasEvent("MCF26"), fetchFullGasEvent("MCF26")])
+  const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...MCF26Data }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(SURVEY_QUESTIONS, gas)
   const quiz = mergeGasQuiz(MCF26_QUIZ, gas)
 
