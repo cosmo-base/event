@@ -657,10 +657,23 @@ function EventModal({
               className={INPUT} placeholder="MMRTG|RTG-II|SNAP-27" />
           </Field>
 
-          <Field label="正解インデックス" note="0始まり（0=1番目）">
-            <input type="number" min="0" max="9" value={form.quizCorrectIndex}
-              onChange={e => set("quizCorrectIndex", e.target.value)}
-              className={`${INPUT} w-24`} />
+          <Field label="正解">
+            {form.quizOptions
+              ? form.quizOptions.split("|").map(s => s.trim()).filter(Boolean).map((opt, i) => (
+                <label key={i} className="flex items-center gap-2 cursor-pointer py-0.5">
+                  <input
+                    type="radio"
+                    name="quizCorrectIndex"
+                    value={String(i)}
+                    checked={form.quizCorrectIndex === String(i)}
+                    onChange={() => set("quizCorrectIndex", String(i))}
+                    className="accent-primary"
+                  />
+                  <span className="text-sm">{i + 1}. {opt}</span>
+                </label>
+              ))
+              : <span className="text-xs text-muted-foreground">先に選択肢を入力してください</span>
+            }
           </Field>
 
           <Field label="解説文">
