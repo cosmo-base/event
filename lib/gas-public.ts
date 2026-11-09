@@ -52,6 +52,14 @@ export interface GasEventPublicData {
   quizLinkLabel?: string
   quizLinkHref?: string
   quizLinkDescription?: string
+  // contents selection (pipe-separated content IDs; empty = show all)
+  selectedContentIds?: string
+  // CBMD per-event configuration
+  cbmdPrefectures?: string  // pipe-separated prefecture names, e.g. "東京都|神奈川県"
+  cbmdRegion?: string       // region name instead of prefectures, e.g. "北信越"
+  cbmdMapLat?: number | string
+  cbmdMapLng?: number | string
+  cbmdMapZoom?: number | string
 }
 
 export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPublicData | null> {

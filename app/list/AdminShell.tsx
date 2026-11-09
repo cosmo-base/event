@@ -128,6 +128,14 @@ interface EventFormData {
   quizLinkLabel: string
   quizLinkHref: string
   quizLinkDescription: string
+  // ─ コンテンツ選択 ─
+  selectedContentIds: string
+  // ─ CBMD設定 ─
+  cbmdPrefectures: string
+  cbmdRegion: string
+  cbmdMapLat: string
+  cbmdMapLng: string
+  cbmdMapZoom: string
   // ─ ページ設定 ─
   pageTitle: string
   pageDescription: string
@@ -170,6 +178,8 @@ const EMPTY_FORM: EventFormData = {
   surveyQ1: "", surveyQ2: "", surveyQ3: "",
   quizIntro: "", quizQuestion: "", quizOptions: "", quizCorrectIndex: "0",
   quizExplanation: "", quizLinkLabel: "", quizLinkHref: "", quizLinkDescription: "",
+  selectedContentIds: "",
+  cbmdPrefectures: "", cbmdRegion: "", cbmdMapLat: "", cbmdMapLng: "", cbmdMapZoom: "",
   pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
   noindex: true, published: false,
 }
@@ -680,6 +690,42 @@ function EventModal({
             <Field label="リンク説明">
               <input value={form.quizLinkDescription} onChange={e => set("quizLinkDescription", e.target.value)}
                 className={INPUT} placeholder="リンク先の説明" />
+            </Field>
+          </div>
+
+          {/* コンテンツ選択 */}
+          <SectionDivider label="コンテンツ選択" />
+
+          <Field label="表示するコンテンツID" note="| で区切る（空=全表示）">
+            <input value={form.selectedContentIds} onChange={e => set("selectedContentIds", e.target.value)}
+              className={INPUT} placeholder="c-space-type|c-cbmd" />
+          </Field>
+
+          {/* CBMD設定 */}
+          <SectionDivider label="CBMD設定" />
+
+          <Field label="都道府県" note="| で区切る（例: 東京都|神奈川県）">
+            <input value={form.cbmdPrefectures} onChange={e => set("cbmdPrefectures", e.target.value)}
+              className={INPUT} placeholder="東京都|神奈川県|埼玉県|千葉県" />
+          </Field>
+
+          <Field label="地方区分" note="都道府県の代わりに指定（例: 北信越）">
+            <input value={form.cbmdRegion} onChange={e => set("cbmdRegion", e.target.value)}
+              className={INPUT} placeholder="北信越" />
+          </Field>
+
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="地図中心 緯度">
+              <input type="number" step="0.001" value={form.cbmdMapLat} onChange={e => set("cbmdMapLat", e.target.value)}
+                className={INPUT} placeholder="35.681" />
+            </Field>
+            <Field label="地図中心 経度">
+              <input type="number" step="0.001" value={form.cbmdMapLng} onChange={e => set("cbmdMapLng", e.target.value)}
+                className={INPUT} placeholder="139.767" />
+            </Field>
+            <Field label="ズーム">
+              <input type="number" min="1" max="18" value={form.cbmdMapZoom} onChange={e => set("cbmdMapZoom", e.target.value)}
+                className={INPUT} placeholder="10" />
             </Field>
           </div>
 

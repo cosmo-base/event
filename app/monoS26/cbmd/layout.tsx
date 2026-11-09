@@ -3,6 +3,8 @@ import { SocialFooter } from "@/components/social-footer"
 import { orgData } from "@/data/org-data"
 import { CbmdContextProvider } from "@/components/cbmd-region-context"
 import { ContentExpiryGate } from "@/components/content-expiry-gate"
+import { fetchPublicGasEvent } from "@/lib/gas-public"
+import { parseGasCbmdConfig } from "@/lib/merge-gas-event"
 
 const navLinks = [
   { href: "/monoS26/cbmd", label: "TOP" },
@@ -11,17 +13,21 @@ const navLinks = [
   { href: "/monoS26/cbmd/database", label: "データベース" },
 ]
 
-// ホテルメトロポリタン長野（長野市MetioPLAZA）付近
-const VENUE_CENTER: [number, number] = [36.644, 138.189]
-const VENUE_ZOOM = 9
+// Fallback: ホテルメトロポリタン長野（長野市MetioPLAZA）付近
+const DEFAULT_CENTER: [number, number] = [36.644, 138.189]
+const DEFAULT_ZOOM = 9
+const DEFAULT_REGION = "北信越"
 
-export default function MonoS26CbmdLayout({ children }: { children: React.ReactNode }) {
+export default async function MonoS26CbmdLayout({ children }: { children: React.ReactNode }) {
+  const gas = await fetchPublicGasEvent("monoS26")
+  const cbmd = parseGasCbmdConfig(gas)
   return (
     <ContentExpiryGate expiryDate="2026-08-27" discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
-      lockedRegion="北信越"
-      mapCenter={VENUE_CENTER}
-      mapZoom={VENUE_ZOOM}
+      lockedPrefectures={cbmd.lockedPrefectures}
+      lockedRegion={cbmd.lockedRegion ?? DEFAULT_REGION}
+      mapCenter={cbmd.mapCenter ?? DEFAULT_CENTER}
+      mapZoom={cbmd.mapZoom ?? DEFAULT_ZOOM}
       basePath="/monoS26/cbmd"
     >
       <div className="min-h-dvh bg-[#000033] dark">

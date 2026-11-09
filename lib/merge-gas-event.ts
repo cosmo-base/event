@@ -1,6 +1,7 @@
 import type { EventSpecificData, CarouselSlide } from "@/data/event-page-data"
 import type { GasEventPublicData } from "./gas-public"
 import type { QuizData } from "@/components/event-quiz"
+import { normalizeDocUrl, isDriveUrl } from "./drive-url"
 
 /** Merge GAS-managed fields into the static event data object. Static data acts as fallback. */
 export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEventPublicData | null): T {
@@ -57,15 +58,25 @@ export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEven
     const basePitch  = base.pitch ?? { title: "", presentationTitle: "", description: "", speakerName: "", presentationDate: "", slideUrl: "" }
     const basePosters = basePitch.posters ?? []
 
+    const p1EmbedRaw = gas.poster1EmbedUrl || gas.poster1PdfUrl || ""
+    const p1Embed = p1EmbedRaw && isDriveUrl(p1EmbedRaw) ? normalizeDocUrl(p1EmbedRaw).embedUrl : p1EmbedRaw
+    const p1Pdf   = gas.poster1PdfUrl && isDriveUrl(gas.poster1PdfUrl) ? normalizeDocUrl(gas.poster1PdfUrl).downloadUrl : gas.poster1PdfUrl
+
     const poster1 = (gas.poster1Title || gas.poster1PdfUrl || gas.poster1EmbedUrl)
-      ? { ...(basePosters[0] ?? {}), ...(gas.poster1Title && { title: gas.poster1Title }), ...(gas.poster1PdfUrl && { pdfUrl: gas.poster1PdfUrl }), ...(gas.poster1EmbedUrl && { embedUrl: gas.poster1EmbedUrl }) }
+      ? { ...(basePosters[0] ?? {}), ...(gas.poster1Title && { title: gas.poster1Title }), ...(p1Pdf && { pdfUrl: p1Pdf }), ...(p1Embed && { embedUrl: p1Embed }) }
       : basePosters[0]
 
+    const p2Pdf = gas.poster2PdfUrl && isDriveUrl(gas.poster2PdfUrl) ? normalizeDocUrl(gas.poster2PdfUrl).downloadUrl : gas.poster2PdfUrl
+
     const poster2 = (gas.poster2Title || gas.poster2PdfUrl)
-      ? { ...(basePosters[1] ?? {}), ...(gas.poster2Title && { title: gas.poster2Title }), ...(gas.poster2PdfUrl && { pdfUrl: gas.poster2PdfUrl }) }
+      ? { ...(basePosters[1] ?? {}), ...(gas.poster2Title && { title: gas.poster2Title }), ...(p2Pdf && { pdfUrl: p2Pdf }) }
       : basePosters[1]
 
     const newPosters = [poster1, poster2].filter((p): p is NonNullable<typeof p> => !!p)
+
+    const pitchEmbedRaw = gas.embedUrl || gas.pdfUrl || ""
+    const pitchEmbed = pitchEmbedRaw && isDriveUrl(pitchEmbedRaw) ? normalizeDocUrl(pitchEmbedRaw).embedUrl : pitchEmbedRaw
+    const pitchPdf   = gas.pdfUrl && isDriveUrl(gas.pdfUrl) ? normalizeDocUrl(gas.pdfUrl).downloadUrl : gas.pdfUrl
 
     merged.pitch = {
       ...basePitch,
@@ -74,13 +85,60 @@ export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEven
       ...(gas.speakerName             && { speakerName:       gas.speakerName }),
       ...(gas.presentationDate        && { presentationDate:  gas.presentationDate }),
       ...(gas.slideUrl                && { slideUrl:          gas.slideUrl }),
-      ...(gas.pdfUrl                  && { pdfUrl:            gas.pdfUrl }),
-      ...(gas.embedUrl                && { embedUrl:          gas.embedUrl }),
+      ...(pitchPdf                    && { pdfUrl:            pitchPdf }),
+      ...(pitchEmbed                  && { embedUrl:          pitchEmbed }),
       posters: newPosters.length > 0 ? newPosters : basePosters,
     }
   }
 
+  // ─ contents selection ─
+  if (gas.selectedContentIds) {
+    const ids = gas.selectedContentIds.split("|").map(s => s.trim()).filter(Boolean)
+    if (ids.length > 0) {
+      merged.contents = ids
+        .map(id => base.contents.find(c => c.id === id))
+        .filter((c): c is NonNullable<typeof c> => !!c)
+    }
+  }
+
   return merged
+}
+
+/**
+ * Parse CBMD configuration fields from GAS data.
+ * Returns the values to pass to CbmdContextProvider, or null if not set.
+ */
+export function parseGasCbmdConfig(gas: GasEventPublicData | null): {
+  lockedPrefectures: string[] | null
+  lockedRegion: string | null
+  mapCenter: [number, number] | null
+  mapZoom: number | null
+} {
+  const result = {
+    lockedPrefectures: null as string[] | null,
+    lockedRegion: null as string | null,
+    mapCenter: null as [number, number] | null,
+    mapZoom: null as number | null,
+  }
+  if (!gas) return result
+
+  if (gas.cbmdPrefectures) {
+    const prefs = gas.cbmdPrefectures.split("|").map(s => s.trim()).filter(Boolean)
+    if (prefs.length > 0) result.lockedPrefectures = prefs
+  }
+  if (gas.cbmdRegion) result.lockedRegion = gas.cbmdRegion.trim()
+
+  const lat = gas.cbmdMapLat !== undefined && gas.cbmdMapLat !== "" ? Number(gas.cbmdMapLat) : null
+  const lng = gas.cbmdMapLng !== undefined && gas.cbmdMapLng !== "" ? Number(gas.cbmdMapLng) : null
+  if (lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)) {
+    result.mapCenter = [lat, lng]
+  }
+  if (gas.cbmdMapZoom !== undefined && gas.cbmdMapZoom !== "") {
+    const z = Number(gas.cbmdMapZoom)
+    if (!isNaN(z)) result.mapZoom = z
+  }
+
+  return result
 }
 
 /** Merge GAS quiz fields into the static QuizData. Static data acts as fallback. */
