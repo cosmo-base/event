@@ -1,13 +1,17 @@
 import { OG_SIZE, generateEventOgImage } from '@/lib/og-event-image'
+import { monoS26Data } from '@/data/events/monoS26'
+import { fetchPublicGasEvent } from '@/lib/gas-public'
 
 export const dynamic = 'force-static'
 export const size = OG_SIZE
 export const contentType = 'image/png'
 
-export default function Image() {
+export default async function Image() {
+  const gas = await fetchPublicGasEvent('monoS26')
   return generateEventOgImage({
-    eventName: '全日本学生ものづくりExpo@信州',
-    date: '2026年8月20日',
-    venue: 'ホテルメトロポリタン長野',
+    eventName: gas?.name ?? monoS26Data.event.name,
+    date: gas?.date ?? monoS26Data.event.date,
+    venue: gas?.venue ?? monoS26Data.event.venue,
+    accent: gas?.accentColor ?? monoS26Data.site.accentColor,
   })
 }
