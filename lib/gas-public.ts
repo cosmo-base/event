@@ -101,10 +101,41 @@ export interface GasCommunityCta {
   secondaryLinks?: Array<{ label: string; href: string; event?: string; anchor?: boolean }>
 }
 
+export interface GasContentItem {
+  id: string
+  title: string
+  description: string
+  href: string
+  imageUrl?: string
+  duration?: string
+  audience?: string
+  labels?: string[]
+  status?: string
+  external?: boolean
+  icon?: string
+}
+
+export interface GasLimitedContentItem {
+  id: string
+  title: string
+  description: string
+  href: string
+  imageUrl?: string
+  duration?: string
+  labels?: string[]
+  status?: string
+  external?: boolean
+  availableFrom?: string
+  availableUntil?: string
+  requiresPassword?: boolean
+}
+
 export interface GasEventFullData {
   carousel?: GasCarouselSlide[]
   quickLinks?: GasQuickLink[]
   communityCta?: GasCommunityCta | null
+  contents?: GasContentItem[]
+  limitedContents?: GasLimitedContentItem[]
 }
 
 export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullData | null> {
@@ -120,6 +151,20 @@ export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullDa
     return json as GasEventFullData
   } catch {
     return null
+  }
+}
+
+export async function fetchPublishedEventIds(): Promise<string[]> {
+  const url = process.env.NEXT_PUBLIC_GAS_URL
+  if (!url) return []
+  try {
+    const res = await fetch(`${url}?action=publishedEventIds`, { cache: "no-store" })
+    if (!res.ok) return []
+    const json = await res.json()
+    if (!Array.isArray(json)) return []
+    return json as string[]
+  } catch {
+    return []
   }
 }
 

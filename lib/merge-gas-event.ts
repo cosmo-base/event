@@ -1,4 +1,4 @@
-import type { EventSpecificData, CarouselSlide, IconName } from "@/data/event-page-data"
+import type { EventSpecificData, CarouselSlide, IconName, ContentItem, LimitedContentItem, ContentStatus } from "@/data/event-page-data"
 import type { GasEventPublicData, GasEventFullData } from "./gas-public"
 import type { QuizData } from "@/components/event-quiz"
 import { normalizeDocUrl, isDriveUrl } from "./drive-url"
@@ -195,6 +195,41 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       ...(cta.primaryHref  && { primaryHref:  cta.primaryHref }),
       ...(cta.secondaryLinks && cta.secondaryLinks.length > 0 && { secondaryLinks: cta.secondaryLinks }),
     }
+  }
+
+  // Replace contents if GAS has items
+  if (gasFull.contents && gasFull.contents.length > 0) {
+    merged.contents = gasFull.contents.map(c => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      href: c.href,
+      ...(c.imageUrl  && { imageUrl:  c.imageUrl }),
+      ...(c.duration  && { duration:  c.duration }),
+      ...(c.audience  && { audience:  c.audience }),
+      labels: c.labels ?? [],
+      status: (c.status as ContentStatus) ?? "available",
+      external: c.external ?? false,
+      ...(c.icon && { icon: c.icon as IconName }),
+    })) as ContentItem[]
+  }
+
+  // Replace limitedContents if GAS has items
+  if (gasFull.limitedContents && gasFull.limitedContents.length > 0) {
+    merged.limitedContents = gasFull.limitedContents.map(c => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      href: c.href,
+      ...(c.imageUrl       && { imageUrl:        c.imageUrl }),
+      ...(c.duration       && { duration:         c.duration }),
+      labels: c.labels ?? [],
+      status: (c.status as ContentStatus) ?? "available",
+      external: c.external ?? false,
+      ...(c.availableFrom  && { availableFrom:    c.availableFrom }),
+      ...(c.availableUntil && { availableUntil:   c.availableUntil }),
+      ...(c.requiresPassword !== undefined && { requiresPassword: c.requiresPassword }),
+    })) as LimitedContentItem[]
   }
 
   return merged

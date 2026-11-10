@@ -8,7 +8,7 @@ import {
   Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
   ChevronUp, ChevronDown,
 } from "lucide-react"
-import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData } from "@/lib/gas-public"
+import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData, GasContentItem, GasLimitedContentItem } from "@/lib/gas-public"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
 import { AdminStats, type StatsData } from "./AdminStats"
@@ -543,6 +543,174 @@ function CommunityCтaEditor({ cta, onChange }: { cta: GasCommunityCta | null; o
   )
 }
 
+// ─── Contents Editor ─────────────────────────────────────────────────────────
+
+const CONTENT_STATUS_OPTIONS = ["available", "limited", "coming-soon", "ended"]
+
+function ContentsEditor({ items, onChange }: { items: GasContentItem[]; onChange: (v: GasContentItem[]) => void }) {
+  const upd = (i: number, patch: Partial<GasContentItem>) => {
+    const next = [...items]; next[i] = { ...next[i], ...patch }; onChange(next)
+  }
+  const move = (i: number, dir: -1 | 1) => {
+    const next = [...items]; [next[i], next[i + dir]] = [next[i + dir], next[i]]; onChange(next)
+  }
+  return (
+    <div className="space-y-2.5">
+      {items.map((c, i) => (
+        <ArrayItemWrapper key={c.id || i} index={i} total={items.length} label={c.title ? `#${i + 1} ${c.title}` : `#${i + 1}`}
+          onMoveUp={() => move(i, -1)} onMoveDown={() => move(i, 1)}
+          onDelete={() => onChange(items.filter((_, idx) => idx !== i))}>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="タイトル"><input value={c.title} onChange={e => upd(i, { title: e.target.value })} className={INPUT} /></Field>
+            <Field label="アイコン" note="例: rocket, sparkles">
+              <input value={c.icon ?? ""} onChange={e => upd(i, { icon: e.target.value })} className={INPUT} placeholder="rocket" />
+            </Field>
+          </div>
+          <Field label="説明文">
+            <textarea value={c.description} onChange={e => upd(i, { description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
+          </Field>
+          <Field label="URL"><input value={c.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="対象者">
+              <input value={c.audience ?? ""} onChange={e => upd(i, { audience: e.target.value })} className={INPUT} placeholder="初心者向け" />
+            </Field>
+            <Field label="所要時間">
+              <input value={c.duration ?? ""} onChange={e => upd(i, { duration: e.target.value })} className={INPUT} placeholder="約5分" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="ラベル" note="| で区切る">
+              <input value={(c.labels ?? []).join("|")} onChange={e => upd(i, { labels: e.target.value.split("|").map(s => s.trim()).filter(Boolean) })} className={INPUT} placeholder="クイズ|無料" />
+            </Field>
+            <Field label="ステータス">
+              <select value={c.status ?? "available"} onChange={e => upd(i, { status: e.target.value })} className={INPUT}>
+                {CONTENT_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </Field>
+          </div>
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+            <input type="checkbox" checked={!!c.external} onChange={e => upd(i, { external: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+            <span className="text-zinc-400">外部リンク</span>
+          </label>
+        </ArrayItemWrapper>
+      ))}
+      <button type="button"
+        onClick={() => onChange([...items, { id: `content-${Date.now()}`, title: "", description: "", href: "", labels: [], status: "available", external: false }])}
+        className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-colors w-full justify-center">
+        <Plus className="w-3.5 h-3.5" /> コンテンツを追加
+      </button>
+    </div>
+  )
+}
+
+// ─── Limited Contents Editor ──────────────────────────────────────────────────
+
+function LimitedContentsEditor({ items, onChange }: { items: GasLimitedContentItem[]; onChange: (v: GasLimitedContentItem[]) => void }) {
+  const upd = (i: number, patch: Partial<GasLimitedContentItem>) => {
+    const next = [...items]; next[i] = { ...next[i], ...patch }; onChange(next)
+  }
+  const move = (i: number, dir: -1 | 1) => {
+    const next = [...items]; [next[i], next[i + dir]] = [next[i + dir], next[i]]; onChange(next)
+  }
+  return (
+    <div className="space-y-2.5">
+      {items.map((c, i) => (
+        <ArrayItemWrapper key={c.id || i} index={i} total={items.length} label={c.title ? `#${i + 1} ${c.title}` : `#${i + 1}`}
+          onMoveUp={() => move(i, -1)} onMoveDown={() => move(i, 1)}
+          onDelete={() => onChange(items.filter((_, idx) => idx !== i))}>
+          <Field label="タイトル"><input value={c.title} onChange={e => upd(i, { title: e.target.value })} className={INPUT} /></Field>
+          <Field label="説明文">
+            <textarea value={c.description} onChange={e => upd(i, { description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
+          </Field>
+          <Field label="URL"><input value={c.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="ラベル" note="| で区切る">
+              <input value={(c.labels ?? []).join("|")} onChange={e => upd(i, { labels: e.target.value.split("|").map(s => s.trim()).filter(Boolean) })} className={INPUT} placeholder="限定|メンバー" />
+            </Field>
+            <Field label="ステータス">
+              <select value={c.status ?? "available"} onChange={e => upd(i, { status: e.target.value })} className={INPUT}>
+                {CONTENT_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="公開開始日">
+              <input type="date" value={c.availableFrom ?? ""} onChange={e => upd(i, { availableFrom: e.target.value })} className={INPUT} />
+            </Field>
+            <Field label="公開終了日">
+              <input type="date" value={c.availableUntil ?? ""} onChange={e => upd(i, { availableUntil: e.target.value })} className={INPUT} />
+            </Field>
+          </div>
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+            <input type="checkbox" checked={!!c.external} onChange={e => upd(i, { external: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+            <span className="text-zinc-400">外部リンク</span>
+          </label>
+        </ArrayItemWrapper>
+      ))}
+      <button type="button"
+        onClick={() => onChange([...items, { id: `lcontent-${Date.now()}`, title: "", description: "", href: "", labels: [], status: "available", external: false }])}
+        className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 rounded-lg transition-colors w-full justify-center">
+        <Plus className="w-3.5 h-3.5" /> 限定コンテンツを追加
+      </button>
+    </div>
+  )
+}
+
+// ─── Live Preview ─────────────────────────────────────────────────────────────
+
+function LivePreview({ form, slides, quickLinks }: { form: EventFormData; slides: GasCarouselSlide[]; quickLinks: GasQuickLink[] }) {
+  return (
+    <div className="p-4 space-y-3 text-sm overflow-y-auto h-full">
+      {/* Accent bar */}
+      <div className="h-1 rounded-full w-full mb-2" style={{ background: form.accentColor || "#f59e0b" }} />
+
+      {/* Event info */}
+      <div className="bg-zinc-800/60 rounded-xl p-3 space-y-1">
+        <div className="font-bold text-white text-base">{form.name || <span className="text-zinc-600">イベント名未設定</span>}</div>
+        {form.date && <div className="text-zinc-400 text-xs flex items-center gap-1"><Calendar className="w-3 h-3" />{form.date}</div>}
+        {form.venue && <div className="text-zinc-400 text-xs flex items-center gap-1"><MapPin className="w-3 h-3" />{form.venue}</div>}
+      </div>
+
+      {/* Announcement */}
+      {form.announcementText && (
+        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-lg px-3 py-2 text-xs">
+          {form.announcementText}
+        </div>
+      )}
+
+      {/* Hero slide (first slide or heroTitle) */}
+      {(slides[0]?.title || form.heroTitle) && (
+        <div className="rounded-xl p-3 text-center space-y-1" style={{ background: slides[0]?.gradient || form.heroGradient || "linear-gradient(135deg,#1e3a8a,#2563eb)" }}>
+          <div className="font-bold text-white text-xs whitespace-pre-line">{slides[0]?.title || form.heroTitle}</div>
+          {(slides[0]?.description || form.heroDescription) && (
+            <div className="text-white/70 text-[10px]">{slides[0]?.description || form.heroDescription}</div>
+          )}
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-2 text-[10px] text-zinc-500">
+        <div className="bg-zinc-800/50 rounded-lg px-2 py-1.5">カルーセル: {slides.length}件</div>
+        <div className="bg-zinc-800/50 rounded-lg px-2 py-1.5">クイックリンク: {quickLinks.length}件</div>
+      </div>
+
+      {/* Page settings */}
+      <div className="flex flex-wrap gap-2 text-[10px]">
+        <span className={`px-2 py-0.5 rounded-full border ${form.published ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-zinc-700/50 border-zinc-700 text-zinc-500"}`}>
+          {form.published ? "公開中" : "非公開"}
+        </span>
+        {form.noindex && <span className="px-2 py-0.5 rounded-full border bg-zinc-700/50 border-zinc-700 text-zinc-500">noindex</span>}
+        {form.accentColor && (
+          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-400">
+            <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: form.accentColor }} />
+            {form.accentColor}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── Event Modal ─────────────────────────────────────────────────────────────
 
 function EventModal({
@@ -562,12 +730,15 @@ function EventModal({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [savedOk, setSavedOk] = useState(false)
-  const [previewKey, setPreviewKey] = useState(0)
+  const [iframeKey, setIframeKey] = useState(0)
+  const [previewTab, setPreviewTab] = useState<"live" | "iframe">("live")
 
   // Array data state
   const [slides, setSlides] = useState<GasCarouselSlide[]>([])
   const [quickLinks, setQuickLinks] = useState<GasQuickLink[]>([])
   const [cta, setCta] = useState<GasCommunityCta | null>(null)
+  const [contents, setContents] = useState<GasContentItem[]>([])
+  const [limitedContents, setLimitedContents] = useState<GasLimitedContentItem[]>([])
   const [fullDataLoading, setFullDataLoading] = useState(false)
 
   useEffect(() => {
@@ -579,6 +750,8 @@ function EventModal({
         setSlides(data.carousel ?? [])
         setQuickLinks(data.quickLinks ?? [])
         setCta(data.communityCta ?? null)
+        setContents(data.contents ?? [])
+        setLimitedContents(data.limitedContents ?? [])
       })
       .catch(() => {})
       .finally(() => setFullDataLoading(false))
@@ -604,8 +777,10 @@ function EventModal({
           carousel: slides,
           quickLinks,
           communityCta: cta,
+          contents,
+          limitedContents,
         })
-        setPreviewKey(k => k + 1)
+        setIframeKey(k => k + 1)
         setSavedOk(true)
         setTimeout(() => setSavedOk(false), 2500)
       } else {
@@ -658,8 +833,7 @@ function EventModal({
               <input value={form.shortName} onChange={e => set("shortName", e.target.value)} className={INPUT} />
             </Field>
             <Field label="開催日">
-              <input value={form.date} onChange={e => set("date", e.target.value)} className={INPUT}
-                placeholder="2026年9月1日（火）" />
+              <input type="date" value={form.date} onChange={e => set("date", e.target.value)} className={INPUT} />
             </Field>
           </div>
 
@@ -774,6 +948,26 @@ function EventModal({
             </>
           )}
 
+          {/* コンテンツ（配列データ） */}
+          {isEdit && (
+            <>
+              <SectionDivider label="コンテンツ（配列）" />
+              {fullDataLoading
+                ? <div className="flex items-center gap-2 text-zinc-600 text-xs"><Loader2 className="w-3.5 h-3.5 animate-spin" /> 読み込み中...</div>
+                : <ContentsEditor items={contents} onChange={setContents} />}
+            </>
+          )}
+
+          {/* 限定コンテンツ（配列データ） */}
+          {isEdit && (
+            <>
+              <SectionDivider label="限定コンテンツ（配列）" />
+              {fullDataLoading
+                ? <div className="flex items-center gap-2 text-zinc-600 text-xs"><Loader2 className="w-3.5 h-3.5 animate-spin" /> 読み込み中...</div>
+                : <LimitedContentsEditor items={limitedContents} onChange={setLimitedContents} />}
+            </>
+          )}
+
           {/* 発表・ポスター */}
           <SectionDivider label="発表・ポスター" />
 
@@ -792,8 +986,8 @@ function EventModal({
               <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)} className={INPUT} />
             </Field>
             <Field label="発表日">
-              <input value={form.presentationDate} onChange={e => set("presentationDate", e.target.value)}
-                className={INPUT} placeholder="2026年8月28日" />
+              <input type="date" value={form.presentationDate} onChange={e => set("presentationDate", e.target.value)}
+                className={INPUT} />
             </Field>
           </div>
 
@@ -947,9 +1141,9 @@ function EventModal({
               <input type="number" min="1" max="18" value={form.cbmdMapZoom} onChange={e => set("cbmdMapZoom", e.target.value)}
                 className={INPUT} placeholder="10" />
             </Field>
-            <Field label="公開終了日 (YYYY-MM-DD)">
-              <input type="text" value={form.cbmdExpiryDate} onChange={e => set("cbmdExpiryDate", e.target.value)}
-                className={INPUT} placeholder="2026-09-22" />
+            <Field label="公開終了日">
+              <input type="date" value={form.cbmdExpiryDate} onChange={e => set("cbmdExpiryDate", e.target.value)}
+                className={INPUT} />
             </Field>
           </div>
 
@@ -1031,23 +1225,44 @@ function EventModal({
           </form>
         </div>
 
-        {/* Right: Preview iframe (edit mode only) */}
+        {/* Right: Preview (edit mode only) */}
         {isEdit && (
-          <div className="flex-1 bg-zinc-950 flex flex-col">
-            <div className="bg-zinc-950 border-b border-zinc-800 px-4 py-3 flex items-center justify-between shrink-0">
-              <span className="text-xs text-zinc-500">プレビュー — ビルド・デプロイ済みのページを表示</span>
+          <div className="flex-1 bg-zinc-950 flex flex-col min-w-0">
+            <div className="bg-zinc-950 border-b border-zinc-800 px-4 py-2 flex items-center justify-between shrink-0 gap-3">
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPreviewTab("live")}
+                  className={`text-xs px-3 py-1 rounded-md transition-colors ${previewTab === "live" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                >
+                  ライブ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewTab("iframe")}
+                  className={`text-xs px-3 py-1 rounded-md transition-colors ${previewTab === "iframe" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                >
+                  デプロイ済み
+                </button>
+              </div>
               <Link href={`/${form.eventId}?ref=preview`} target="_blank"
-                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+                className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-300 transition-colors shrink-0">
                 <ExternalLink className="w-3 h-3" />
-                新タブで開く
+                ページを開く
               </Link>
             </div>
-            <iframe
-              key={previewKey}
-              src={`/${form.eventId}?ref=preview`}
-              className="flex-1 w-full border-0"
-              title="イベントプレビュー"
-            />
+            {previewTab === "live" ? (
+              <div className="flex-1 overflow-y-auto bg-zinc-950">
+                <LivePreview form={form} slides={slides} quickLinks={quickLinks} />
+              </div>
+            ) : (
+              <iframe
+                key={iframeKey}
+                src={`/${form.eventId}?ref=preview`}
+                className="flex-1 w-full border-0"
+                title="イベントプレビュー（デプロイ済み）"
+              />
+            )}
           </div>
         )}
       </div>
