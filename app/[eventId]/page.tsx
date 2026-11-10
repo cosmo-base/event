@@ -98,12 +98,12 @@ const DEFAULT_SURVEY_QUESTIONS = [
 
 export async function generateStaticParams() {
   const ids = await fetchPublishedEventIds()
-  return ids
+  const filtered = ids
     .filter(id => !STATIC_ROUTES.has(id))
     .map(id => ({ eventId: id }))
+  // output: export requires at least one param; use a placeholder when GAS returns nothing
+  return filtered.length > 0 ? filtered : [{ eventId: "__placeholder__" }]
 }
-
-export const dynamic = "force-static"
 
 export default async function Page({ params }: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await params
