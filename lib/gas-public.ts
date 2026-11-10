@@ -139,7 +139,7 @@ export interface GasEventFullData {
 }
 
 export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullData | null> {
-  const url = process.env.NEXT_PUBLIC_GAS_URL
+  const url = process.env.NEXT_PUBLIC_EVENT_GAS_URL
   if (!url) return null
   try {
     const res = await fetch(`${url}?action=event&id=${encodeURIComponent(eventId)}`, {
@@ -155,7 +155,7 @@ export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullDa
 }
 
 export async function fetchPublishedEventIds(): Promise<string[]> {
-  const url = process.env.NEXT_PUBLIC_GAS_URL
+  const url = process.env.NEXT_PUBLIC_EVENT_GAS_URL
   if (!url) return []
   try {
     const res = await fetch(`${url}?action=publishedEventIds`, { cache: "no-store" })
@@ -169,7 +169,7 @@ export async function fetchPublishedEventIds(): Promise<string[]> {
 }
 
 export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPublicData | null> {
-  const url = process.env.NEXT_PUBLIC_GAS_URL
+  const url = process.env.NEXT_PUBLIC_EVENT_GAS_URL
   if (!url) return null
   try {
     const res = await fetch(`${url}?action=publicEvent&id=${encodeURIComponent(eventId)}`, {
