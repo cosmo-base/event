@@ -156,14 +156,26 @@ export async function fetchFullGasEvent(eventId: string): Promise<GasEventFullDa
 
 export async function fetchPublishedEventIds(): Promise<string[]> {
   const url = process.env.NEXT_PUBLIC_GAS_URL
-  if (!url) return []
+  if (!url) {
+    console.warn("[fetchPublishedEventIds] NEXT_PUBLIC_GAS_URL is not set")
+    return []
+  }
+  console.log("[fetchPublishedEventIds] fetching from:", url)
   try {
     const res = await fetch(`${url}?action=publishedEventIds`, { cache: "no-store" })
-    if (!res.ok) return []
+    if (!res.ok) {
+      console.warn("[fetchPublishedEventIds] HTTP error:", res.status, res.statusText)
+      return []
+    }
     const json = await res.json()
-    if (!Array.isArray(json)) return []
+    if (!Array.isArray(json)) {
+      console.warn("[fetchPublishedEventIds] unexpected response (not array):", JSON.stringify(json).slice(0, 200))
+      return []
+    }
+    console.log("[fetchPublishedEventIds] result:", json)
     return json as string[]
-  } catch {
+  } catch (err) {
+    console.warn("[fetchPublishedEventIds] fetch error:", err)
     return []
   }
 }
