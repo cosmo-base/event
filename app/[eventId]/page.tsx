@@ -127,7 +127,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
   const surveyQuestions = mergeGasSurveyQuestions(DEFAULT_SURVEY_QUESTIONS, gas)
   const { expiryDate } = parseGasCbmdConfig(gas)
   const EMPTY_QUIZ: QuizData = { question: "", options: [], correctIndex: 0, explanation: "" }
-  const quiz = gas?.quizQuestion ? mergeGasQuiz(EMPTY_QUIZ, gas) : null
+  const quiz = gas?.quizQuestion?.trim() ? mergeGasQuiz(EMPTY_QUIZ, gas) : null
 
   const accentStyle = data.site.accentColor
     ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)

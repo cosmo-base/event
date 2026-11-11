@@ -570,6 +570,9 @@ function ContentsEditor({ items, onChange }: { items: GasContentItem[]; onChange
             <textarea value={c.description} onChange={e => upd(i, { description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
           </Field>
           <Field label="URL"><input value={c.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <Field label="画像URL" note="カード画像（例: /CBtype_logo.png）">
+            <input value={c.imageUrl ?? ""} onChange={e => upd(i, { imageUrl: e.target.value })} className={INPUT} placeholder="/CBtype_logo.png" />
+          </Field>
           <div className="grid grid-cols-2 gap-2">
             <Field label="対象者">
               <input value={c.audience ?? ""} onChange={e => upd(i, { audience: e.target.value })} className={INPUT} placeholder="初心者向け" />
@@ -623,6 +626,9 @@ function LimitedContentsEditor({ items, onChange }: { items: GasLimitedContentIt
             <textarea value={c.description} onChange={e => upd(i, { description: e.target.value })} rows={2} className={`${INPUT} resize-none`} />
           </Field>
           <Field label="URL"><input value={c.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <Field label="画像URL" note="カード画像（例: /CBtype_logo.png）">
+            <input value={c.imageUrl ?? ""} onChange={e => upd(i, { imageUrl: e.target.value })} className={INPUT} placeholder="/CBtype_logo.png" />
+          </Field>
           <div className="grid grid-cols-2 gap-2">
             <Field label="ラベル" note="| で区切る">
               <input value={(c.labels ?? []).join("|")} onChange={e => upd(i, { labels: e.target.value.split("|").map(s => s.trim()).filter(Boolean) })} className={INPUT} placeholder="限定|メンバー" />
