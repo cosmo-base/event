@@ -127,7 +127,9 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
   const surveyQuestions = mergeGasSurveyQuestions(DEFAULT_SURVEY_QUESTIONS, gas)
   const { expiryDate } = parseGasCbmdConfig(gas)
   const EMPTY_QUIZ: QuizData = { question: "", options: [], correctIndex: 0, explanation: "" }
-  const quiz = gas?.quizQuestion?.trim() ? mergeGasQuiz(EMPTY_QUIZ, gas) : null
+  // GAS CacheService can serve stale quizQuestion; list events where quiz is confirmed disabled.
+  const QUIZ_DISABLED_EVENTS = new Set(["CMCdemoDay"])
+  const quiz = !QUIZ_DISABLED_EVENTS.has(eventId) && gas?.quizQuestion?.trim() ? mergeGasQuiz(EMPTY_QUIZ, gas) : null
 
   const accentStyle = data.site.accentColor
     ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)
