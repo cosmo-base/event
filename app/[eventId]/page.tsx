@@ -115,7 +115,8 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
     fetchFullGasEvent(eventId),
   ])
 
-  if (!gas || gas.published === false || gas.published === "FALSE") notFound()
+  if (gas && (gas.published === false || gas.published === "FALSE")) notFound()
+  if (!gas) console.warn(`[page] gas null for eventId=${eventId}, rendering with defaults`)
 
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...BASE_EVENT_DATA }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(DEFAULT_SURVEY_QUESTIONS, gas)
