@@ -182,16 +182,28 @@ export async function fetchPublishedEventIds(): Promise<string[]> {
 
 export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPublicData | null> {
   const url = process.env.NEXT_PUBLIC_GAS_URL
-  if (!url) return null
+  if (!url) {
+    console.warn("[fetchPublicGasEvent] NEXT_PUBLIC_GAS_URL is not set")
+    return null
+  }
+  console.log(`[fetchPublicGasEvent] fetching eventId=${eventId} from:`, url)
   try {
     const res = await fetch(`${url}?action=publicEvent&id=${encodeURIComponent(eventId)}`, {
       cache: "no-store",
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      console.warn(`[fetchPublicGasEvent] HTTP error for ${eventId}:`, res.status, res.statusText)
+      return null
+    }
     const json = await res.json()
-    if (json?.error) return null
+    if (json?.error) {
+      console.warn(`[fetchPublicGasEvent] GAS error for ${eventId}:`, JSON.stringify(json).slice(0, 200))
+      return null
+    }
+    console.log(`[fetchPublicGasEvent] success for ${eventId}, published=${json?.published}`)
     return json as GasEventPublicData
-  } catch {
+  } catch (err) {
+    console.warn(`[fetchPublicGasEvent] fetch error for ${eventId}:`, err)
     return null
   }
 }
