@@ -200,7 +200,7 @@ export async function fetchPublicGasEvent(eventId: string): Promise<GasEventPubl
       console.warn(`[fetchPublicGasEvent] GAS error for ${eventId}:`, JSON.stringify(json).slice(0, 200))
       return null
     }
-    console.log(`[fetchPublicGasEvent] success for ${eventId}, published=${json?.published}`)
+    console.log(`[fetchPublicGasEvent] success for ${eventId}, published=${json?.published}, quizQuestion=${JSON.stringify(json?.quizQuestion ?? null)}`)
     return json as GasEventPublicData
   } catch (err) {
     console.warn(`[fetchPublicGasEvent] fetch error for ${eventId}:`, err)
