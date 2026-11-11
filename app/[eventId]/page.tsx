@@ -167,12 +167,14 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
 
         {data.contents.length > 0 && <ContentExperienceSection contents={data.contents} />}
 
-        {expiryDate ? (
-          <ExpiryHide expiryDate={expiryDate}>
-            <LimitedContentSection items={data.limitedContents} eventId={eventId} />
-          </ExpiryHide>
-        ) : (
-          <LimitedContentSection items={data.limitedContents} eventId={eventId} />
+        {(data.limitedContents.length > 0 || quiz) && (
+          expiryDate ? (
+            <ExpiryHide expiryDate={expiryDate}>
+              <LimitedContentSection items={data.limitedContents} eventId={eventId} quiz={quiz ?? undefined} />
+            </ExpiryHide>
+          ) : (
+            <LimitedContentSection items={data.limitedContents} eventId={eventId} quiz={quiz ?? undefined} />
+          )
         )}
 
         {data.pitch?.presentationTitle && (data.pitch.embedUrl || data.pitch.slideUrl) && (
@@ -181,12 +183,6 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
 
         {data.pitch?.posters && data.pitch.posters.length > 0 && (
           <PosterSection pitch={data.pitch} />
-        )}
-
-        {quiz && (
-          <section className="mx-auto max-w-6xl px-4 pb-10">
-            <EventQuiz eventId={eventId} quiz={quiz} />
-          </section>
         )}
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
