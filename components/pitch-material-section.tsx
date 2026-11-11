@@ -20,7 +20,9 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
           <div className="grid gap-0 overflow-hidden rounded-3xl border border-border bg-card shadow-sm md:grid-cols-[1.1fr_1fr]">
             {/* スライド埋め込み / サムネイル */}
             <div className="relative aspect-video md:aspect-auto">
-              {pitch.embedUrl ? (
+              {pitch.pdfUrl ? (
+                <PdfSlideViewer url={pitch.pdfUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} />
+              ) : pitch.embedUrl ? (
                 pitch.embedUrl.endsWith(".pdf") ? (
                   <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} />
                 ) : (
