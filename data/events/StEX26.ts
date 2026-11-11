@@ -219,6 +219,18 @@ export const StEX26Data: EventSpecificData = {
       icon: "database",
       imageUrl: "/CBMD_logo.png",
     },
+    {
+      id: "c-spacecraft",
+      title: "宇宙機プロジェクトシミュレーター",
+      description: "宇宙の知識がなくても大丈夫。あなたは小さな人工衛星プロジェクトの責任者として、ミッションを考え、機体を選び、宇宙へ送り出す体験ができます。",
+      href: "https://cosmo-base.github.io/project-spacecraft/",
+      duration: "30〜60分",
+      audience: "だれでも",
+      labels: ["ゲーム", "知識不要"],
+      status: "available",
+      external: true,
+      icon: "rocket",
+    },
   ] as ContentItem[],
 
   limitedContents: [] as LimitedContentItem[],
