@@ -61,30 +61,6 @@ jobs:
         with:
           path: ./out
 
-      - name: Test EVENT_GAS_URL (remove after fix)
-        if: always()
-        run: |
-          node -e "
-          (async () => {
-            const url = process.env.NEXT_PUBLIC_EVENT_GAS_URL;
-            console.log('URL set:', !!url, '/ length:', url ? url.length : 0);
-            if (!url) { console.log('SECRET NOT SET'); return; }
-            console.log('URL prefix:', url.slice(0, 60));
-            try {
-              const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ type: 'pageview', eventId: '_ci_test_' }),
-              });
-              console.log('status:', res.status, res.statusText);
-              const t = await res.text();
-              console.log('body:', t.slice(0, 300));
-            } catch(e) { console.error('fetch error:', e.message); }
-          })();
-          "
-        env:
-          NEXT_PUBLIC_EVENT_GAS_URL: ${{ secrets.NEXT_PUBLIC_EVENT_GAS_URL }}
-
   deploy:
     environment:
       name: github-pages
