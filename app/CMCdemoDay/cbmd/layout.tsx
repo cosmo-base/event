@@ -32,7 +32,11 @@ export default async function CMCdemoDayCbmdLayout({ children }: { children: Rea
       mapZoom={cbmd.mapZoom ?? DEFAULT_ZOOM}
       basePath="/CMCdemoDay/cbmd"
     >
-      <div className="min-h-dvh bg-[#000033] dark">
+      <div
+          className="min-h-dvh bg-[#000033] dark"
+          data-cbmd-gas={gas ? "ok" : "null"}
+          data-cbmd-prefectures={cbmd.lockedPrefectures?.join(",") ?? "null"}
+        >
         <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/10 bg-black/60 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 shrink-0">
