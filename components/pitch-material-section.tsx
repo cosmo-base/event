@@ -5,7 +5,6 @@ import { SectionHeading } from "@/components/section-heading"
 import { ExternalLinkButton } from "@/components/external-link-button"
 import { Reveal } from "@/components/reveal"
 import { PdfSlideViewer } from "@/components/pdf-slide-viewer"
-import { isDriveUrl } from "@/lib/drive-url"
 
 export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
   return (
@@ -21,11 +20,11 @@ export function PitchMaterialSection({ pitch }: { pitch: PitchData }) {
           <div className="grid gap-0 overflow-hidden rounded-3xl border border-border bg-card shadow-sm md:grid-cols-[1.1fr_1fr]">
             {/* スライド埋め込み / サムネイル */}
             <div className="relative aspect-video md:aspect-auto">
-              {pitch.pdfUrl && !isDriveUrl(pitch.pdfUrl) ? (
-                <PdfSlideViewer url={pitch.pdfUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} />
+              {pitch.pdfUrl ? (
+                <PdfSlideViewer url={pitch.pdfUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} fallbackEmbedUrl={pitch.embedUrl} />
               ) : pitch.embedUrl ? (
-                pitch.embedUrl.endsWith(".pdf") && !isDriveUrl(pitch.embedUrl) ? (
-                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} />
+                pitch.embedUrl.endsWith(".pdf") ? (
+                  <PdfSlideViewer url={pitch.embedUrl} title={pitch.presentationTitle} downloadUrl={pitch.pdfUrl} downloadName={pitch.pdfDownloadName ?? pitch.presentationTitle} fallbackEmbedUrl={pitch.embedUrl} />
                 ) : (
                   <iframe
                     src={pitch.embedUrl}
@@ -126,21 +125,13 @@ export function PosterSection({ pitch }: { pitch: PitchData }) {
                   <p className="text-sm font-semibold text-primary">{poster.title}</p>
                 </div>
                 <div className="relative aspect-[3/4]">
-                  {isDriveUrl(poster.embedUrl) ? (
-                    <iframe
-                      src={poster.embedUrl}
-                      title={poster.title}
-                      className="absolute inset-0 h-full w-full border-0"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <PdfSlideViewer
-                      url={poster.embedUrl}
-                      title={poster.title}
-                      downloadUrl={poster.pdfUrl}
-                      downloadName={poster.downloadName ?? poster.title}
-                    />
-                  )}
+                  <PdfSlideViewer
+                    url={poster.pdfUrl || poster.embedUrl || ""}
+                    title={poster.title}
+                    downloadUrl={poster.pdfUrl}
+                    downloadName={poster.downloadName ?? poster.title}
+                    fallbackEmbedUrl={poster.embedUrl}
+                  />
                 </div>
               </div>
             </Reveal>

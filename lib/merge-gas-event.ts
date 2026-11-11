@@ -3,6 +3,12 @@ import type { GasEventPublicData, GasEventFullData } from "./gas-public"
 import type { QuizData } from "@/components/event-quiz"
 import { normalizeDocUrl, isDriveUrl } from "./drive-url"
 
+/** Return true only for strings that look like a valid image URL (absolute path or http/https). */
+function isValidImageUrl(url: unknown): url is string {
+  if (typeof url !== "string" || !url) return false
+  return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://")
+}
+
 /** Format an ISO date string (or YYYY-MM-DD) to Japanese date e.g. "2026年11月10日" */
 function formatJpDate(raw: string): string {
   const d = new Date(raw)
@@ -216,7 +222,7 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       title: c.title,
       description: c.description,
       href: typeof c.href === 'string' ? c.href : '',
-      ...(c.imageUrl  && { imageUrl:  c.imageUrl }),
+      ...(isValidImageUrl(c.imageUrl) && { imageUrl: c.imageUrl }),
       ...(c.duration  && { duration:  c.duration }),
       ...(c.audience  && { audience:  c.audience }),
       labels: c.labels ?? [],
@@ -233,7 +239,7 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       title: c.title,
       description: c.description,
       href: typeof c.href === 'string' ? c.href : '',
-      ...(c.imageUrl       && { imageUrl:        c.imageUrl }),
+      ...(isValidImageUrl(c.imageUrl) && { imageUrl: c.imageUrl }),
       ...(c.duration       && { duration:         c.duration }),
       labels: c.labels ?? [],
       status: (c.status as ContentStatus) ?? "available",

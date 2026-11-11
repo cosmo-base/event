@@ -8,13 +8,14 @@ interface PdfSlideViewerProps {
   title?: string
   downloadUrl?: string
   downloadName?: string
+  fallbackEmbedUrl?: string
 }
 
 const MIN_ZOOM = 1
 const MAX_ZOOM = 4
 const ZOOM_STEP = 0.5
 
-export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSlideViewerProps) {
+export function PdfSlideViewer({ url, title, downloadUrl, downloadName, fallbackEmbedUrl }: PdfSlideViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const viewerRef = useRef<HTMLDivElement>(null)
   const contentAreaRef = useRef<HTMLDivElement>(null)
@@ -239,7 +240,9 @@ export function PdfSlideViewer({ url, title, downloadUrl, downloadName }: PdfSli
     else document.exitFullscreen()
   }
 
-  if (error) return (
+  if (error) return fallbackEmbedUrl ? (
+    <iframe src={fallbackEmbedUrl} title={title} className="absolute inset-0 h-full w-full border-0" allowFullScreen />
+  ) : (
     <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
       スライドを読み込めませんでした
     </div>
