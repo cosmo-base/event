@@ -159,14 +159,14 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       title: s.title,
       description: s.description,
       ...(s.buttonLabel   && { buttonLabel:   s.buttonLabel }),
-      ...(s.href          && { href:           s.href }),
+      ...(typeof s.href === 'string' && s.href && { href: s.href }),
       ...(s.external      !== undefined && { external: s.external }),
       ...(s.gradient      && { gradient:       s.gradient }),
       ...(s.centered      !== undefined && { centered: s.centered }),
       ...(s.label         && { label:          s.label }),
       ...(s.imageUrl      && { imageUrl:       s.imageUrl }),
       ...(s.secondaryLabel && { secondaryLabel: s.secondaryLabel }),
-      ...(s.secondaryHref  && { secondaryHref:  s.secondaryHref }),
+      ...(typeof s.secondaryHref === 'string' && s.secondaryHref && { secondaryHref: s.secondaryHref }),
     })) as CarouselSlide[]
   }
 
@@ -176,7 +176,7 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       id: l.id,
       title: l.title,
       description: l.description,
-      href: l.href,
+      href: typeof l.href === 'string' ? l.href : '',
       icon: l.icon as IconName,
       external: l.external,
       ...(l.featured !== undefined && l.featured && { featured: l.featured }),
@@ -192,8 +192,10 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       ...(cta.title        && { title:        cta.title }),
       ...(cta.description  && { description:  cta.description }),
       ...(cta.primaryLabel && { primaryLabel: cta.primaryLabel }),
-      ...(cta.primaryHref  && { primaryHref:  cta.primaryHref }),
-      ...(cta.secondaryLinks && cta.secondaryLinks.length > 0 && { secondaryLinks: cta.secondaryLinks }),
+      ...(typeof cta.primaryHref === 'string' && cta.primaryHref && { primaryHref: cta.primaryHref }),
+      ...(cta.secondaryLinks && cta.secondaryLinks.length > 0 && {
+        secondaryLinks: cta.secondaryLinks.filter(l => typeof l.href === 'string'),
+      }),
     }
   }
 
@@ -203,7 +205,7 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       id: c.id,
       title: c.title,
       description: c.description,
-      href: c.href,
+      href: typeof c.href === 'string' ? c.href : '',
       ...(c.imageUrl  && { imageUrl:  c.imageUrl }),
       ...(c.duration  && { duration:  c.duration }),
       ...(c.audience  && { audience:  c.audience }),
@@ -220,7 +222,7 @@ export function mergeFullGasEvent<T extends EventSpecificData>(base: T, gasFull:
       id: c.id,
       title: c.title,
       description: c.description,
-      href: c.href,
+      href: typeof c.href === 'string' ? c.href : '',
       ...(c.imageUrl       && { imageUrl:        c.imageUrl }),
       ...(c.duration       && { duration:         c.duration }),
       labels: c.labels ?? [],

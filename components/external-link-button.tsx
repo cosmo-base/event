@@ -70,8 +70,9 @@ export function ExternalLinkButton({
   disabled,
   download,
 }: ExternalLinkButtonProps) {
-  const isInternalAnchor = href.startsWith("#")
-  const isExternal = external ?? (!isInternalAnchor && /^https?:\/\//.test(href))
+  const hrefStr = typeof href === 'string' ? href : ''
+  const isInternalAnchor = hrefStr.startsWith("#")
+  const isExternal = external ?? (!isInternalAnchor && /^https?:\/\//.test(hrefStr))
 
   const handleClick = () => {
     if (event) trackEvent(event, eventProps)
@@ -90,7 +91,7 @@ export function ExternalLinkButton({
 
   return (
     <a
-      href={href}
+      href={hrefStr}
       aria-label={ariaLabel}
       onClick={handleClick}
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
