@@ -9,14 +9,17 @@ function isValidImageUrl(url: unknown): url is string {
   return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://")
 }
 
-/** Format an ISO date string (or YYYY-MM-DD) to Japanese date e.g. "2026年11月10日" */
+/** Format an ISO date string (or YYYY-MM-DD) to Japanese date in JST. */
 function formatJpDate(raw: string): string {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const [y, m, d] = raw.split("-").map(Number)
+    return `${y}年${m}月${d}日`
+  }
   const d = new Date(raw)
   if (isNaN(d.getTime())) return raw
-  const y = d.getUTCFullYear()
-  const m = d.getUTCMonth() + 1
-  const day = d.getUTCDate()
-  return `${y}年${m}月${day}日`
+  // GAS/Sheets serializes dates as UTC ISO strings; apply JST (+9h) to get the correct calendar date
+  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
+  return `${jst.getUTCFullYear()}年${jst.getUTCMonth() + 1}月${jst.getUTCDate()}日`
 }
 
 /** Merge GAS-managed fields into the static event data object. Static data acts as fallback. */
