@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
       - name: Build with Next.js
-        run: npm run build
+        run: npm run build 2>&1 | tee /tmp/nextjs-build.log; exit ${PIPESTATUS[0]}
         env:
           NEXT_PUBLIC_CBED_CSV_URL: ${{ secrets.NEXT_PUBLIC_CBED_CSV_URL }}
           NEXT_PUBLIC_LAUNCHES_CSV_URL: ${{ secrets.NEXT_PUBLIC_LAUNCHES_CSV_URL }}
@@ -64,14 +64,20 @@ jobs:
       - name: Diagnose GAS publicEvent (remove after fix)
         if: always()
         run: |
-          echo "=== GAS publishedEventIds ==="
-          curl -sL "${NEXT_PUBLIC_GAS_URL}?action=publishedEventIds" 2>&1 | head -c 400
-          echo ""
-          echo "=== GAS publicEvent CMCdemoDay ==="
-          curl -sL "${NEXT_PUBLIC_GAS_URL}?action=publicEvent&id=CMCdemoDay" 2>&1 | head -c 400
-          echo ""
-          echo "=== CMCdemoDay index.html snippet ==="
-          grep -o '"name":"[^"]*"\|"published":[^,}]*\|not found\|__placeholder__' out/CMCdemoDay/index.html 2>/dev/null | head -5 || echo "(file missing or no match)"
+          echo "=== fetchPublicGasEvent logs from build ==="
+          grep -E "\[fetchPublicGasEvent\]|\[fetchPublishedEventIds\]|\[page\] gas" /tmp/nextjs-build.log 2>/dev/null | head -30 || echo "(no matching lines in build log)"
+          echo "=== Node.js fetch test ==="
+          node -e "
+          (async () => {
+            const url = process.env.NEXT_PUBLIC_GAS_URL;
+            try {
+              const res = await fetch(url + '?action=publicEvent&id=CMCdemoDay');
+              console.log('status:', res.status);
+              const t = await res.text();
+              console.log('body:', t.slice(0, 300));
+            } catch(e) { console.error('error:', e.message); }
+          })();
+          "
         env:
           NEXT_PUBLIC_GAS_URL: ${{ secrets.NEXT_PUBLIC_GAS_URL }}
 
