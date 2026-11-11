@@ -54,7 +54,7 @@ export const orgData: OrgData = {
       "週刊宇宙ニュース・交流企画",
     ],
     stats: [
-      { label: "毎日宇宙クイズ参加者数", value: "1500人以上" },
+      { label: "毎日宇宙クイズ参加者数", value: "2000人以上" },
       { label: "コンテンツ", value: "10種類以上" },
       { label: "コミュニティ参加者", value: "180人以上" },
       { label: "パートナー数", value: "2社・6団体" },
@@ -74,7 +74,7 @@ export const orgData: OrgData = {
     mission: "すべての人に宇宙と関わる『選択肢』をつくる",
     vision: "宇宙をみんなのものにする",
     purpose: "一番身近な宇宙の専門家",
-    websiteUrl: "https://fsifofficial.wixsite.com/future-space-industr",
+    websiteUrl: "https://www.fsif.jp",
   },
 
   socialLinks: {

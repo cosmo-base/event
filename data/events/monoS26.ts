@@ -96,7 +96,7 @@ export const monoS26Data: EventSpecificData = {
       id: "ql-fsif-site",
       title: "未来宇宙産業フォーラム",
       description: "運営団体の公式サイト",
-      href: "https://fsifofficial.wixsite.com/future-space-industr",
+      href: "https://www.fsif.jp",
       icon: "building",
       external: true,
       event: "click_fsif_website",

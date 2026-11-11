@@ -3,6 +3,16 @@ import type { GasEventPublicData, GasEventFullData } from "./gas-public"
 import type { QuizData } from "@/components/event-quiz"
 import { normalizeDocUrl, isDriveUrl } from "./drive-url"
 
+/** Format an ISO date string (or YYYY-MM-DD) to Japanese date e.g. "2026年11月10日" */
+function formatJpDate(raw: string): string {
+  const d = new Date(raw)
+  if (isNaN(d.getTime())) return raw
+  const y = d.getUTCFullYear()
+  const m = d.getUTCMonth() + 1
+  const day = d.getUTCDate()
+  return `${y}年${m}月${day}日`
+}
+
 /** Merge GAS-managed fields into the static event data object. Static data acts as fallback. */
 export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEventPublicData | null): T {
   if (!gas) return base
@@ -83,7 +93,7 @@ export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEven
       ...(gas.presentationTitle       && { presentationTitle: gas.presentationTitle }),
       ...(gas.presentationDescription && { description:       gas.presentationDescription }),
       ...(gas.speakerName             && { speakerName:       gas.speakerName }),
-      ...(gas.presentationDate        && { presentationDate:  gas.presentationDate }),
+      ...(gas.presentationDate        && { presentationDate:  formatJpDate(gas.presentationDate) }),
       ...(gas.slideUrl                && { slideUrl:          gas.slideUrl }),
       ...(pitchPdf                    && { pdfUrl:            pitchPdf }),
       ...(pitchEmbed                  && { embedUrl:          pitchEmbed }),
