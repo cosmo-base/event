@@ -21,6 +21,9 @@ import { fetchPublicGasEvent, fetchFullGasEvent, fetchPublishedEventIds } from "
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, parseGasCbmdConfig } from "@/lib/merge-gas-event"
 import type { EventSpecificData } from "@/data/event-page-data"
 
+// Allow cache: "no-store" fetches in output: "export" mode (Next.js 15+ defaults to dynamic="error")
+export const dynamic = "force-static"
+
 // Known static routes — dynamic route must not shadow them
 const STATIC_ROUTES = new Set([
   "MCF26", "SDF26", "StEX26", "monoK26", "monoS26",
