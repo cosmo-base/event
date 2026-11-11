@@ -10,7 +10,9 @@ import { FsifIntroduction } from "@/components/fsif-introduction"
 import { CommunityCta } from "@/components/community-cta"
 import { SocialLinksSection } from "@/components/social-links-section"
 import { SocialFooter } from "@/components/social-footer"
-import { PosterSection } from "@/components/pitch-material-section"
+import { PitchMaterialSection, PosterSection } from "@/components/pitch-material-section"
+import { EventQuiz } from "@/components/event-quiz"
+import type { QuizData } from "@/components/event-quiz"
 import { LimitedContentSection } from "@/components/limited-content-section"
 import { PageViewTracker } from "@/components/page-view-tracker"
 import { SurveySection } from "@/components/event-survey"
@@ -18,7 +20,7 @@ import { AnnouncementBanner } from "@/components/announcement-banner"
 import { ExpiryHide } from "@/components/expiry-hide"
 import { notFound } from "next/navigation"
 import { fetchPublicGasEvent, fetchFullGasEvent, fetchPublishedEventIds } from "@/lib/gas-public"
-import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, parseGasCbmdConfig } from "@/lib/merge-gas-event"
+import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz, parseGasCbmdConfig } from "@/lib/merge-gas-event"
 import type { EventSpecificData } from "@/data/event-page-data"
 
 // Allow cache: "no-store" fetches in output: "export" mode (Next.js 15+ defaults to dynamic="error")
@@ -124,6 +126,8 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
   const data = mergeFullGasEvent(mergeGasEvent({ ...orgData, ...BASE_EVENT_DATA }, gas), gasFull)
   const surveyQuestions = mergeGasSurveyQuestions(DEFAULT_SURVEY_QUESTIONS, gas)
   const { expiryDate } = parseGasCbmdConfig(gas)
+  const EMPTY_QUIZ: QuizData = { question: "", options: [], correctIndex: 0, explanation: "" }
+  const quiz = gas?.quizQuestion ? mergeGasQuiz(EMPTY_QUIZ, gas) : null
 
   const accentStyle = data.site.accentColor
     ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)
@@ -169,7 +173,19 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
           <LimitedContentSection items={data.limitedContents} eventId={eventId} />
         )}
 
-        {data.pitch?.slideUrl && <PosterSection pitch={data.pitch} />}
+        {data.pitch?.presentationTitle && (data.pitch.embedUrl || data.pitch.slideUrl) && (
+          <PitchMaterialSection pitch={data.pitch} />
+        )}
+
+        {data.pitch?.posters && data.pitch.posters.length > 0 && (
+          <PosterSection pitch={data.pitch} />
+        )}
+
+        {quiz && (
+          <section className="mx-auto max-w-6xl px-4 pb-10">
+            <EventQuiz eventId={eventId} quiz={quiz} />
+          </section>
+        )}
 
         <CosmoBaseIntroduction cosmoBase={data.cosmoBase} />
 

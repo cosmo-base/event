@@ -9,6 +9,7 @@ import {
   Users,
   MessageCircle,
   ExternalLink,
+  Satellite,
 } from "lucide-react"
 import type { IconName } from "@/data/event-page-data"
 
@@ -24,6 +25,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   users: Users,
   message: MessageCircle,
   external: ExternalLink,
+  satellite: Satellite,
 }
 
 export function QuickIcon({ name, className }: { name: IconName; className?: string }) {

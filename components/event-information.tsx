@@ -41,9 +41,19 @@ function FitValue({ children }: { children: string }) {
   )
 }
 
+function formatEventDate(value: string): string {
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    const d = new Date(value)
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Tokyo" })
+    }
+  }
+  return value
+}
+
 export function EventInformation({ event }: { event: EventPageData["event"] }) {
   const infoItems = [
-    { icon: CalendarDays, label: "開催日", value: event.date },
+    { icon: CalendarDays, label: "開催日", value: formatEventDate(event.date) },
     { icon: MapPin, label: "会場", value: event.venue },
     event.boothNumber
       ? { icon: Store, label: "ブース", value: event.boothNumber }

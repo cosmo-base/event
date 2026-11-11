@@ -28,6 +28,7 @@ export type IconName =
   | "users"
   | "message"
   | "external"
+  | "satellite"
 
 export interface CarouselSlide {
   id: string
