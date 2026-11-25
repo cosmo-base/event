@@ -7,6 +7,15 @@ export const metadata = {
 
 const EVENTS: StaticEvent[] = [
   {
+    id: "CMCdemoDay",
+    path: "/CMCdemoDay/cbmd",
+    fullName: "CMC Demo Day 2026",
+    date: "2026年",
+    venue: "",
+    type: "CBMD特別ページ",
+    status: "active",
+  },
+  {
     id: "kurawaku2",
     path: "/kurawaku2",
     fullName: "くらわくトーク#2 変える力",
