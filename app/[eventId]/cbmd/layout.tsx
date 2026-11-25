@@ -6,6 +6,9 @@ import { CbmdContextProvider } from "@/components/cbmd-region-context"
 import { ContentExpiryGate } from "@/components/content-expiry-gate"
 import { fetchPublicGasEvent } from "@/lib/gas-public"
 import { parseGasCbmdConfig } from "@/lib/merge-gas-event"
+import { eventStaticParams } from "@/lib/event-static-params"
+
+export async function generateStaticParams() { return eventStaticParams() }
 
 const DEFAULT_CENTER: [number, number] = [35.681, 139.767]
 const DEFAULT_ZOOM = 10

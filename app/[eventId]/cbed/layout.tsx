@@ -6,6 +6,9 @@ import { EventHeader } from "@/components/event-header"
 import { ContentExpiryGate } from "@/components/content-expiry-gate"
 import { fetchPublicGasEvent } from "@/lib/gas-public"
 import { parseGasCbmdConfig } from "@/lib/merge-gas-event"
+import { eventStaticParams } from "@/lib/event-static-params"
+
+export async function generateStaticParams() { return eventStaticParams() }
 
 export default async function EventCbedLayout({
   children,
