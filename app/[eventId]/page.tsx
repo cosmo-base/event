@@ -20,18 +20,13 @@ import { SurveySection } from "@/components/event-survey"
 import { AnnouncementBanner } from "@/components/announcement-banner"
 import { ExpiryHide } from "@/components/expiry-hide"
 import { notFound } from "next/navigation"
-import { fetchPublicGasEvent, fetchFullGasEvent, fetchPublishedEventIds } from "@/lib/gas-public"
+import { fetchPublicGasEvent, fetchFullGasEvent } from "@/lib/gas-public"
 import { mergeGasEvent, mergeFullGasEvent, mergeGasSurveyQuestions, mergeGasQuiz, parseGasCbmdConfig } from "@/lib/merge-gas-event"
+import { EVENT_STATIC_ROUTES as STATIC_ROUTES, eventStaticParams } from "@/lib/event-static-params"
 import type { EventSpecificData } from "@/data/event-page-data"
 
 // Allow cache: "no-store" fetches in output: "export" mode (Next.js 15+ defaults to dynamic="error")
 export const dynamic = "force-static"
-
-// Known static routes — dynamic route must not shadow them
-const STATIC_ROUTES = new Set([
-  "MCF26", "SDF26", "StEX26", "monoK26", "monoS26",
-  "cbed", "cbmd", "cosmomatch", "feedback", "gacha", "kurawaku2", "list", "type",
-])
 
 // Minimal stub so mergeGasEvent has something to work with
 const BASE_EVENT_DATA: EventSpecificData = {
@@ -116,14 +111,7 @@ export async function generateMetadata({ params }: { params: Promise<{ eventId: 
   }
 }
 
-export async function generateStaticParams() {
-  const ids = await fetchPublishedEventIds()
-  const filtered = ids
-    .filter(id => !STATIC_ROUTES.has(id))
-    .map(id => ({ eventId: id }))
-  // output: export requires at least one param; use a placeholder when GAS returns nothing
-  return filtered.length > 0 ? filtered : [{ eventId: "__placeholder__" }]
-}
+export const generateStaticParams = eventStaticParams
 
 export default async function Page({ params }: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await params
