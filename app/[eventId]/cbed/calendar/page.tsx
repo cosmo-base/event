@@ -1,4 +1,5 @@
+import CbedCalendarPage from "@/app/cbed/calendar/page"
 import { eventStaticParams } from "@/lib/event-static-params"
 export const dynamic = "force-static"
-export const generateStaticParams = eventStaticParams
-export { default } from "@/app/cbed/calendar/page"
+export async function generateStaticParams() { return eventStaticParams() }
+export default CbedCalendarPage
