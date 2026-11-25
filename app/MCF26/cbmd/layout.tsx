@@ -17,7 +17,6 @@ const navLinks = [
 // Fallback: ベルサール半蔵門（千代田区麹町6-2-1）付近
 const DEFAULT_CENTER: [number, number] = [35.689, 139.741]
 const DEFAULT_ZOOM = 10
-const DEFAULT_PREFECTURES = ["東京都", "神奈川県", "埼玉県", "千葉県"]
 
 export default async function MCF26CbmdLayout({ children }: { children: React.ReactNode }) {
   const gas = await fetchPublicGasEvent("MCF26")
@@ -27,7 +26,7 @@ export default async function MCF26CbmdLayout({ children }: { children: React.Re
   return (
     <ContentExpiryGate expiryDate={expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
-      lockedPrefectures={cbmd.lockedPrefectures ?? DEFAULT_PREFECTURES}
+      lockedPrefectures={cbmd.lockedPrefectures}
       lockedRegion={cbmd.lockedRegion}
       mapCenter={cbmd.mapCenter ?? DEFAULT_CENTER}
       mapZoom={cbmd.mapZoom ?? DEFAULT_ZOOM}
