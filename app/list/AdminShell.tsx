@@ -1147,11 +1147,12 @@ function EventModal({
               <input type="number" min="1" max="18" value={form.cbmdMapZoom} onChange={e => set("cbmdMapZoom", e.target.value)}
                 className={INPUT} placeholder="10" />
             </Field>
-            <Field label="公開終了日">
-              <input type="date" value={form.cbmdExpiryDate} onChange={e => set("cbmdExpiryDate", e.target.value)}
-                className={INPUT} />
-            </Field>
           </div>
+
+          <Field label="公開終了日" note="この日以降はページが非表示になります">
+            <input type="date" value={form.cbmdExpiryDate} onChange={e => set("cbmdExpiryDate", e.target.value)}
+              className={INPUT} />
+          </Field>
 
           {/* ページ設定 */}
           <SectionDivider label="ページ設定" />
