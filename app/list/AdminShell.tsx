@@ -1334,7 +1334,6 @@ export function AdminShell({
       window.google?.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleCredential,
-        use_fedcm_for_prompt: true,
       })
       if (signInRef.current) {
         window.google?.accounts.id.renderButton(signInRef.current, {
