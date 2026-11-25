@@ -16,7 +16,6 @@ const navLinks = [
 
 const DEFAULT_CENTER: [number, number] = [35.681, 139.767]
 const DEFAULT_ZOOM = 10
-const DEFAULT_PREFECTURES = ["東京都", "神奈川県", "埼玉県", "千葉県"]
 
 export default async function CMCdemoDayCbmdLayout({ children }: { children: React.ReactNode }) {
   const gas = await fetchPublicGasEvent("CMCdemoDay")
@@ -26,7 +25,7 @@ export default async function CMCdemoDayCbmdLayout({ children }: { children: Rea
   return (
     <ContentExpiryGate expiryDate={expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
     <CbmdContextProvider
-      lockedPrefectures={cbmd.lockedPrefectures ?? DEFAULT_PREFECTURES}
+      lockedPrefectures={cbmd.lockedPrefectures}
       lockedRegion={cbmd.lockedRegion}
       mapCenter={cbmd.mapCenter ?? DEFAULT_CENTER}
       mapZoom={cbmd.mapZoom ?? DEFAULT_ZOOM}

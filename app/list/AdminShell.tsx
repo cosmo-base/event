@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, useRef } from "react"
+import { useEffect, useState, useCallback, useRef, useMemo } from "react"
 import Link from "next/link"
 import {
   ExternalLink, LogOut, Plus, Pencil, Trash2, Eye, EyeOff,
@@ -12,6 +12,13 @@ import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData,
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
 import { AdminStats, type StatsData } from "./AdminStats"
+import { EventHeader } from "@/components/event-header"
+import { EventInformation } from "@/components/event-information"
+import { HeroCarousel } from "@/components/hero-carousel"
+import { QuickAccessGrid } from "@/components/quick-access-grid"
+import { AnnouncementBanner } from "@/components/announcement-banner"
+import { mergeGasEvent, mergeFullGasEvent } from "@/lib/merge-gas-event"
+import type { EventSpecificData } from "@/data/event-page-data"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -664,55 +671,105 @@ function LimitedContentsEditor({ items, onChange }: { items: GasLimitedContentIt
 
 // ─── Live Preview ─────────────────────────────────────────────────────────────
 
-function LivePreview({ form, slides, quickLinks }: { form: EventFormData; slides: GasCarouselSlide[]; quickLinks: GasQuickLink[] }) {
+const PREVIEW_BASE_DATA: EventSpecificData = {
+  site: {
+    pageTitle: "Cosmo Base イベント特設ページ",
+    pageDescription: "Cosmo Base のイベント特設ページです。",
+    siteName: "Cosmo Base",
+    url: "https://event.fsif.jp",
+    logoUrl: "/CB_logo.png",
+    fsifLogoUrl: "/FSIF_logo.png",
+    accentColor: "#f59e0b",
+    ogImage: "/images/hero-event.png",
+    noindex: true,
+  },
+  event: {
+    name: "",
+    shortName: "",
+    date: "",
+    venue: "",
+    participationType: "",
+    exhibitorName: "",
+    message: "",
+  },
+  carousel: [{
+    id: "slide-main",
+    title: "",
+    description: "Cosmo Base のコンテンツを、この会場でそのまま体験できます。",
+    buttonLabel: "コンテンツを見る",
+    href: "#contents",
+    gradient: "linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#0ea5e9 100%)",
+    centered: true,
+  }],
+  quickLinks: [],
+  pitch: { title: "発表・ポスター", presentationTitle: "", description: "", speakerName: "", presentationDate: "", slideUrl: "" },
+  spaceType: { badges: [], title: "", description: "", duration: "", questionCount: "", requirement: "", buttonLabel: "", href: "" },
+  contents: [],
+  limitedContents: [],
+  communityCta: {
+    title: "宇宙コミュニティへようこそ",
+    description: "Cosmo Base は宇宙好きが集まるコミュニティです。",
+    primaryLabel: "コミュニティに参加する",
+    primaryHref: "https://discord.gg/X78w86XE3v",
+    secondaryLinks: [],
+  },
+}
+
+function LivePreview({ form, slides, quickLinks, cta }: {
+  form: EventFormData
+  slides: GasCarouselSlide[]
+  quickLinks: GasQuickLink[]
+  cta: GasCommunityCta | null
+}) {
+  const data = useMemo(() => {
+    const gasLike = {
+      eventId: form.eventId,
+      ...(form.name           && { name:              form.name }),
+      ...(form.shortName      && { shortName:          form.shortName }),
+      ...(form.date           && { date:               form.date }),
+      ...(form.venue          && { venue:              form.venue }),
+      ...(form.participationType && { participationType: form.participationType }),
+      ...(form.exhibitorName  && { exhibitorName:      form.exhibitorName }),
+      ...(form.boothNumber    && { boothNumber:        form.boothNumber }),
+      ...(form.pitchTime      && { pitchTime:          form.pitchTime }),
+      ...(form.message        && { message:            form.message }),
+      ...(form.reportUrl      && { reportUrl:          form.reportUrl }),
+      ...(form.heroTitle       && { heroTitle:         form.heroTitle }),
+      ...(form.heroDescription && { heroDescription:   form.heroDescription }),
+      ...(form.heroGradient    && { heroGradient:      form.heroGradient }),
+      ...(form.heroButtonLabel && { heroButtonLabel:   form.heroButtonLabel }),
+      ...(form.heroButtonHref  && { heroButtonHref:    form.heroButtonHref }),
+      ...(form.accentColor     && { accentColor:       form.accentColor }),
+    }
+    const merged = mergeGasEvent({ ...PREVIEW_BASE_DATA }, gasLike)
+    return mergeFullGasEvent(merged, {
+      ...(slides.length > 0    && { carousel:    slides }),
+      ...(quickLinks.length > 0 && { quickLinks: quickLinks }),
+      ...(cta                  && { communityCta: cta }),
+    })
+  }, [form, slides, quickLinks, cta])
+
+  const accentStyle = data.site.accentColor
+    ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)
+    : undefined
+
   return (
-    <div className="p-4 space-y-3 text-sm overflow-y-auto h-full">
-      {/* Accent bar */}
-      <div className="h-1 rounded-full w-full mb-2" style={{ background: form.accentColor || "#f59e0b" }} />
-
-      {/* Event info */}
-      <div className="bg-zinc-800/60 rounded-xl p-3 space-y-1">
-        <div className="font-bold text-white text-base">{form.name || <span className="text-zinc-600">イベント名未設定</span>}</div>
-        {form.date && <div className="text-zinc-400 text-xs flex items-center gap-1"><Calendar className="w-3 h-3" />{form.date}</div>}
-        {form.venue && <div className="text-zinc-400 text-xs flex items-center gap-1"><MapPin className="w-3 h-3" />{form.venue}</div>}
-      </div>
-
-      {/* Announcement */}
-      {form.announcementText && (
-        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-lg px-3 py-2 text-xs">
-          {form.announcementText}
-        </div>
-      )}
-
-      {/* Hero slide (first slide or heroTitle) */}
-      {(slides[0]?.title || form.heroTitle) && (
-        <div className="rounded-xl p-3 text-center space-y-1" style={{ background: slides[0]?.gradient || form.heroGradient || "linear-gradient(135deg,#1e3a8a,#2563eb)" }}>
-          <div className="font-bold text-white text-xs whitespace-pre-line">{slides[0]?.title || form.heroTitle}</div>
-          {(slides[0]?.description || form.heroDescription) && (
-            <div className="text-white/70 text-[10px]">{slides[0]?.description || form.heroDescription}</div>
-          )}
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-2 text-[10px] text-zinc-500">
-        <div className="bg-zinc-800/50 rounded-lg px-2 py-1.5">カルーセル: {slides.length}件</div>
-        <div className="bg-zinc-800/50 rounded-lg px-2 py-1.5">クイックリンク: {quickLinks.length}件</div>
-      </div>
-
-      {/* Page settings */}
-      <div className="flex flex-wrap gap-2 text-[10px]">
-        <span className={`px-2 py-0.5 rounded-full border ${form.published ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-zinc-700/50 border-zinc-700 text-zinc-500"}`}>
-          {form.published ? "公開中" : "非公開"}
-        </span>
-        {form.noindex && <span className="px-2 py-0.5 rounded-full border bg-zinc-700/50 border-zinc-700 text-zinc-500">noindex</span>}
-        {form.accentColor && (
-          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-400">
-            <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: form.accentColor }} />
-            {form.accentColor}
-          </span>
+    <div className="bg-background w-full" style={accentStyle}>
+      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName || data.event.name} />
+      <main>
+        <AnnouncementBanner text={form.announcementText || undefined} />
+        <EventInformation event={data.event} />
+        <section className="mx-auto max-w-6xl px-4 pb-4">
+          <HeroCarousel slides={data.carousel} />
+        </section>
+        {data.quickLinks.length > 0 && (
+          <section className="py-10">
+            <div className="mx-auto max-w-6xl px-4">
+              <QuickAccessGrid links={data.quickLinks} />
+            </div>
+          </section>
         )}
-      </div>
+      </main>
     </div>
   )
 }
@@ -1259,8 +1316,8 @@ function EventModal({
               </Link>
             </div>
             {previewTab === "live" ? (
-              <div className="flex-1 overflow-y-auto bg-zinc-950">
-                <LivePreview form={form} slides={slides} quickLinks={quickLinks} />
+              <div className="flex-1 overflow-y-auto bg-background">
+                <LivePreview form={form} slides={slides} quickLinks={quickLinks} cta={cta} />
               </div>
             ) : (
               <iframe
