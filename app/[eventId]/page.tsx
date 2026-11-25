@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { orgData } from "@/data/org-data"
 import { EventHeader } from "@/components/event-header"
 import { EventInformation } from "@/components/event-information"
@@ -100,6 +101,20 @@ const DEFAULT_SURVEY_QUESTIONS = [
   "Cosmo Baseを知ったきっかけを教えてください。",
   "今後、どんなコンテンツや活動に期待しますか？",
 ]
+
+export async function generateMetadata({ params }: { params: Promise<{ eventId: string }> }): Promise<Metadata> {
+  const { eventId } = await params
+  if (STATIC_ROUTES.has(eventId)) return {}
+  const gas = await fetchPublicGasEvent(eventId)
+  const title = gas?.pageTitle || gas?.name || undefined
+  const description = gas?.pageDescription || undefined
+  const noindex = gas?.noindex === true || gas?.noindex === "TRUE"
+  return {
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
+    ...(noindex ? { robots: { index: false, follow: false } } : {}),
+  }
+}
 
 export async function generateStaticParams() {
   const ids = await fetchPublishedEventIds()
