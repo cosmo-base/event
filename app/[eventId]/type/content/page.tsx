@@ -20,7 +20,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
 
   return (
     <div className="min-h-dvh bg-[#0B0F19]">
-      <EventHeader logoUrl={orgData.cosmoBase.logoUrl} eventName={eventName} />
+      <EventHeader logoUrl="/CB_logo.png" eventName={eventName} />
       <div className="pt-14">
         <SpaceType
           eventId={eventId}
