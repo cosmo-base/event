@@ -34,7 +34,7 @@ export default async function EventCbedLayout({
   return (
     <ContentExpiryGate expiryDate={cbmd.expiryDate} discordUrl="https://discord.gg/X78w86XE3v">
       <div className="min-h-dvh bg-[#000033]">
-        <EventHeader logoUrl={orgData.cosmoBase.logoUrl} eventName={eventName} />
+        <EventHeader logoUrl="/CB_logo.png" eventName={eventName} />
         <main className="pt-14">
           <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
