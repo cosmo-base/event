@@ -3,8 +3,6 @@ import { fetchPublicGasEvent, fetchPublishedEventIds } from "@/lib/gas-public"
 import { parseGasCbmdConfig } from "@/lib/merge-gas-event"
 import { EVENT_STATIC_ROUTES } from "@/lib/event-static-params"
 
-const DEFAULT_PREFECTURES = ["東京都", "神奈川県", "埼玉県", "千葉県"]
-
 export const dynamic = "force-static"
 export const dynamicParams = false
 
@@ -24,7 +22,8 @@ export async function generateStaticParams(): Promise<{ eventId: string; id: str
           const gas = await fetchPublicGasEvent(eventId)
           const cbmd = parseGasCbmdConfig(gas)
           if (!cbmd.expiryDate) return
-          const prefectures = cbmd.lockedPrefectures ?? DEFAULT_PREFECTURES
+          const prefectures = cbmd.lockedPrefectures ?? []
+          if (!prefectures.length) return
           const subset = facilities.filter((f) => prefectures.includes(f.prefecture))
           if (!subset.length) return
           subset.forEach((f) => results.push({ eventId, id: String(f.id).trim() }))
