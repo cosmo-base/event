@@ -19,6 +19,15 @@ import { QuickAccessGrid } from "@/components/quick-access-grid"
 import { AnnouncementBanner } from "@/components/announcement-banner"
 import { mergeGasEvent, mergeFullGasEvent } from "@/lib/merge-gas-event"
 import type { EventSpecificData } from "@/data/event-page-data"
+import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
+import { ContentExperienceSection } from "@/components/content-experience-section"
+import { LimitedContentSection } from "@/components/limited-content-section"
+import { CosmoBaseIntroduction } from "@/components/cosmo-base-introduction"
+import { FsifIntroduction } from "@/components/fsif-introduction"
+import { CommunityCta } from "@/components/community-cta"
+import { SocialLinksSection } from "@/components/social-links-section"
+import { SocialFooter } from "@/components/social-footer"
+import { orgData } from "@/data/org-data"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -715,11 +724,13 @@ const PREVIEW_BASE_DATA: EventSpecificData = {
   },
 }
 
-function LivePreview({ form, slides, quickLinks, cta }: {
+function LivePreview({ form, slides, quickLinks, cta, contents, limitedContents }: {
   form: EventFormData
   slides: GasCarouselSlide[]
   quickLinks: GasQuickLink[]
   cta: GasCommunityCta | null
+  contents: GasContentItem[]
+  limitedContents: GasLimitedContentItem[]
 }) {
   const data = useMemo(() => {
     const gasLike = {
@@ -743,11 +754,13 @@ function LivePreview({ form, slides, quickLinks, cta }: {
     }
     const merged = mergeGasEvent({ ...PREVIEW_BASE_DATA }, gasLike)
     return mergeFullGasEvent(merged, {
-      ...(slides.length > 0    && { carousel:    slides }),
-      ...(quickLinks.length > 0 && { quickLinks: quickLinks }),
-      ...(cta                  && { communityCta: cta }),
+      ...(slides.length > 0         && { carousel:       slides }),
+      ...(quickLinks.length > 0     && { quickLinks:     quickLinks }),
+      ...(cta                       && { communityCta:   cta }),
+      ...(contents.length > 0       && { contents:       contents }),
+      ...(limitedContents.length > 0 && { limitedContents: limitedContents }),
     })
-  }, [form, slides, quickLinks, cta])
+  }, [form, slides, quickLinks, cta, contents, limitedContents])
 
   const accentStyle = data.site.accentColor
     ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)
@@ -769,7 +782,30 @@ function LivePreview({ form, slides, quickLinks, cta }: {
             </div>
           </section>
         )}
+
+        {data.spaceType?.title && <SpaceTypeDiagnosisFeature feature={data.spaceType} />}
+
+        {data.contents.length > 0 && <ContentExperienceSection contents={data.contents} />}
+
+        {data.limitedContents.length > 0 && (
+          <LimitedContentSection items={data.limitedContents} eventId={form.eventId || "__preview__"} />
+        )}
+
+        <CosmoBaseIntroduction cosmoBase={orgData.cosmoBase} />
+
+        <FsifIntroduction fsif={orgData.fsif} />
+
+        <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
+
+        <SocialLinksSection socialLinks={orgData.socialLinks} />
       </main>
+
+      <SocialFooter
+        cosmoBase={orgData.cosmoBase}
+        fsif={orgData.fsif}
+        socialLinks={orgData.socialLinks}
+        legalLinks={orgData.legalLinks}
+      />
     </div>
   )
 }
@@ -1317,7 +1353,7 @@ function EventModal({
             </div>
             {previewTab === "live" ? (
               <div className="flex-1 overflow-y-auto bg-background">
-                <LivePreview form={form} slides={slides} quickLinks={quickLinks} cta={cta} />
+                <LivePreview form={form} slides={slides} quickLinks={quickLinks} cta={cta} contents={contents} limitedContents={limitedContents} />
               </div>
             ) : (
               <iframe
