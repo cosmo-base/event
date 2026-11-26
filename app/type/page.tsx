@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { SpaceTypeDiagnosis } from "@/components/space-type-diagnosis"
 import { EventHeader } from "@/components/event-header"
 import { SocialFooter } from "@/components/social-footer"
-import { eventPageData } from "@/data/event-page-data"
+import { orgData } from "@/data/org-data"
 
 export const metadata: Metadata = {
   title: 'あなたの宇宙タイプは？ | Cosmo Base',
@@ -10,18 +10,17 @@ export const metadata: Metadata = {
 }
 
 export default function SpaceTypePage() {
-  const data = eventPageData
   return (
     <div className="min-h-dvh bg-[#000033]">
-      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
+      <EventHeader logoUrl="/CB_logo.png" eventName="" />
       <div className="pt-14">
         <SpaceTypeDiagnosis />
       </div>
       <SocialFooter
-        cosmoBase={data.cosmoBase}
-        fsif={data.fsif}
-        socialLinks={data.socialLinks}
-        legalLinks={data.legalLinks}
+        cosmoBase={orgData.cosmoBase}
+        fsif={orgData.fsif}
+        socialLinks={orgData.socialLinks}
+        legalLinks={orgData.legalLinks}
       />
     </div>
   )

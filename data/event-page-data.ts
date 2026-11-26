@@ -8,7 +8,6 @@
 // ============================================================================
 
 import { orgData } from "@/data/org-data"
-import { kurawaku2Data } from "@/data/events/kurawaku2"
 
 export type { OrgData } from "@/data/org-data"
 
@@ -203,13 +202,3 @@ export type EventPageData = EventSpecificData & {
   }
 }
 
-// ─────────────────────────────────────────────
-// くらわくトーク#2 用（既存インポートとの後方互換）
-// ─────────────────────────────────────────────
-
-export const eventPageData: EventPageData = {
-  ...orgData,
-  ...kurawaku2Data,
-}
-
-export default eventPageData

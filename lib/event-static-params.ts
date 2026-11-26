@@ -2,8 +2,7 @@ import { fetchPublishedEventIds } from "./gas-public"
 
 // Routes that have dedicated static directories — [eventId] must not shadow them
 export const EVENT_STATIC_ROUTES = new Set([
-  "MCF26", "SDF26", "StEX26", "monoK26", "monoS26",
-  "cbed", "cbmd", "cosmomatch", "feedback", "gacha", "kurawaku2", "list", "type",
+  "cbed", "cbmd", "cosmomatch", "feedback", "gacha", "list", "type",
 ])
 
 export async function eventStaticParams(): Promise<{ eventId: string }[]> {

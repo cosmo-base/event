@@ -1,21 +1,20 @@
 import { SpaceType } from "@/components/space-type"
 import { EventHeader } from "@/components/event-header"
 import { SocialFooter } from "@/components/social-footer"
-import { eventPageData } from "@/data/event-page-data"
+import { orgData } from "@/data/org-data"
 
 export default function SpaceTypeContentPage() {
-  const data = eventPageData
   return (
     <div className="min-h-dvh bg-[#0B0F19]">
-      <EventHeader logoUrl={data.site.logoUrl} eventName={data.event.shortName} />
+      <EventHeader logoUrl="/CB_logo.png" eventName="" />
       <div className="pt-14">
         <SpaceType eventId="type" />
       </div>
       <SocialFooter
-        cosmoBase={data.cosmoBase}
-        fsif={data.fsif}
-        socialLinks={data.socialLinks}
-        legalLinks={data.legalLinks}
+        cosmoBase={orgData.cosmoBase}
+        fsif={orgData.fsif}
+        socialLinks={orgData.socialLinks}
+        legalLinks={orgData.legalLinks}
       />
     </div>
   )
