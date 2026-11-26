@@ -8,7 +8,7 @@ import {
   Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
   ChevronUp, ChevronDown,
 } from "lucide-react"
-import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData, GasContentItem, GasLimitedContentItem } from "@/lib/gas-public"
+import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData, GasEventPublicData, GasContentItem, GasLimitedContentItem } from "@/lib/gas-public"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
 import { AdminStats, type StatsData } from "./AdminStats"
@@ -845,12 +845,67 @@ function EventModal({
     setFullDataLoading(true)
     fetch(`${GAS_URL}?action=event&id=${encodeURIComponent(event.eventId as string)}`)
       .then(r => r.json())
-      .then((data: GasEventFullData) => {
+      .then((data: GasEventFullData & Partial<GasEventPublicData>) => {
         setSlides(data.carousel ?? [])
         setQuickLinks(data.quickLinks ?? [])
         setCta(data.communityCta ?? null)
         setContents(data.contents ?? [])
         setLimitedContents(data.limitedContents ?? [])
+        // Scalar fields (date etc.) may be included in this response but absent from getEvents list
+        const scalars: Partial<EventFormData> = {}
+        const str = (v: string | undefined) => v ?? ""
+        if (data.name              !== undefined) scalars.name              = str(data.name)
+        if (data.shortName         !== undefined) scalars.shortName         = str(data.shortName)
+        if (data.date              !== undefined) scalars.date              = str(data.date)
+        if (data.venue             !== undefined) scalars.venue             = str(data.venue)
+        if (data.participationType !== undefined) scalars.participationType = str(data.participationType)
+        if (data.exhibitorName     !== undefined) scalars.exhibitorName     = str(data.exhibitorName)
+        if (data.boothNumber       !== undefined) scalars.boothNumber       = str(data.boothNumber)
+        if (data.pitchTime         !== undefined) scalars.pitchTime         = str(data.pitchTime)
+        if (data.message           !== undefined) scalars.message           = str(data.message)
+        if (data.reportUrl         !== undefined) scalars.reportUrl         = str(data.reportUrl)
+        if (data.websiteUrl        !== undefined) scalars.websiteUrl        = str(data.websiteUrl)
+        if (data.registrationUrl   !== undefined) scalars.registrationUrl   = str(data.registrationUrl)
+        if (data.twitterUrl        !== undefined) scalars.twitterUrl        = str(data.twitterUrl)
+        if (data.announcementText  !== undefined) scalars.announcementText  = str(data.announcementText)
+        if (data.heroTitle         !== undefined) scalars.heroTitle         = str(data.heroTitle)
+        if (data.heroDescription   !== undefined) scalars.heroDescription   = str(data.heroDescription)
+        if (data.heroGradient      !== undefined) scalars.heroGradient      = str(data.heroGradient)
+        if (data.heroButtonLabel   !== undefined) scalars.heroButtonLabel   = str(data.heroButtonLabel)
+        if (data.heroButtonHref    !== undefined) scalars.heroButtonHref    = str(data.heroButtonHref)
+        if (data.accentColor       !== undefined) scalars.accentColor       = str(data.accentColor)
+        if (data.pageTitle         !== undefined) scalars.pageTitle         = str(data.pageTitle)
+        if (data.pageDescription   !== undefined) scalars.pageDescription   = str(data.pageDescription)
+        if (data.presentationTitle !== undefined) scalars.presentationTitle = str(data.presentationTitle)
+        if (data.presentationDescription !== undefined) scalars.presentationDescription = str(data.presentationDescription)
+        if (data.speakerName       !== undefined) scalars.speakerName       = str(data.speakerName)
+        if (data.presentationDate  !== undefined) scalars.presentationDate  = str(data.presentationDate)
+        if (data.slideUrl          !== undefined) scalars.slideUrl          = str(data.slideUrl)
+        if (data.pdfUrl            !== undefined) scalars.pdfUrl            = str(data.pdfUrl)
+        if (data.embedUrl          !== undefined) scalars.embedUrl          = str(data.embedUrl)
+        if (data.poster1Title      !== undefined) scalars.poster1Title      = str(data.poster1Title)
+        if (data.poster1PdfUrl     !== undefined) scalars.poster1PdfUrl     = str(data.poster1PdfUrl)
+        if (data.poster1EmbedUrl   !== undefined) scalars.poster1EmbedUrl   = str(data.poster1EmbedUrl)
+        if (data.poster2Title      !== undefined) scalars.poster2Title      = str(data.poster2Title)
+        if (data.poster2PdfUrl     !== undefined) scalars.poster2PdfUrl     = str(data.poster2PdfUrl)
+        if (data.surveyQ1          !== undefined) scalars.surveyQ1          = str(data.surveyQ1)
+        if (data.surveyQ2          !== undefined) scalars.surveyQ2          = str(data.surveyQ2)
+        if (data.surveyQ3          !== undefined) scalars.surveyQ3          = str(data.surveyQ3)
+        if (data.quizIntro         !== undefined) scalars.quizIntro         = str(data.quizIntro)
+        if (data.quizQuestion      !== undefined) scalars.quizQuestion      = str(data.quizQuestion)
+        if (data.quizOptions       !== undefined) scalars.quizOptions       = str(data.quizOptions)
+        if (data.quizExplanation   !== undefined) scalars.quizExplanation   = str(data.quizExplanation)
+        if (data.quizLinkLabel     !== undefined) scalars.quizLinkLabel     = str(data.quizLinkLabel)
+        if (data.quizLinkHref      !== undefined) scalars.quizLinkHref      = str(data.quizLinkHref)
+        if (data.quizLinkDescription !== undefined) scalars.quizLinkDescription = str(data.quizLinkDescription)
+        if (data.selectedContentIds !== undefined) scalars.selectedContentIds = str(data.selectedContentIds)
+        if (data.cbmdPrefectures   !== undefined) scalars.cbmdPrefectures   = str(data.cbmdPrefectures)
+        if (data.cbmdRegion        !== undefined) scalars.cbmdRegion        = str(data.cbmdRegion)
+        if (data.cbmdExpiryDate    !== undefined) scalars.cbmdExpiryDate    = str(data.cbmdExpiryDate)
+        if (data.cbmdMapLat        !== undefined) scalars.cbmdMapLat        = String(data.cbmdMapLat ?? "")
+        if (data.cbmdMapLng        !== undefined) scalars.cbmdMapLng        = String(data.cbmdMapLng ?? "")
+        if (data.cbmdMapZoom       !== undefined) scalars.cbmdMapZoom       = String(data.cbmdMapZoom ?? "")
+        if (Object.keys(scalars).length > 0) setForm(f => ({ ...f, ...scalars }))
       })
       .catch(() => {})
       .finally(() => setFullDataLoading(false))
