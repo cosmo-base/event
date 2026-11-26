@@ -8,7 +8,7 @@ import {
   Calendar, MapPin, TableProperties, Lock, Search, CheckSquare, Copy,
   ChevronUp, ChevronDown,
 } from "lucide-react"
-import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData, GasContentItem, GasLimitedContentItem } from "@/lib/gas-public"
+import type { GasCarouselSlide, GasQuickLink, GasCommunityCta, GasEventFullData, GasEventPublicData, GasContentItem, GasLimitedContentItem } from "@/lib/gas-public"
 import { EventGacha, type GachaPrize } from "@/components/event-gacha"
 import { OperatorModeSetter } from "@/components/operator-mode-setter"
 import { AdminStats, type StatsData } from "./AdminStats"
@@ -19,6 +19,15 @@ import { QuickAccessGrid } from "@/components/quick-access-grid"
 import { AnnouncementBanner } from "@/components/announcement-banner"
 import { mergeGasEvent, mergeFullGasEvent } from "@/lib/merge-gas-event"
 import type { EventSpecificData } from "@/data/event-page-data"
+import { SpaceTypeDiagnosisFeature } from "@/components/space-type-diagnosis-feature"
+import { ContentExperienceSection } from "@/components/content-experience-section"
+import { LimitedContentSection } from "@/components/limited-content-section"
+import { CosmoBaseIntroduction } from "@/components/cosmo-base-introduction"
+import { FsifIntroduction } from "@/components/fsif-introduction"
+import { CommunityCta } from "@/components/community-cta"
+import { SocialLinksSection } from "@/components/social-links-section"
+import { SocialFooter } from "@/components/social-footer"
+import { orgData } from "@/data/org-data"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -715,11 +724,13 @@ const PREVIEW_BASE_DATA: EventSpecificData = {
   },
 }
 
-function LivePreview({ form, slides, quickLinks, cta }: {
+function LivePreview({ form, slides, quickLinks, cta, contents, limitedContents }: {
   form: EventFormData
   slides: GasCarouselSlide[]
   quickLinks: GasQuickLink[]
   cta: GasCommunityCta | null
+  contents: GasContentItem[]
+  limitedContents: GasLimitedContentItem[]
 }) {
   const data = useMemo(() => {
     const gasLike = {
@@ -743,11 +754,13 @@ function LivePreview({ form, slides, quickLinks, cta }: {
     }
     const merged = mergeGasEvent({ ...PREVIEW_BASE_DATA }, gasLike)
     return mergeFullGasEvent(merged, {
-      ...(slides.length > 0    && { carousel:    slides }),
-      ...(quickLinks.length > 0 && { quickLinks: quickLinks }),
-      ...(cta                  && { communityCta: cta }),
+      ...(slides.length > 0         && { carousel:       slides }),
+      ...(quickLinks.length > 0     && { quickLinks:     quickLinks }),
+      ...(cta                       && { communityCta:   cta }),
+      ...(contents.length > 0       && { contents:       contents }),
+      ...(limitedContents.length > 0 && { limitedContents: limitedContents }),
     })
-  }, [form, slides, quickLinks, cta])
+  }, [form, slides, quickLinks, cta, contents, limitedContents])
 
   const accentStyle = data.site.accentColor
     ? ({ "--color-primary": data.site.accentColor } as React.CSSProperties)
@@ -769,7 +782,30 @@ function LivePreview({ form, slides, quickLinks, cta }: {
             </div>
           </section>
         )}
+
+        {data.spaceType?.title && <SpaceTypeDiagnosisFeature feature={data.spaceType} />}
+
+        {data.contents.length > 0 && <ContentExperienceSection contents={data.contents} />}
+
+        {data.limitedContents.length > 0 && (
+          <LimitedContentSection items={data.limitedContents} eventId={form.eventId || "__preview__"} />
+        )}
+
+        <CosmoBaseIntroduction cosmoBase={orgData.cosmoBase} />
+
+        <FsifIntroduction fsif={orgData.fsif} />
+
+        <CommunityCta cta={data.communityCta} reportUrl={data.event.reportUrl} />
+
+        <SocialLinksSection socialLinks={orgData.socialLinks} />
       </main>
+
+      <SocialFooter
+        cosmoBase={orgData.cosmoBase}
+        fsif={orgData.fsif}
+        socialLinks={orgData.socialLinks}
+        legalLinks={orgData.legalLinks}
+      />
     </div>
   )
 }
@@ -807,14 +843,72 @@ function EventModal({
   useEffect(() => {
     if (!isEdit || !GAS_URL || !event?.eventId) return
     setFullDataLoading(true)
-    fetch(`${GAS_URL}?action=event&id=${encodeURIComponent(event.eventId as string)}`)
-      .then(r => r.json())
-      .then((data: GasEventFullData) => {
-        setSlides(data.carousel ?? [])
-        setQuickLinks(data.quickLinks ?? [])
-        setCta(data.communityCta ?? null)
-        setContents(data.contents ?? [])
-        setLimitedContents(data.limitedContents ?? [])
+    const eid = encodeURIComponent(event.eventId as string)
+    Promise.all([
+      fetch(`${GAS_URL}?action=event&id=${eid}`).then(r => r.json()) as Promise<GasEventFullData>,
+      fetch(`${GAS_URL}?action=publicEvent&id=${eid}`).then(r => r.json()) as Promise<GasEventPublicData>,
+    ])
+      .then(([full, pub]) => {
+        setSlides(full.carousel ?? [])
+        setQuickLinks(full.quickLinks ?? [])
+        setCta(full.communityCta ?? null)
+        setContents(full.contents ?? [])
+        setLimitedContents(full.limitedContents ?? [])
+        const scalars: Partial<EventFormData> = {}
+        const str = (v: string | undefined) => v ?? ""
+        if (pub.name              !== undefined) scalars.name              = str(pub.name)
+        if (pub.shortName         !== undefined) scalars.shortName         = str(pub.shortName)
+        if (pub.date              !== undefined) scalars.date              = str(pub.date)
+        if (pub.venue             !== undefined) scalars.venue             = str(pub.venue)
+        if (pub.participationType !== undefined) scalars.participationType = str(pub.participationType)
+        if (pub.exhibitorName     !== undefined) scalars.exhibitorName     = str(pub.exhibitorName)
+        if (pub.boothNumber       !== undefined) scalars.boothNumber       = str(pub.boothNumber)
+        if (pub.pitchTime         !== undefined) scalars.pitchTime         = str(pub.pitchTime)
+        if (pub.message           !== undefined) scalars.message           = str(pub.message)
+        if (pub.reportUrl         !== undefined) scalars.reportUrl         = str(pub.reportUrl)
+        if (pub.websiteUrl        !== undefined) scalars.websiteUrl        = str(pub.websiteUrl)
+        if (pub.registrationUrl   !== undefined) scalars.registrationUrl   = str(pub.registrationUrl)
+        if (pub.twitterUrl        !== undefined) scalars.twitterUrl        = str(pub.twitterUrl)
+        if (pub.announcementText  !== undefined) scalars.announcementText  = str(pub.announcementText)
+        if (pub.heroTitle         !== undefined) scalars.heroTitle         = str(pub.heroTitle)
+        if (pub.heroDescription   !== undefined) scalars.heroDescription   = str(pub.heroDescription)
+        if (pub.heroGradient      !== undefined) scalars.heroGradient      = str(pub.heroGradient)
+        if (pub.heroButtonLabel   !== undefined) scalars.heroButtonLabel   = str(pub.heroButtonLabel)
+        if (pub.heroButtonHref    !== undefined) scalars.heroButtonHref    = str(pub.heroButtonHref)
+        if (pub.accentColor       !== undefined) scalars.accentColor       = str(pub.accentColor)
+        if (pub.pageTitle         !== undefined) scalars.pageTitle         = str(pub.pageTitle)
+        if (pub.pageDescription   !== undefined) scalars.pageDescription   = str(pub.pageDescription)
+        if (pub.presentationTitle !== undefined) scalars.presentationTitle = str(pub.presentationTitle)
+        if (pub.presentationDescription !== undefined) scalars.presentationDescription = str(pub.presentationDescription)
+        if (pub.speakerName       !== undefined) scalars.speakerName       = str(pub.speakerName)
+        if (pub.presentationDate  !== undefined) scalars.presentationDate  = str(pub.presentationDate)
+        if (pub.slideUrl          !== undefined) scalars.slideUrl          = str(pub.slideUrl)
+        if (pub.pdfUrl            !== undefined) scalars.pdfUrl            = str(pub.pdfUrl)
+        if (pub.embedUrl          !== undefined) scalars.embedUrl          = str(pub.embedUrl)
+        if (pub.poster1Title      !== undefined) scalars.poster1Title      = str(pub.poster1Title)
+        if (pub.poster1PdfUrl     !== undefined) scalars.poster1PdfUrl     = str(pub.poster1PdfUrl)
+        if (pub.poster1EmbedUrl   !== undefined) scalars.poster1EmbedUrl   = str(pub.poster1EmbedUrl)
+        if (pub.poster2Title      !== undefined) scalars.poster2Title      = str(pub.poster2Title)
+        if (pub.poster2PdfUrl     !== undefined) scalars.poster2PdfUrl     = str(pub.poster2PdfUrl)
+        if (pub.surveyQ1          !== undefined) scalars.surveyQ1          = str(pub.surveyQ1)
+        if (pub.surveyQ2          !== undefined) scalars.surveyQ2          = str(pub.surveyQ2)
+        if (pub.surveyQ3          !== undefined) scalars.surveyQ3          = str(pub.surveyQ3)
+        if (pub.quizIntro         !== undefined) scalars.quizIntro         = str(pub.quizIntro)
+        if (pub.quizQuestion      !== undefined) scalars.quizQuestion      = str(pub.quizQuestion)
+        if (pub.quizOptions       !== undefined) scalars.quizOptions       = str(pub.quizOptions)
+        if (pub.quizCorrectIndex  !== undefined) scalars.quizCorrectIndex  = String(pub.quizCorrectIndex ?? "0")
+        if (pub.quizExplanation   !== undefined) scalars.quizExplanation   = str(pub.quizExplanation)
+        if (pub.quizLinkLabel     !== undefined) scalars.quizLinkLabel     = str(pub.quizLinkLabel)
+        if (pub.quizLinkHref      !== undefined) scalars.quizLinkHref      = str(pub.quizLinkHref)
+        if (pub.quizLinkDescription !== undefined) scalars.quizLinkDescription = str(pub.quizLinkDescription)
+        if (pub.selectedContentIds !== undefined) scalars.selectedContentIds = str(pub.selectedContentIds)
+        if (pub.cbmdPrefectures   !== undefined) scalars.cbmdPrefectures   = str(pub.cbmdPrefectures)
+        if (pub.cbmdRegion        !== undefined) scalars.cbmdRegion        = str(pub.cbmdRegion)
+        if (pub.cbmdExpiryDate    !== undefined) scalars.cbmdExpiryDate    = str(pub.cbmdExpiryDate)
+        if (pub.cbmdMapLat        !== undefined) scalars.cbmdMapLat        = String(pub.cbmdMapLat ?? "")
+        if (pub.cbmdMapLng        !== undefined) scalars.cbmdMapLng        = String(pub.cbmdMapLng ?? "")
+        if (pub.cbmdMapZoom       !== undefined) scalars.cbmdMapZoom       = String(pub.cbmdMapZoom ?? "")
+        if (Object.keys(scalars).length > 0) setForm(f => ({ ...f, ...scalars }))
       })
       .catch(() => {})
       .finally(() => setFullDataLoading(false))
@@ -1317,7 +1411,7 @@ function EventModal({
             </div>
             {previewTab === "live" ? (
               <div className="flex-1 overflow-y-auto bg-background">
-                <LivePreview form={form} slides={slides} quickLinks={quickLinks} cta={cta} />
+                <LivePreview form={form} slides={slides} quickLinks={quickLinks} cta={cta} contents={contents} limitedContents={limitedContents} />
               </div>
             ) : (
               <iframe
