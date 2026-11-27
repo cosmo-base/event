@@ -41,6 +41,7 @@ export interface GasEventPublicData {
   pageTitle?: string
   pageDescription?: string
   accentColor?: string
+  ogImage?: string
   noindex?: boolean | string
   published?: boolean | string
   // quiz fields (options are pipe-separated)
