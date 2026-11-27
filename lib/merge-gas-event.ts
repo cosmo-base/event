@@ -47,6 +47,7 @@ export function mergeGasEvent<T extends EventSpecificData>(base: T, gas: GasEven
   merged.site = {
     ...base.site,
     ...(gas.accentColor      && { accentColor:   gas.accentColor }),
+    ...(gas.ogImage          && { ogImage:        gas.ogImage }),
     ...(gas.pageTitle        && { pageTitle:      gas.pageTitle }),
     ...(gas.pageDescription  && { pageDescription: gas.pageDescription }),
     ...(gas.noindex !== undefined && {

@@ -159,6 +159,7 @@ interface EventFormData {
   pageTitle: string
   pageDescription: string
   accentColor: string
+  ogImage: string
   noindex: boolean
   published: boolean
 }
@@ -199,7 +200,7 @@ const EMPTY_FORM: EventFormData = {
   quizExplanation: "", quizLinkLabel: "", quizLinkHref: "", quizLinkDescription: "",
   selectedContentIds: "",
   cbmdPrefectures: "", cbmdRegion: "", cbmdMapLat: "", cbmdMapLng: "", cbmdMapZoom: "", cbmdExpiryDate: "",
-  pageTitle: "", pageDescription: "", accentColor: "#f59e0b",
+  pageTitle: "", pageDescription: "", accentColor: "#f59e0b", ogImage: "",
   noindex: true, published: false,
 }
 
@@ -454,6 +455,20 @@ function CarouselEditor({ slides, onChange }: { slides: GasCarouselSlide[]; onCh
           </div>
           <Field label="グラデーション"><input value={s.gradient ?? ""} onChange={e => upd(i, { gradient: e.target.value })} className={INPUT} placeholder="linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%)" /></Field>
           <Field label="画像URL"><input value={s.imageUrl ?? ""} onChange={e => upd(i, { imageUrl: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="セカンダリボタン"><input value={s.secondaryLabel ?? ""} onChange={e => upd(i, { secondaryLabel: e.target.value })} className={INPUT} placeholder="ラベル" /></Field>
+            <Field label="セカンダリリンク"><input value={s.secondaryHref ?? ""} onChange={e => upd(i, { secondaryHref: e.target.value })} className={INPUT} placeholder="#..." /></Field>
+          </div>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+              <input type="checkbox" checked={!!s.centered} onChange={e => upd(i, { centered: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+              <span className="text-zinc-400">中央揃え</span>
+            </label>
+            <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
+              <input type="checkbox" checked={!!s.external} onChange={e => upd(i, { external: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+              <span className="text-zinc-400">外部リンク</span>
+            </label>
+          </div>
         </ArrayItemWrapper>
       ))}
       <button type="button"
@@ -490,6 +505,9 @@ function QuickLinksEditor({ links, onChange }: { links: GasQuickLink[]; onChange
             <textarea value={l.description} onChange={e => upd(i, { description: e.target.value })} rows={1} className={`${INPUT} resize-none`} />
           </Field>
           <Field label="リンクURL"><input value={l.href} onChange={e => upd(i, { href: e.target.value })} className={INPUT} placeholder="https://..." /></Field>
+          <Field label="イベントID" note="任意">
+            <input value={l.event ?? ""} onChange={e => upd(i, { event: e.target.value })} className={INPUT} placeholder="StEX26" />
+          </Field>
           <div className="flex flex-wrap gap-4">
             <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm">
               <input type="checkbox" checked={!!l.external} onChange={e => upd(i, { external: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
@@ -516,7 +534,7 @@ function QuickLinksEditor({ links, onChange }: { links: GasQuickLink[]; onChange
 function CommunityCтaEditor({ cta, onChange }: { cta: GasCommunityCta | null; onChange: (c: GasCommunityCta) => void }) {
   const c: GasCommunityCta = cta ?? { title: "", description: "", primaryLabel: "", primaryHref: "", secondaryLinks: [] }
   const upd = (patch: Partial<GasCommunityCta>) => onChange({ ...c, ...patch })
-  const updSecondary = (i: number, patch: Partial<{ label: string; href: string }>) => {
+  const updSecondary = (i: number, patch: Partial<NonNullable<GasCommunityCta["secondaryLinks"]>[number]>) => {
     const links = [...(c.secondaryLinks ?? [])]
     links[i] = { ...links[i], ...patch }
     upd({ secondaryLinks: links })
@@ -537,15 +555,25 @@ function CommunityCтaEditor({ cta, onChange }: { cta: GasCommunityCta | null; o
         <span className="text-[10px] font-bold text-zinc-600 block mb-2">サブリンク</span>
         <div className="space-y-2">
           {(c.secondaryLinks ?? []).map((link, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input value={link.label} onChange={e => updSecondary(i, { label: e.target.value })}
-                className={`${INPUT} flex-1`} placeholder="ラベル" />
+            <div key={i} className="bg-zinc-800/30 rounded-lg p-2 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <input value={link.label} onChange={e => updSecondary(i, { label: e.target.value })}
+                  className={`${INPUT} flex-1`} placeholder="ラベル" />
+                <button type="button" onClick={() => upd({ secondaryLinks: (c.secondaryLinks ?? []).filter((_, idx) => idx !== i) })}
+                  className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors shrink-0">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
               <input value={link.href} onChange={e => updSecondary(i, { href: e.target.value })}
-                className={`${INPUT} flex-1`} placeholder="URL" />
-              <button type="button" onClick={() => upd({ secondaryLinks: (c.secondaryLinks ?? []).filter((_, idx) => idx !== i) })}
-                className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors shrink-0">
-                <X className="w-3.5 h-3.5" />
-              </button>
+                className={INPUT} placeholder="URL" />
+              <div className="flex items-center gap-3">
+                <input value={link.event ?? ""} onChange={e => updSecondary(i, { event: e.target.value })}
+                  className={`${INPUT} flex-1`} placeholder="イベントID（任意）" />
+                <label className="flex items-center gap-1.5 cursor-pointer select-none text-sm whitespace-nowrap">
+                  <input type="checkbox" checked={!!link.anchor} onChange={e => updSecondary(i, { anchor: e.target.checked })} className="w-3.5 h-3.5 accent-blue-500" />
+                  <span className="text-zinc-400">アンカー</span>
+                </label>
+              </div>
             </div>
           ))}
           <button type="button"
@@ -750,7 +778,20 @@ function LivePreview({ form, slides, quickLinks, cta, contents, limitedContents 
       ...(form.heroGradient    && { heroGradient:      form.heroGradient }),
       ...(form.heroButtonLabel && { heroButtonLabel:   form.heroButtonLabel }),
       ...(form.heroButtonHref  && { heroButtonHref:    form.heroButtonHref }),
-      ...(form.accentColor     && { accentColor:       form.accentColor }),
+      ...(form.accentColor          && { accentColor:          form.accentColor }),
+      ...(form.ogImage              && { ogImage:               form.ogImage }),
+      ...(form.presentationTitle    && { presentationTitle:     form.presentationTitle }),
+      ...(form.presentationDescription && { presentationDescription: form.presentationDescription }),
+      ...(form.speakerName          && { speakerName:           form.speakerName }),
+      ...(form.presentationDate     && { presentationDate:      form.presentationDate }),
+      ...(form.slideUrl             && { slideUrl:              form.slideUrl }),
+      ...(form.pdfUrl               && { pdfUrl:                form.pdfUrl }),
+      ...(form.embedUrl             && { embedUrl:              form.embedUrl }),
+      ...(form.poster1Title         && { poster1Title:          form.poster1Title }),
+      ...(form.poster1PdfUrl        && { poster1PdfUrl:         form.poster1PdfUrl }),
+      ...(form.poster1EmbedUrl      && { poster1EmbedUrl:       form.poster1EmbedUrl }),
+      ...(form.poster2Title         && { poster2Title:          form.poster2Title }),
+      ...(form.poster2PdfUrl        && { poster2PdfUrl:         form.poster2PdfUrl }),
     }
     const merged = mergeGasEvent({ ...PREVIEW_BASE_DATA }, gasLike)
     return mergeFullGasEvent(merged, {
@@ -876,6 +917,7 @@ function EventModal({
         if (pub.heroButtonLabel   !== undefined) scalars.heroButtonLabel   = str(pub.heroButtonLabel)
         if (pub.heroButtonHref    !== undefined) scalars.heroButtonHref    = str(pub.heroButtonHref)
         if (pub.accentColor       !== undefined) scalars.accentColor       = str(pub.accentColor)
+        if (pub.ogImage           !== undefined) scalars.ogImage           = str(pub.ogImage)
         if (pub.pageTitle         !== undefined) scalars.pageTitle         = str(pub.pageTitle)
         if (pub.pageDescription   !== undefined) scalars.pageDescription   = str(pub.pageDescription)
         if (pub.presentationTitle !== undefined) scalars.presentationTitle = str(pub.presentationTitle)
@@ -1324,6 +1366,11 @@ function EventModal({
               <input value={form.accentColor} onChange={e => set("accentColor", e.target.value)}
                 className={`${INPUT} flex-1`} placeholder="#f59e0b" />
             </div>
+          </Field>
+
+          <Field label="OG画像URL" note="SNSシェア用画像（省略可）">
+            <input value={form.ogImage} onChange={e => set("ogImage", e.target.value)}
+              className={INPUT} placeholder="/images/hero-event.png" />
           </Field>
 
           {/* 告知・メモ */}
